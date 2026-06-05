@@ -29,3 +29,5 @@ py run_melomanos.py
 - Frontend: http://localhost:3000  
 
 Press **Enter** or **CTRL+C** in the launcher terminal to stop both processes.
+
+See [README_RUN_MELOMANOS.md](./README_RUN_MELOMANOS.md) for `--check`, `--no-wait`, and `--kill-stale`.

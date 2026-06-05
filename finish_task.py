@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import argparse
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -15,6 +17,28 @@ FRONTEND = Path(r"C:\melomanos-frontend")
 BACKEND_BRANCH = "main"
 FRONTEND_BRANCH = "master"
 
+AI_OS_DOC_MARKERS = (
+    "ai_os_overview",
+    "agent_rules",
+    "architecture.md",
+    "business_rules",
+    "testing_strategy",
+    "quality_gate",
+    ".cursor/rules",
+)
+WORKSPACE_DOC_MARKERS = (
+    "project_status",
+    "mvp_roadmap",
+    "readme",
+)
+
+
+@dataclass
+class SuggestionResult:
+    message: str | None
+    source: str
+    warn_mismatch: bool = False
+
 
 @dataclass
 class RepoState:
@@ -22,6 +46,7 @@ class RepoState:
     repo: Path
     branch: str
     has_changes: bool
+    changed_files: list[str]
     message: str = ""
 
     @property
@@ -33,6 +58,18 @@ class RepoState:
     @property
     def will_commit(self) -> bool:
         return self.has_changes and bool(self.message)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Melomanos release: Quality Gate, smart commits, push."
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show git status and suggested messages only; no audit, commit, or push.",
+    )
+    return parser.parse_args()
 
 
 def print_command(command: list[str], cwd: Path) -> None:
@@ -53,8 +90,22 @@ def run_command(command: list[str], cwd: Path) -> int:
     return result.returncode
 
 
-def git_status_short(repo: Path) -> str:
-    print_command(["git", "status", "--short"], repo)
+def parse_changed_files(status_output: str) -> list[str]:
+    files: list[str] = []
+    for line in status_output.strip().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        path_part = line[3:].strip() if len(line) > 3 else line
+        if " -> " in path_part:
+            path_part = path_part.split(" -> ")[-1].strip()
+        files.append(path_part.replace("\\", "/"))
+    return files
+
+
+def git_status_data(repo: Path, *, echo: bool = True) -> tuple[str, list[str]]:
+    if echo:
+        print_command(["git", "status", "--short"], repo)
     if not repo.is_dir():
         print(f"ERROR: Repository path not found: {repo}")
         sys.exit(1)
@@ -68,22 +119,186 @@ def git_status_short(repo: Path) -> str:
     if result.returncode != 0:
         print(f"ERROR: git status failed in {repo} (exit {result.returncode})")
         sys.exit(result.returncode)
-    return result.stdout.strip()
-
-
-def has_git_changes(repo: Path) -> bool:
-    return bool(git_status_short(repo))
+    output = result.stdout.strip()
+    return output, parse_changed_files(output)
 
 
 def print_repo_status(name: str, has_changes: bool) -> None:
     print(f"{name}:")
-    print("Changes detected" if has_changes else "Clean")
+    if not has_changes:
+        print("Clean")
     print()
 
 
-def prompt_commit_message(name: str) -> str:
+def read_active_task_from_roadmap(roadmap_path: Path) -> str | None:
+    if not roadmap_path.is_file():
+        return None
+    text = roadmap_path.read_text(encoding="utf-8")
+    match = re.search(
+        r"## Current Active Task\s*\n+(?:###\s+(.+?)\s*(?:\n|$))",
+        text,
+    )
+    if not match:
+        return None
+    return match.group(1).strip()
+
+
+def format_task_for_commit(task: str) -> str:
+    words = task.strip().split()
+    return " ".join(
+        "MVP" if word.upper() == "MVP" else word.lower() for word in words
+    )
+
+
+def _combined_paths(files: list[str]) -> str:
+    return " ".join(files).lower()
+
+
+def _is_doc_file(path: str) -> bool:
+    lower = path.lower()
+    return (
+        lower.endswith(".md")
+        or lower.endswith(".mdc")
+        or "readme" in Path(lower).name
+    )
+
+
+def is_mostly_documentation(files: list[str]) -> bool:
+    if not files:
+        return False
+    doc_count = sum(1 for f in files if _is_doc_file(f))
+    return doc_count >= len(files) * 0.5
+
+
+def paths_contain(files: list[str], *needles: str) -> bool:
+    combined = _combined_paths(files)
+    return any(needle.lower() in combined for needle in needles)
+
+
+def repo_feature_suffix(repo_label: str) -> str:
+    return "backend" if repo_label == "Backend" else "frontend"
+
+
+def build_feature_message(feature: str, repo_label: str) -> str:
+    formatted = format_task_for_commit(feature)
+    suffix = repo_feature_suffix(repo_label)
+    if suffix in formatted:
+        return f"Add {formatted}"
+    return f"Add {formatted} {suffix}"
+
+
+def roadmap_task_matches_files(task: str, files: list[str]) -> bool:
+    combined = _combined_paths(files)
+    task_lower = task.lower()
+    checks = (
+        ("admin", ("admin",)),
+        ("payout", ("payout", "seller_payout")),
+        ("dispute", ("dispute",)),
+        ("shipping", ("shipping",)),
+        ("subscription", ("subscription",)),
+        ("escrow", ("escrow", "order")),
+    )
+    for keyword, file_hints in checks:
+        if keyword in task_lower:
+            return any(hint in combined for hint in file_hints)
+    return True
+
+
+def suggest_from_changed_files(
+    files: list[str],
+    repo_label: str,
+    active_task: str | None,
+) -> SuggestionResult:
+    suffix = repo_feature_suffix(repo_label)
+
+    if paths_contain(files, "seller_payout", "payout_profile", "test_seller_payout"):
+        return SuggestionResult(
+            message=f"Add seller payout profile {suffix}",
+            source="payout",
+        )
+
+    if is_mostly_documentation(files):
+        if paths_contain(files, *AI_OS_DOC_MARKERS):
+            return SuggestionResult(
+                message="Update AI Operating System documentation",
+                source="ai_os_docs",
+            )
+        return SuggestionResult(
+            message="Update workspace documentation",
+            source="workspace_docs",
+        )
+
+    if paths_contain(files, "admin", "test_admin"):
+        return SuggestionResult(
+            message=f"Add admin panel MVP {suffix}",
+            source="admin",
+        )
+
+    if paths_contain(
+        files,
+        "dispute",
+        "test_dispute",
+        "dispute_resolution",
+        "order_dispute",
+    ):
+        return SuggestionResult(
+            message=f"Add dispute resolution {suffix}",
+            source="dispute",
+        )
+
+    if active_task:
+        warn = not roadmap_task_matches_files(active_task, files)
+        return SuggestionResult(
+            message=build_feature_message(active_task, repo_label),
+            source="roadmap",
+            warn_mismatch=warn,
+        )
+
+    return SuggestionResult(message=None, source="manual")
+
+
+def print_changed_files_summary(name: str, files: list[str]) -> None:
+    print(f"{name} changes detected:")
+    for path in files:
+        print(f"- {path}")
+    print()
+
+
+def prompt_smart_commit_message(
+    name: str,
+    files: list[str],
+    suggestion: SuggestionResult | None,
+) -> str:
+    print_changed_files_summary(name, files)
+
+    if suggestion and suggestion.message:
+        print("Suggested commit message:")
+        print(suggestion.message)
+        print()
+        if suggestion.warn_mismatch:
+            print("WARNING:")
+            print(
+                "Suggested message is based on roadmap, but changed files "
+                "may not match."
+            )
+            print("Please review before accepting.")
+            print()
+        print("Press ENTER to accept, type a custom message, or type SKIP.")
+        print("(SKIP = this repo will not be committed.)")
+        line = input("> ").strip()
+        if line.upper() == "SKIP":
+            print(f"{name}: skipped (no commit for this repo).\n")
+            return ""
+        if line == "":
+            return suggestion.message
+        return line
+
     print(f"{name} commit message:")
-    return input("> ").strip()
+    line = input("> ").strip()
+    if line.upper() == "SKIP":
+        print(f"{name}: skipped (no commit for this repo).\n")
+        return ""
+    return line
 
 
 def run_quality_gate() -> None:
@@ -102,9 +317,13 @@ def print_release_summary(backend: RepoState, frontend: RepoState) -> None:
     print(f"Backend:\n{backend.release_action}\n")
     if backend.message:
         print(f"Message:\n{backend.message}\n")
+    elif backend.has_changes:
+        print("Message:\n(skipped)\n")
     print(f"Frontend:\n{frontend.release_action}\n")
     if frontend.message:
         print(f"Message:\n{frontend.message}\n")
+    elif frontend.has_changes:
+        print("Message:\n(skipped)\n")
 
 
 def confirm_yes_no(prompt: str) -> bool:
@@ -144,7 +363,7 @@ def final_outcome(state: RepoState, result: str | None) -> str:
     if not state.has_changes:
         return "Clean"
     if not state.message:
-        return "Skipped (no commit message)"
+        return "Skipped (SKIP or empty message)"
     return "Not committed"
 
 
@@ -162,34 +381,106 @@ def print_final_summary(
     print("================================\n")
     print(f"Backend:\n{final_outcome(backend, backend_result)}\n")
     print(f"Frontend:\n{final_outcome(frontend, frontend_result)}\n")
-    print(f"Audit:\n{'PASSED' if audit_passed else 'FAILED'}\n")
+    print(f"Audit:\n{'PASSED' if audit_passed else 'FAILED / SKIPPED'}\n")
     if aborted:
         print("Status:\nABORTED\n")
     else:
         print("Status:\nSUCCESS\n")
 
 
+def show_dry_run_suggestion(name: str, files: list[str], active_task: str | None) -> None:
+    if not files:
+        print(f"{name}: Clean\n")
+        return
+    result = suggest_from_changed_files(files, name, active_task)
+    print_changed_files_summary(name, files)
+    if result.message:
+        print(f"Suggested commit message ({result.source}):")
+        print(result.message)
+        if result.warn_mismatch:
+            print()
+            print("WARNING: Roadmap suggestion may not match changed files.")
+    else:
+        print("Suggested commit message: (manual prompt required)")
+    print()
+
+
+def collect_repo_messages(
+    *,
+    backend_files: list[str],
+    frontend_files: list[str],
+    active_task: str | None,
+    interactive: bool,
+) -> tuple[str, str]:
+    backend_message = ""
+    if backend_files:
+        if interactive:
+            suggestion = suggest_from_changed_files(
+                backend_files, "Backend", active_task
+            )
+            backend_message = prompt_smart_commit_message(
+                "Backend", backend_files, suggestion
+            )
+        else:
+            backend_message = ""
+
+    frontend_message = ""
+    if frontend_files:
+        if interactive:
+            suggestion = suggest_from_changed_files(
+                frontend_files, "Frontend", active_task
+            )
+            frontend_message = prompt_smart_commit_message(
+                "Frontend", frontend_files, suggestion
+            )
+        else:
+            frontend_message = ""
+
+    return backend_message, frontend_message
+
+
 def main() -> None:
+    args = parse_args()
     print("Melomanos finish task v2\n")
+
+    active_task = read_active_task_from_roadmap(BACKEND / "MVP_ROADMAP.md")
+
+    _, backend_files = git_status_data(BACKEND, echo=not args.dry_run)
+    _, frontend_files = git_status_data(FRONTEND, echo=not args.dry_run)
+
+    if args.dry_run:
+        print("=== DRY RUN (no audit, commit, or push) ===\n")
+        if active_task:
+            print(f"Roadmap active task: {active_task}\n")
+        show_dry_run_suggestion("Backend", backend_files, active_task)
+        show_dry_run_suggestion("Frontend", frontend_files, active_task)
+        print("Dry run complete.\n")
+        return
 
     run_quality_gate()
 
-    backend_changes = has_git_changes(BACKEND)
-    frontend_changes = has_git_changes(FRONTEND)
+    backend_changes = bool(backend_files)
+    frontend_changes = bool(frontend_files)
+
+    if active_task:
+        print(f"Roadmap active task: {active_task}\n")
 
     print_repo_status("Backend", backend_changes)
     print_repo_status("Frontend", frontend_changes)
 
-    backend_message = prompt_commit_message("Backend") if backend_changes else ""
-    if backend_changes:
-        print()
-    frontend_message = prompt_commit_message("Frontend") if frontend_changes else ""
+    backend_message, frontend_message = collect_repo_messages(
+        backend_files=backend_files,
+        frontend_files=frontend_files,
+        active_task=active_task,
+        interactive=True,
+    )
 
     backend = RepoState(
         "Backend",
         BACKEND,
         BACKEND_BRANCH,
         backend_changes,
+        backend_files,
         backend_message,
     )
     frontend = RepoState(
@@ -197,6 +488,7 @@ def main() -> None:
         FRONTEND,
         FRONTEND_BRANCH,
         frontend_changes,
+        frontend_files,
         frontend_message,
     )
 

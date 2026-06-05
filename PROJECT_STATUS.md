@@ -5,7 +5,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LAST_QUALITY_GATE_START -->
 ## Last Quality Gate
 
-- Date: 2026-06-04 21:38
+- Date: 2026-06-05 01:54
 - Backend tests: PASSED
 - Frontend build: PASSED
 - E2E tests: PASSED
@@ -15,10 +15,10 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LATEST_RELEASE_START -->
 ## Latest Release
 
-- Backend: Add dispute resolution backend
-- Frontend: Add dispute resolution frontend
+- Backend: Add admin panel MVP backend
+- Frontend: No changes.
 - Quality Gate: PASSED
-- Date: 2026-06-04 21:38
+- Date: 2026-06-05 01:54
 <!-- STATUS:LATEST_RELEASE_END -->
 
 ## Current MVP Features
