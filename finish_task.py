@@ -102,16 +102,29 @@ def run_command(command: list[str], cwd: Path) -> int:
     return result.returncode
 
 
+def format_git_status_file(raw_line: str) -> str:
+    """Extract the filename from a git status --short line exactly as git reports it.
+
+    git status --short format: XY<space>filename
+    where XY is always two status characters (e.g. ' M', 'M ', '??', 'MM', 'R ').
+    The filename starts at position 3.  For renames git emits 'old -> new'; we keep
+    the destination path.  We do NOT strip() first because that would eat the leading
+    space in codes like ' M', shifting the filename left.
+    """
+    if len(raw_line) < 4:
+        return raw_line.strip()
+    path_part = raw_line[3:]
+    if " -> " in path_part:
+        path_part = path_part.split(" -> ")[-1]
+    return path_part.strip().replace("\\", "/")
+
+
 def parse_changed_files(status_output: str) -> list[str]:
     files: list[str] = []
-    for line in status_output.strip().splitlines():
-        line = line.strip()
-        if not line:
+    for line in status_output.splitlines():
+        if not line.strip():
             continue
-        path_part = line[3:].strip() if len(line) > 3 else line
-        if " -> " in path_part:
-            path_part = path_part.split(" -> ")[-1].strip()
-        files.append(path_part.replace("\\", "/"))
+        files.append(format_git_status_file(line))
     return files
 
 
@@ -131,7 +144,7 @@ def git_status_data(repo: Path, *, echo: bool = True) -> tuple[str, list[str]]:
     if result.returncode != 0:
         print(f"ERROR: git status failed in {repo} (exit {result.returncode})")
         sys.exit(result.returncode)
-    output = result.stdout.strip()
+    output = result.stdout
     return output, parse_changed_files(output)
 
 
