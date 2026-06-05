@@ -29,7 +29,18 @@ py finish_task.py --dry-run
 
 - Runs `git status` on backend and frontend
 - Shows changed files and suggested messages
+- Shows **Roadmap Auto-Advance** preview (current task, next task, can advance)
 - Does **not** run audit, commit, or push
+
+### Auto-advance roadmap (no prompt)
+
+```powershell
+py finish_task.py --advance-roadmap
+```
+
+After a successful release, advances `MVP_ROADMAP.md` without asking `Advance MVP_ROADMAP.md current task? (Y/N)`.
+
+Still requires Quality Gate pass and at least one successful commit/push.
 
 ## Flow
 
@@ -38,6 +49,8 @@ py finish_task.py --dry-run
 3. **Smart commit prompts** — file-based suggestion + optional roadmap fallback
 4. **Confirmation** — `Proceed? (Y/N)` if any repo will commit
 5. **Final summary** — per-repo outcome
+6. **PROJECT_STATUS** — optional update (`Update PROJECT_STATUS.md? (Y/N)`)
+7. **Roadmap Auto-Advance** — optional advance of `MVP_ROADMAP.md` (see below)
 
 ## Smart Commit Messages
 
@@ -131,3 +144,62 @@ Each git command is printed before it runs. The script stops on the first failin
 ## Project status (optional)
 
 After a successful run (not aborted), you may be asked to update `PROJECT_STATUS.md`. See [README_STATUS.md](./README_STATUS.md).
+
+## Roadmap Auto-Advance
+
+After a **successful** release (Quality Gate passed, not aborted, at least one repo committed and pushed), `finish_task.py` can update the roadmap for you.
+
+### Prompt
+
+```
+Advance MVP_ROADMAP.md current task? (Y/N)
+```
+
+Skipped with `--advance-roadmap` (auto-advances when safe).
+
+### What it does (when you answer Y)
+
+1. Reads **Current Active Task** from `C:\melomanos_market\MVP_ROADMAP.md`
+2. Appends that task to the **Completed** table (if not already there)
+3. Removes it from **Current Priority Queue** and renumbers remaining items
+4. Sets the next **TODO/READY** queue item as **Current Active Task** (`Status: READY`)
+5. Updates:
+   - `C:\melomanos_workspace\PROJECT_STATUS.md` — Roadmap Focus (`Current Active Task`, `Last completed task`)
+   - `C:\melomanos_market\PROJECT_STATUS.md` — active task / recently completed
+6. Commits and pushes `MVP_ROADMAP.md` + backend `PROJECT_STATUS.md` in the backend repo
+
+If the queue has no remaining **TODO/READY** items:
+
+```
+Current Active Task: None
+Status: Backlog complete / needs planning
+```
+
+### Safety (will not advance)
+
+| Condition | Result |
+|-----------|--------|
+| Quality Gate failed | Skipped |
+| Release aborted | Skipped |
+| No successful commit/push | Skipped |
+| Current Active Task not detected | Warning; file unchanged |
+| Priority queue not parseable | Warning; file unchanged |
+| Parsing uncertain / write error | Warning; file unchanged |
+
+### Dry-run preview example
+
+```
+--- Roadmap Auto-Advance Preview ---
+Current active task: Payment Provider Integration (WebPay placeholder)
+Next detected task: Notifications
+Can auto-advance: YES
+```
+
+### When to override manually
+
+- Shipped work that does **not** match the current active task
+- Multiple milestones in one release
+- Roadmap structure was edited by hand and no longer matches expected sections
+- You need custom **Completed** notes or milestone counts beyond auto-increment
+
+In those cases, answer **N** and edit `MVP_ROADMAP.md` manually (or ask Cursor with the usual prompt).

@@ -5,7 +5,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LAST_QUALITY_GATE_START -->
 ## Last Quality Gate
 
-- Date: 2026-06-05 02:06
+- Date: 2026-06-05 02:37
 - Backend tests: PASSED
 - Frontend build: PASSED
 - E2E tests: PASSED
@@ -15,10 +15,10 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LATEST_RELEASE_START -->
 ## Latest Release
 
-- Backend: No changes.
-- Frontend: No changes.
+- Backend: Add admin panel MVP backend
+- Frontend: Add admin panel MVP frontend
 - Quality Gate: PASSED
-- Date: 2026-06-05 02:06
+- Date: 2026-06-05 02:37
 <!-- STATUS:LATEST_RELEASE_END -->
 
 ## Current MVP Features
@@ -39,6 +39,10 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 - Subscription plans
 - Protected messaging
 - Seller shipping profile
+- Disputes with evidence
+- Dispute resolution (admin)
+- Seller payout profile
+- Admin panel (read-only ops dashboard)
 
 ## Current Business Model
 
@@ -55,8 +59,8 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Next Recommended Work
 
-- Disputes with evidence
-- Admin resolution panel
-- Seller payout profile
-- Payment gateway integration
-- Digging Score v2
+- Payment provider integration (WebPay placeholder)
+- Notifications (in-app + optional email)
+- Production deployment
+- Closed beta
+- Public launch

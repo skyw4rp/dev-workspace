@@ -10,6 +10,13 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from project_status import update_project_status
+from roadmap_advance import (
+    ROADMAP_FILE,
+    apply_roadmap_advance,
+    preview_roadmap_advance,
+    update_backend_status_focus,
+    update_workspace_roadmap_focus,
+)
 
 WORKSPACE = Path(__file__).resolve().parent
 BACKEND = Path(r"C:\melomanos_market")
@@ -68,6 +75,11 @@ def parse_args() -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help="Show git status and suggested messages only; no audit, commit, or push.",
+    )
+    parser.add_argument(
+        "--advance-roadmap",
+        action="store_true",
+        help="After successful release, auto-advance MVP_ROADMAP.md without prompting.",
     )
     return parser.parse_args()
 
@@ -388,6 +400,128 @@ def print_final_summary(
         print("Status:\nSUCCESS\n")
 
 
+def show_roadmap_advance_preview() -> None:
+    preview = preview_roadmap_advance(ROADMAP_FILE)
+    print("--- Roadmap Auto-Advance Preview ---")
+    print(f"Current active task: {preview.current_task or '(not detected)'}")
+    if preview.backlog_complete:
+        print("Next detected task: (none — backlog complete)")
+    else:
+        print(f"Next detected task: {preview.next_task or '(not detected)'}")
+    if preview.warnings:
+        for warning in preview.warnings:
+            print(f"WARNING: {warning}")
+    print(f"Can auto-advance: {'YES' if preview.can_advance else 'NO'}")
+    print()
+
+
+def release_had_successful_commit(
+    backend_result: str | None,
+    frontend_result: str | None,
+) -> bool:
+    return (
+        backend_result == "Committed and pushed"
+        or frontend_result == "Committed and pushed"
+    )
+
+
+def commit_roadmap_docs(repo: Path, branch: str, message: str) -> None:
+    status = subprocess.run(
+        ["git", "status", "--short", "MVP_ROADMAP.md", "PROJECT_STATUS.md"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        shell=sys.platform == "win32",
+    )
+    if status.returncode != 0 or not status.stdout.strip():
+        print("No roadmap/status doc changes to commit in backend.\n")
+        return
+
+    steps = [
+        ["git", "add", "MVP_ROADMAP.md", "PROJECT_STATUS.md"],
+        ["git", "commit", "-m", message],
+        ["git", "push", "origin", branch],
+    ]
+    for command in steps:
+        code = run_command(command, repo)
+        if code != 0:
+            print(f"\nERROR: Roadmap doc commit failed (exit {code})")
+            sys.exit(code)
+    print("Committed and pushed roadmap/status docs in backend.\n")
+
+
+def maybe_advance_roadmap(
+    *,
+    auto: bool,
+    audit_passed: bool,
+    aborted: bool,
+    backend_result: str | None,
+    frontend_result: str | None,
+) -> None:
+    if not audit_passed or aborted:
+        return
+    if not release_had_successful_commit(backend_result, frontend_result):
+        print("Roadmap auto-advance skipped (no successful commit/push).\n")
+        return
+
+    preview = preview_roadmap_advance(ROADMAP_FILE)
+    if not preview.can_advance:
+        print("Roadmap auto-advance skipped:")
+        for warning in preview.warnings:
+            print(f"  - {warning}")
+        print()
+        return
+
+    print()
+    should_advance = auto
+    if not auto:
+        should_advance = confirm_yes_no("Advance MVP_ROADMAP.md current task? (Y/N)")
+
+    if not should_advance:
+        print("MVP_ROADMAP.md unchanged.\n")
+        return
+
+    previous_task = preview.current_task
+    if not previous_task:
+        print("WARNING: Current Active Task not detected; roadmap not modified.\n")
+        return
+
+    try:
+        new_text, next_task, backlog_complete = apply_roadmap_advance(
+            previous_task=previous_task,
+        )
+        ROADMAP_FILE.write_text(new_text, encoding="utf-8", newline="\n")
+        update_workspace_roadmap_focus(
+            current_task=next_task,
+            last_completed=previous_task,
+        )
+        update_backend_status_focus(
+            current_task=next_task,
+            last_completed=previous_task,
+        )
+    except (OSError, ValueError) as err:
+        print(f"WARNING: Roadmap auto-advance failed: {err}")
+        print("MVP_ROADMAP.md was not modified.\n")
+        return
+
+    next_label = next_task or "None (backlog complete)"
+    print(f"Advanced roadmap: completed {previous_task!r} → active {next_label!r}")
+    if backlog_complete:
+        print(f"Status: {next_label}")
+    print(f"Updated {ROADMAP_FILE}")
+    print(f"Updated {WORKSPACE / 'PROJECT_STATUS.md'}")
+    print(f"Updated {BACKEND / 'PROJECT_STATUS.md'}\n")
+
+    commit_message = (
+        f"Advance roadmap: complete {previous_task}, active {next_label}"
+    )
+    commit_roadmap_docs(BACKEND, BACKEND_BRANCH, commit_message)
+    print(
+        "Note: workspace PROJECT_STATUS.md was updated locally; "
+        "commit the workspace repo separately if needed.\n"
+    )
+
+
 def show_dry_run_suggestion(name: str, files: list[str], active_task: str | None) -> None:
     if not files:
         print(f"{name}: Clean\n")
@@ -454,6 +588,7 @@ def main() -> None:
             print(f"Roadmap active task: {active_task}\n")
         show_dry_run_suggestion("Backend", backend_files, active_task)
         show_dry_run_suggestion("Frontend", frontend_files, active_task)
+        show_roadmap_advance_preview()
         print("Dry run complete.\n")
         return
 
@@ -530,6 +665,13 @@ def main() -> None:
         maybe_update_project_status(
             backend=backend,
             frontend=frontend,
+            backend_result=backend_result,
+            frontend_result=frontend_result,
+        )
+        maybe_advance_roadmap(
+            auto=args.advance_roadmap,
+            audit_passed=True,
+            aborted=aborted,
             backend_result=backend_result,
             frontend_result=frontend_result,
         )
