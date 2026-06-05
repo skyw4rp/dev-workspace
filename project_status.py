@@ -2,15 +2,26 @@
 
 from __future__ import annotations
 
+import argparse
+import re
+import sys
 from datetime import datetime
 from pathlib import Path
 
 STATUS_FILE = Path(__file__).resolve().parent / "PROJECT_STATUS.md"
+ROADMAP_FILE = Path(r"C:\melomanos_market") / "MVP_ROADMAP.md"
 
 MARKER_LAST_QG_START = "<!-- STATUS:LAST_QUALITY_GATE_START -->"
 MARKER_LAST_QG_END = "<!-- STATUS:LAST_QUALITY_GATE_END -->"
 MARKER_LATEST_RELEASE_START = "<!-- STATUS:LATEST_RELEASE_START -->"
 MARKER_LATEST_RELEASE_END = "<!-- STATUS:LATEST_RELEASE_END -->"
+
+REQUIRED_MARKERS = (
+    MARKER_LAST_QG_START,
+    MARKER_LAST_QG_END,
+    MARKER_LATEST_RELEASE_START,
+    MARKER_LATEST_RELEASE_END,
+)
 
 
 def _replace_between_markers(
@@ -104,3 +115,152 @@ def update_project_status(
     )
 
     STATUS_FILE.write_text(content, encoding="utf-8", newline="\n")
+
+
+def read_active_task_from_roadmap(roadmap_path: Path = ROADMAP_FILE) -> str | None:
+    if not roadmap_path.is_file():
+        return None
+    text = roadmap_path.read_text(encoding="utf-8")
+    match = re.search(
+        r"## Current Active Task\s*\n+(?:###\s+(.+?)\s*(?:\n|$))",
+        text,
+    )
+    if not match:
+        return None
+    return match.group(1).strip()
+
+
+def extract_between_markers(
+    content: str,
+    start_marker: str,
+    end_marker: str,
+) -> str | None:
+    start_idx = content.find(start_marker)
+    end_idx = content.find(end_marker)
+    if start_idx == -1 or end_idx == -1 or end_idx < start_idx:
+        return None
+    body_start = start_idx + len(start_marker)
+    return content[body_start:end_idx].strip()
+
+
+def verify_status_file() -> tuple[bool, list[str]]:
+    errors: list[str] = []
+    if not STATUS_FILE.is_file():
+        errors.append(f"File not found: {STATUS_FILE}")
+        return False, errors
+
+    content = STATUS_FILE.read_text(encoding="utf-8")
+    for marker in REQUIRED_MARKERS:
+        if marker not in content:
+            errors.append(f"Missing marker: {marker}")
+    return not errors, errors
+
+
+def print_status_summary() -> int:
+    print(f"PROJECT_STATUS.md: {STATUS_FILE}\n")
+
+    ok, errors = verify_status_file()
+    if not ok:
+        for err in errors:
+            print(f"ERROR: {err}")
+        print("\nStatus: ERROR")
+        return 1
+
+    content = STATUS_FILE.read_text(encoding="utf-8")
+
+    qg_section = extract_between_markers(
+        content, MARKER_LAST_QG_START, MARKER_LAST_QG_END
+    )
+    release_section = extract_between_markers(
+        content, MARKER_LATEST_RELEASE_START, MARKER_LATEST_RELEASE_END
+    )
+
+    print("--- Last Quality Gate ---")
+    print(qg_section or "(empty)")
+    print()
+
+    print("--- Latest Release ---")
+    print(release_section or "(empty)")
+    print()
+
+    active_task = read_active_task_from_roadmap()
+    print("--- Current Active Task ---")
+    if active_task:
+        print(f"{active_task} (from {ROADMAP_FILE})")
+    else:
+        print(f"(not found in {ROADMAP_FILE})")
+    print()
+
+    print("Status: OK")
+    return 0
+
+
+def run_check() -> int:
+    print(f"Checking {STATUS_FILE}\n")
+    ok, errors = verify_status_file()
+    if ok:
+        for marker in REQUIRED_MARKERS:
+            print(f"OK   {marker}")
+        print("\nOverall: OK")
+        return 0
+
+    for err in errors:
+        print(f"ERROR   {err}")
+    for marker in REQUIRED_MARKERS:
+        if STATUS_FILE.is_file():
+            content = STATUS_FILE.read_text(encoding="utf-8")
+            if marker in content:
+                print(f"OK   {marker}")
+            else:
+                print(f"ERROR   Missing marker: {marker}")
+    print("\nOverall: ERROR")
+    return 1
+
+
+def run_update_manual() -> int:
+    try:
+        update_project_status(
+            backend_committed=False,
+            backend_message="",
+            frontend_committed=False,
+            frontend_message="",
+        )
+    except (FileNotFoundError, ValueError) as err:
+        print(f"ERROR: {err}")
+        return 1
+
+    print(f"Updated {STATUS_FILE}")
+    print("- Backend: No changes.")
+    print("- Frontend: No changes.")
+    print("- Quality Gate: PASSED")
+    return 0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Print or update Melomanos PROJECT_STATUS.md."
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Verify PROJECT_STATUS.md exists and required markers are present.",
+    )
+    parser.add_argument(
+        "--update-manual",
+        action="store_true",
+        help="Update status sections for manual testing (no changes, QG passed).",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    if args.check:
+        sys.exit(run_check())
+    if args.update_manual:
+        sys.exit(run_update_manual())
+    sys.exit(print_status_summary())
+
+
+if __name__ == "__main__":
+    main()
