@@ -9,7 +9,7 @@ A short, human-readable snapshot of Melómanos Market. It answers:
 - What is the business model?
 - What should we build next?
 
-It lives in the dev workspace (`C:\melomanos_workspace`) and is meant for **Ernesto** and **Daniela** — no need to read commits or code.
+It lives in the dev workspace (`C:\melomanos_workspace`; see [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md)) and is meant for **Ernesto** and **Daniela** — no need to read commits or code.
 
 ## How Daniela can use it
 

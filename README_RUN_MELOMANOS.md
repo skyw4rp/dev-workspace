@@ -1,6 +1,6 @@
 # Melomanos dev launcher (`run_melomanos.py`)
 
-Starts backend (`C:\melomanos_market`) and frontend (`C:\melomanos-frontend`) with **readiness checks** before reporting success.
+Starts backend and frontend (paths from `melomanos_paths.py`; see [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md)) with **readiness checks** before reporting success.
 
 Required for local development and **Quality Gate / E2E** preparation (see [README_AUDIT.md](./README_AUDIT.md)).
 

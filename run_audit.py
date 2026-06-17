@@ -6,8 +6,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-BACKEND = Path(r"C:\melomanos_market")
-FRONTEND = Path(r"C:\melomanos-frontend")
+from melomanos_paths import BACKEND_DIR, FRONTEND_DIR
+
+BACKEND = BACKEND_DIR
+FRONTEND = FRONTEND_DIR
 
 STEPS = [
     {

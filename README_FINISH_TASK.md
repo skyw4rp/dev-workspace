@@ -2,6 +2,8 @@
 
 Automates **Quality Gate → commit → push** for backend and frontend. Commit messages are suggested from **actual changed files**, not only the roadmap.
 
+Repo paths are resolved by `melomanos_paths.py` — see [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md).
+
 ## Requirements
 
 Backend and frontend must be running before `run_audit.py` (E2E step). See [README_AUDIT.md](./README_AUDIT.md) and [README_RUN_MELOMANOS.md](./README_RUN_MELOMANOS.md).
@@ -134,6 +136,8 @@ Dry run complete.
 
 ## Repositories
 
+Default paths (override with `MELOMANOS_*_DIR` env vars — see [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md)):
+
 | Repo | Path | Branch |
 |------|------|--------|
 | Backend | `C:\melomanos_market` | `main` |
@@ -159,13 +163,11 @@ Skipped with `--advance-roadmap` (auto-advances when safe).
 
 ### What it does (when you answer Y)
 
-1. Reads **Current Active Task** from `C:\melomanos_market\MVP_ROADMAP.md`
+1. Reads **Current Active Task** from backend `MVP_ROADMAP.md` (`melomanos_paths.ROADMAP_FILE`)
 2. Appends that task to the **Completed** table (if not already there)
 3. Removes it from **Current Priority Queue** and renumbers remaining items
 4. Sets the next **TODO/READY** queue item as **Current Active Task** (`Status: READY`)
-5. Updates:
-   - `C:\melomanos_workspace\PROJECT_STATUS.md` — Roadmap Focus (`Current Active Task`, `Last completed task`)
-   - `C:\melomanos_market\PROJECT_STATUS.md` — active task / recently completed
+5. Updates workspace and backend `PROJECT_STATUS.md` (paths from `melomanos_paths.py`)
 6. Commits and pushes `MVP_ROADMAP.md` + backend `PROJECT_STATUS.md` in the backend repo
 
 If the queue has no remaining **TODO/READY** items:

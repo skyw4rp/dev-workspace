@@ -1,6 +1,6 @@
 # Melomanos audit
 
-Single-command validation for backend and frontend.
+Single-command validation for backend and frontend. Repo paths: `melomanos_paths.py` ([README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md)).
 
 ## Requirements
 

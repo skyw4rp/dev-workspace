@@ -6,9 +6,11 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-ROADMAP_FILE = Path(r"C:\melomanos_market") / "MVP_ROADMAP.md"
-BACKEND_STATUS_FILE = Path(r"C:\melomanos_market") / "PROJECT_STATUS.md"
-WORKSPACE_STATUS_FILE = Path(__file__).resolve().parent / "PROJECT_STATUS.md"
+from melomanos_paths import (
+    BACKEND_STATUS_FILE,
+    ROADMAP_FILE,
+    WORKSPACE_STATUS_FILE,
+)
 
 MARKER_ROADMAP_FOCUS_START = "<!-- STATUS:ROADMAP_FOCUS_START -->"
 MARKER_ROADMAP_FOCUS_END = "<!-- STATUS:ROADMAP_FOCUS_END -->"

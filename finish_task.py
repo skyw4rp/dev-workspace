@@ -9,6 +9,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, WORKSPACE_DIR
 from project_status import update_project_status
 from roadmap_advance import (
     ROADMAP_FILE,
@@ -18,9 +19,9 @@ from roadmap_advance import (
     update_workspace_roadmap_focus,
 )
 
-WORKSPACE = Path(__file__).resolve().parent
-BACKEND = Path(r"C:\melomanos_market")
-FRONTEND = Path(r"C:\melomanos-frontend")
+WORKSPACE = WORKSPACE_DIR
+BACKEND = BACKEND_DIR
+FRONTEND = FRONTEND_DIR
 BACKEND_BRANCH = "main"
 FRONTEND_BRANCH = "master"
 

@@ -1,5 +1,7 @@
 # Melomanos — local run
 
+Path layout: [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md) (env vars `MELOMANOS_*_DIR`).
+
 ## Backend only
 
 ```powershell

@@ -1,0 +1,138 @@
+# Melomanos project layout
+
+This document describes where Melomanos repos live today, the recommended future layout, and how to migrate without breaking workspace scripts.
+
+## Current layout (today)
+
+Repos are separate folders on `C:\`:
+
+```
+C:\
+├── melomanos_market\      # backend (git: main)
+├── melomanos-frontend\    # frontend (git: master)
+└── melomanos_workspace\   # dev scripts, PROJECT_STATUS.md, finish workflow
+```
+
+Workspace Python scripts resolve these paths via `melomanos_paths.py`. With no environment variables set, defaults match the paths above.
+
+## Recommended future layout
+
+Single root folder for all Melomanos development:
+
+```
+C:\melomanos\
+├── backend\     # was C:\melomanos_market
+├── frontend\    # was C:\melomanos-frontend
+└── workspace\   # was C:\melomanos_workspace
+```
+
+**No folders have been moved yet.** Scripts are prepared so migration is mostly a filesystem move plus optional env vars.
+
+## Path configuration (`melomanos_paths.py`)
+
+All workspace scripts import paths from `melomanos_paths.py`:
+
+| Symbol | Purpose |
+|--------|---------|
+| `BACKEND_DIR` | Backend repo root |
+| `FRONTEND_DIR` | Frontend repo root |
+| `WORKSPACE_DIR` | Workspace repo root |
+| `ROADMAP_FILE` | `BACKEND_DIR / MVP_ROADMAP.md` |
+| `BACKEND_STATUS_FILE` | `BACKEND_DIR / PROJECT_STATUS.md` |
+| `WORKSPACE_STATUS_FILE` | `WORKSPACE_DIR / PROJECT_STATUS.md` |
+
+Resolution order: **environment variable → default (current layout)**.
+
+## Required environment variables (after migration)
+
+Set these if repos are not at the legacy paths:
+
+| Variable | After migration example | Current default |
+|----------|-------------------------|-----------------|
+| `MELOMANOS_BACKEND_DIR` | `C:\melomanos\backend` | `C:\melomanos_market` |
+| `MELOMANOS_FRONTEND_DIR` | `C:\melomanos\frontend` | `C:\melomanos-frontend` |
+| `MELOMANOS_WORKSPACE_DIR` | `C:\melomanos\workspace` | `C:\melomanos_workspace` |
+
+### PowerShell (session)
+
+```powershell
+$env:MELOMANOS_BACKEND_DIR = "C:\melomanos\backend"
+$env:MELOMANOS_FRONTEND_DIR = "C:\melomanos\frontend"
+$env:MELOMANOS_WORKSPACE_DIR = "C:\melomanos\workspace"
+```
+
+### PowerShell (persistent, user)
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("MELOMANOS_BACKEND_DIR", "C:\melomanos\backend", "User")
+[System.Environment]::SetEnvironmentVariable("MELOMANOS_FRONTEND_DIR", "C:\melomanos\frontend", "User")
+[System.Environment]::SetEnvironmentVariable("MELOMANOS_WORKSPACE_DIR", "C:\melomanos\workspace", "User")
+```
+
+Restart the terminal after persistent changes.
+
+## Migration plan
+
+1. **Stop running services** — close `run_melomanos.py`, local API, and frontend dev server.
+2. **Create root** — `mkdir C:\melomanos`
+3. **Move repos** (git history preserved):
+   - `C:\melomanos_market` → `C:\melomanos\backend`
+   - `C:\melomanos-frontend` → `C:\melomanos\frontend`
+   - `C:\melomanos_workspace` → `C:\melomanos\workspace`
+4. **Set environment variables** (see above) **or** update machine/user PATH habits to `cd C:\melomanos\workspace`.
+5. **Do not change** backend/frontend application code for this layout step.
+6. **Validate** (from workspace directory):
+
+   ```powershell
+   cd C:\melomanos\workspace
+   py run_melomanos.py --check
+   py finish_task.py --dry-run
+   py project_status.py --check
+   ```
+
+7. **Update bookmarks / IDE workspace roots** to the new paths.
+8. **Optional:** add a small `C:\melomanos\README.md` pointing to `workspace\` for scripts.
+
+### Rollback
+
+Move folders back to the original names and clear the three `MELOMANOS_*` env vars (or unset them). Scripts fall back to legacy defaults.
+
+## Commands before vs after migration
+
+| Task | Before (current) | After migration |
+|------|------------------|-----------------|
+| Workspace scripts | `cd C:\melomanos_workspace` | `cd C:\melomanos\workspace` |
+| Start backend only | `cd C:\melomanos_market` | `cd C:\melomanos\backend` |
+| Start frontend only | `cd C:\melomanos-frontend` | `cd C:\melomanos\frontend` |
+| Dev launcher | `py run_melomanos.py` | Same (from workspace dir) |
+| Quality Gate | `py run_audit.py` | Same |
+| Finish workflow | `py finish_task.py` | Same |
+| Status check | `py project_status.py --check` | Same |
+
+Script **invocation** is unchanged; only the **working directory** and underlying repo paths change.
+
+## Scripts using `melomanos_paths.py`
+
+- `run_melomanos.py` — backend/frontend launch paths
+- `run_audit.py` — audit `cwd` for pytest, build, E2E
+- `finish_task.py` — git repos and workspace root
+- `project_status.py` — workspace status file and roadmap
+- `roadmap_advance.py` — roadmap and status file paths
+
+## Documentation with legacy paths
+
+These README files still show `C:\melomanos_*` paths for the **current** layout. After migration, substitute `C:\melomanos\backend`, `C:\melomanos\frontend`, and `C:\melomanos\workspace`, or rely on env vars and run commands from the new workspace folder:
+
+- `README_LOCAL_RUN.md`
+- `README_RUN_MELOMANOS.md`
+- `README_AUDIT.md`
+- `README_FINISH_TASK.md`
+- `README_STATUS.md`
+
+## Verify paths without starting services
+
+```powershell
+py -c "import melomanos_paths as p; print(p.BACKEND_DIR); print(p.FRONTEND_DIR); print(p.WORKSPACE_DIR)"
+```
+
+Expected today (no env vars): `C:\melomanos_market`, `C:\melomanos-frontend`, `C:\melomanos_workspace`.

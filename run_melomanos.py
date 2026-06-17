@@ -13,8 +13,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-BACKEND_DIR = Path(r"C:\melomanos_market")
-FRONTEND_DIR = Path(r"C:\melomanos-frontend")
+from melomanos_paths import BACKEND_DIR, FRONTEND_DIR
 
 BACKEND_URL = "http://127.0.0.1:8000"
 BACKEND_HEALTH_URL = "http://127.0.0.1:8000/listings?limit=1"

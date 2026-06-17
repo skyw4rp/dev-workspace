@@ -8,8 +8,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-STATUS_FILE = Path(__file__).resolve().parent / "PROJECT_STATUS.md"
-ROADMAP_FILE = Path(r"C:\melomanos_market") / "MVP_ROADMAP.md"
+from melomanos_paths import ROADMAP_FILE, WORKSPACE_STATUS_FILE
+
+STATUS_FILE = WORKSPACE_STATUS_FILE
 
 MARKER_LAST_QG_START = "<!-- STATUS:LAST_QUALITY_GATE_START -->"
 MARKER_LAST_QG_END = "<!-- STATUS:LAST_QUALITY_GATE_END -->"
