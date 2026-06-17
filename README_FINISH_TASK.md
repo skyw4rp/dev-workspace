@@ -1,6 +1,8 @@
 # Melomanos finish task (v2)
 
-Automates **Quality Gate → commit → push** across all three Melómanos repos: **backend**, **frontend**, and **workspace**. Commit messages are suggested from **actual changed files**, not only the roadmap.
+Automates **Quality Gate → commit → push** across all three Melómanos repos: **backend**, **frontend**, and **workspace**. Commit messages are suggested from **actual changed files** and applied automatically.
+
+**One confirmation:** the only normal interactive prompt is `Proceed? (Y/N)`.
 
 Repo paths are resolved by `melomanos_paths.py` — see [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md).
 
@@ -11,7 +13,7 @@ Backend and frontend must be running before `run_audit.py` (E2E step). See [READ
 Prep servers for automation:
 
 ```powershell
-cd C:\melomanos_workspace
+cd C:\melomanos\workspace
 py run_melomanos.py --kill-stale --no-wait
 py run_melomanos.py --check
 ```
@@ -19,9 +21,17 @@ py run_melomanos.py --check
 ## Run
 
 ```powershell
-cd C:\melomanos_workspace
+cd C:\melomanos\workspace
 py finish_task.py
 ```
+
+Shows a **Release Summary** (repos, messages, project status, roadmap plan), then asks once:
+
+```
+Proceed? (Y/N)
+```
+
+Suggested commit messages are used automatically — no per-repo ENTER prompts.
 
 ### Dry run (preview only)
 
@@ -29,66 +39,125 @@ py finish_task.py
 py finish_task.py --dry-run
 ```
 
-- Runs `git status` on backend, frontend, and **workspace**
-- Shows changed files and suggested messages per repo
-- Shows **Roadmap Auto-Advance** preview (current task, next task, can advance, multi-phase safety)
-- Does **not** run audit, commit, or push
+Shows the full release plan with **no prompts**:
 
-### Auto-advance roadmap (no Y/N prompt)
+- Changed files per repo
+- **Chosen** commit messages (auto-suggested or from flags)
+- Skipped repos (via flags or no suggestion)
+- `Project Status: Will update automatically`
+- Roadmap decision (skip / auto-advance / blocked)
+- `Interactive prompts: none`
+
+### Custom commit messages
 
 ```powershell
-py finish_task.py --advance-roadmap
+py finish_task.py --backend-message "Add webpay checkout backend"
+py finish_task.py --frontend-message "Add webpay checkout frontend"
+py finish_task.py --workspace-message "Improve workspace automation"
 ```
 
-After a successful release, advances `MVP_ROADMAP.md` without asking `Advance MVP_ROADMAP.md current task? (Y/N)`.
-
-Still requires Quality Gate pass and at least one successful commit/push.
-
-**Multi-phase safety:** If the active task looks like an in-progress multi-phase epic (e.g. WebPay with Phase 1 done), `--advance-roadmap` is **refused** unless you also pass `--force-advance-roadmap`. See [ROADMAP_ADVANCE_POLICY.md](./ROADMAP_ADVANCE_POLICY.md).
-
-### Force advance (override multi-phase safety)
+### Skip repos
 
 ```powershell
+py finish_task.py --skip-backend
+py finish_task.py --skip-frontend
+py finish_task.py --skip-workspace
+```
+
+Combine as needed:
+
+```powershell
+py finish_task.py --skip-frontend --workspace-message "Update workspace docs only"
+```
+
+### Roadmap flags
+
+```powershell
+# Default: never advances roadmap interactively
+py finish_task.py
+
+# Advance when policy allows (simple READY task)
+py finish_task.py --advance-roadmap
+
+# Override multi-phase safety (entire epic verified complete)
 py finish_task.py --advance-roadmap --force-advance-roadmap
 ```
 
-Use only when the entire roadmap item is truly complete or you are intentionally correcting the roadmap after manual verification.
+**Default roadmap behavior:**
+
+| Active task | Flags | Result |
+|-------------|-------|--------|
+| Multi-phase / IN_PROGRESS | *(none)* | Skip — prints policy message |
+| Simple / READY | *(none)* | Skip — use `--advance-roadmap` |
+| Any | `--advance-roadmap` | Advance if policy allows |
+| Multi-phase | `--advance-roadmap` | Blocked — prints warning |
+| Multi-phase | `--advance-roadmap --force-advance-roadmap` | Forced advance |
+
+See [ROADMAP_ADVANCE_POLICY.md](./ROADMAP_ADVANCE_POLICY.md).
 
 ## Flow
 
 1. **Quality Gate** — `py run_audit.py` (skipped in `--dry-run`)
-2. **Git status** — list changed files in backend, frontend, and workspace
-3. **Smart commit prompts** — file-based suggestion per repo (+ roadmap fallback for app repos)
-4. **Confirmation** — `Proceed? (Y/N)` if any repo will commit
-5. **Backend / frontend commit + push** — immediate when accepted
-6. **PROJECT_STATUS** — optional update (`Update PROJECT_STATUS.md? (Y/N)`)
-7. **Roadmap Auto-Advance** — optional advance of `MVP_ROADMAP.md` (see below)
-8. **Workspace commit + push** — runs **last**, so the push includes final `PROJECT_STATUS.md` and roadmap-focus updates
+2. **Git status** — backend, frontend, workspace
+3. **Auto-resolve messages** — suggestions or CLI overrides; skip flags applied
+4. **Release Summary** — repos, messages, project status, roadmap plan
+5. **Proceed? (Y/N)** — the only normal interactive question
+6. **Backend / frontend commit + push** — when not skipped and message exists
+7. **PROJECT_STATUS** — updated **automatically** on success (no prompt)
+8. **Roadmap advance** — only with `--advance-roadmap` (+ `--force-advance-roadmap` if needed)
+9. **Workspace commit + push** — runs **last** (includes final status / roadmap-focus)
 
 ## Three-repo automation
 
 | Repo | Branch | When it commits |
 |------|--------|-----------------|
-| Backend | `main` | Step 5 — after `Proceed? (Y/N)` |
-| Frontend | `master` | Step 5 — after `Proceed? (Y/N)` |
-| Workspace | `main` | Step 8 — after PROJECT_STATUS and roadmap updates |
+| Backend | `main` | Step 6 — after `Proceed? (Y/N)` |
+| Frontend | `master` | Step 6 — after `Proceed? (Y/N)` |
+| Workspace | `main` | Step 9 — after PROJECT_STATUS and roadmap updates |
 
-Workspace uses the same prompt style as backend/frontend (ENTER / custom message / **SKIP**).
+### Release Summary example
 
-If you skipped workspace at the initial prompt but later accepted a **PROJECT_STATUS** or **roadmap** update that modified workspace files, you are prompted again before the deferred workspace commit.
+```
+================================
+Release Summary
+================================
+
+Backend:
+Commit + Push
+Message:
+Add seller payout profile backend
+
+Frontend:
+SKIP
+Message:
+(skipped via --skip-* flag)
+
+Workspace:
+Commit + Push
+Message:
+Improve workspace automation
+
+Project Status:
+Will update automatically
+
+Roadmap:
+Will skip - Roadmap advance skipped by policy: multi-phase or IN_PROGRESS.
+```
 
 ### When manual commits are still needed
 
-- You answered **SKIP** for a repo and still want to ship it later
+- You passed `--skip-*` for a repo
 - Quality Gate failed (no commits run)
-- You aborted at **Proceed? (Y/N)**
+- You answered **N** at `Proceed? (Y/N)`
 - Git push failed partway (fix locally, then commit/push by hand)
-- Changes outside the three Melómanos repos (there are no other repos in this workflow)
-- Custom partial commits (specific files only) — `finish_task.py` always runs `git add .` per repo
+- No suggested message and no `--*-message` flag (repo shown as SKIP)
+- Custom partial commits (`finish_task.py` always runs `git add .` per repo)
 
 ## Smart Commit Messages
 
-Suggestions inspect `git status --short` paths. **Priority order:**
+Suggestions inspect `git status --short` paths. Applied automatically unless overridden by flags.
+
+### Backend / frontend
 
 | Priority | Changed files match | Suggested message (backend example) |
 |----------|---------------------|-------------------------------------|
@@ -100,80 +169,19 @@ Suggestions inspect `git status --short` paths. **Priority order:**
 
 Frontend uses the same logic with `frontend` suffix (except pure documentation messages).
 
-### Workspace commit messages
-
-Priority order for **workspace** repo paths:
+### Workspace
 
 | Priority | Changed files match | Suggested message |
 |----------|---------------------|-------------------|
 | **A** | `finish_task.py`, `roadmap_advance.py`, `project_status.py`, `run_melomanos.py`, `melomanos_paths.py` | `Improve workspace automation` |
-| **B** | `AGENT_RULES.md`, `AI_OS_OVERVIEW.md`, `ROADMAP_ADVANCE_POLICY.md`, `ARCHITECTURE.md`, `BUSINESS_RULES.md`, `TESTING_STRATEGY.md` | `Update AI Operating System documentation` |
+| **B** | `AGENT_RULES.md`, `AI_OS_OVERVIEW.md`, `ROADMAP_ADVANCE_POLICY.md`, etc. | `Update AI Operating System documentation` |
 | **C** | `README*` | `Update workspace documentation` |
 | **D** | `PROJECT_STATUS.md` only | `Update workspace project status` |
 | **E** | Fallback | `Update workspace` |
 
-### Documentation safety
-
-If a repo’s changes are **mostly documentation**, the script does **not** suggest a business feature name from the roadmap. It suggests AI OS or workspace documentation updates instead.
-
 ### Roadmap mismatch warning
 
-If priority **E** (roadmap) is used and changed files do not obviously match the active task (e.g. roadmap says Admin but files are unrelated), you see:
-
-```
-WARNING:
-Suggested message is based on roadmap, but changed files may not match.
-Please review before accepting.
-```
-
-**Override manually** when you shipped multiple milestones, docs + code, or the roadmap active task moved ahead of your branch.
-
-### Prompt example (workspace)
-
-```
-Workspace changes detected:
-- finish_task.py
-- ROADMAP_ADVANCE_POLICY.md
-
-Suggested commit message:
-Improve workspace automation
-
-Press ENTER to accept, type a custom message, or type SKIP.
-(SKIP = this repo will not be committed.)
->
-```
-
-| Input | Result |
-|-------|--------|
-| **ENTER** | Uses suggested message (deferred commit after status/roadmap) |
-| **Custom text** | Uses your message |
-| **SKIP** | Workspace is **not** committed; release continues |
-
-### Prompt example (backend)
-- app/models/seller_payout_profile.py
-- app/services/seller_payout.py
-- tests/test_seller_payout_profile.py
-
-Suggested commit message:
-Add seller payout profile backend
-
-Press ENTER to accept, type a custom message, or type SKIP.
-(SKIP = this repo will not be committed.)
->
-```
-
-| Input | Result |
-|-------|--------|
-| **ENTER** | Uses suggested message |
-| **Custom text** | Uses your message |
-| **SKIP** | That repo is **not** committed; release continues safely |
-
-### When to override manually
-
-- Mixed changes (payout code + docs) — pick the message that matches what you are releasing
-- Roadmap mismatch warning shown
-- Partial commit — use custom message or **SKIP** one repo
-- Workspace-only work in backend repo — prefer doc suggestion or custom `Update … documentation`
+If a roadmap-based suggestion may not match changed files, the **Release Summary** shows a warning. Override with `--backend-message` / `--frontend-message`.
 
 ## Example (dry run)
 
@@ -186,33 +194,34 @@ py finish_task.py --dry-run
 
 Roadmap active task: Payment Provider Integration (WebPay placeholder)
 
-Backend changes detected:
-- AGENT_RULES.md
-- AI_OS_OVERVIEW.md
-
-Suggested commit message (ai_os_docs):
-Update AI Operating System documentation
+Backend: Clean
 
 Frontend: Clean
 
 Workspace changes detected:
 - finish_task.py
-- roadmap_advance.py
-- ROADMAP_ADVANCE_POLICY.md
 - README_FINISH_TASK.md
 
-Suggested commit message (automation):
+Chosen commit message:
 Improve workspace automation
 
---- Roadmap Auto-Advance Preview ---
-...
+Project Status:
+Will update automatically
+
+Roadmap:
+Will skip - Roadmap advance skipped by policy: multi-phase or IN_PROGRESS.
+  Current active task: Payment Provider Integration (WebPay placeholder)
+  Next detected task: Notifications
+  Signal: contains 'Phase'
+  Signal: Status is IN_PROGRESS
+  Signal: contains 'Remaining'
+
+Interactive prompts: none (only Proceed? in a real run)
 
 Dry run complete.
 ```
 
 ## Repositories
-
-Default paths (override with `MELOMANOS_*_DIR` env vars — see [README_PROJECT_LAYOUT.md](./README_PROJECT_LAYOUT.md)):
 
 | Repo | Path | Branch |
 |------|------|--------|
@@ -222,112 +231,40 @@ Default paths (override with `MELOMANOS_*_DIR` env vars — see [README_PROJECT_
 
 Each git command is printed before it runs. The script stops on the first failing git command. No force push; no history rewrite.
 
-## Project status (optional)
+## Project status
 
-After a successful run (not aborted), you may be asked to update `PROJECT_STATUS.md`. See [README_STATUS.md](./README_STATUS.md).
+After a successful run (not aborted), `PROJECT_STATUS.md` is updated **automatically**. See [README_STATUS.md](./README_STATUS.md).
 
 ## Roadmap Auto-Advance
 
-After a **successful** release (Quality Gate passed, not aborted, at least one repo committed and pushed), `finish_task.py` can update the roadmap for you.
+After a **successful** backend or frontend commit/push, roadmap advance runs only when `--advance-roadmap` is set and policy allows.
 
-**Policy:** [ROADMAP_ADVANCE_POLICY.md](./ROADMAP_ADVANCE_POLICY.md) — advance only when the **entire** active roadmap item is complete, not after a single internal phase.
+**Policy:** [ROADMAP_ADVANCE_POLICY.md](./ROADMAP_ADVANCE_POLICY.md)
 
-### Prompt (single-phase / READY milestones)
+### What it does when advancing
 
-```
-Advance MVP_ROADMAP.md current task? (Y/N)
-```
-
-### Prompt (multi-phase epic or IN_PROGRESS)
-
-When the active task (or matching queue item) contains signals such as `Phase`, `Remaining`, `7 phases`, `IN_PROGRESS`, or unchecked `[ ]`:
-
-```
-WARNING: Current active task appears to be a multi-phase epic or still IN_PROGRESS.
-Auto-advance may be premature.
-  - contains 'Phase'
-  - contains 'Remaining'
-  - Status is IN_PROGRESS
-Type ADVANCE to confirm roadmap advance:
->
-```
-
-- **`Y` / `YES` alone does not advance** in this case — you must type **`ADVANCE`** exactly.
-- Skipped with `--advance-roadmap` only when multi-phase safety is **not** triggered.
-- `--advance-roadmap` **without** `--force-advance-roadmap` is **refused** when multi-phase safety triggers.
-
-### Flags
-
-| Flag | Effect |
-|------|--------|
-| *(none)* | Interactive prompt after release (`Y/N` or `ADVANCE`) |
-| `--advance-roadmap` | Auto-advance when safe (no multi-phase block) |
-| `--force-advance-roadmap` | Override multi-phase safety (use with `--advance-roadmap` or after typing `ADVANCE`) |
+1. Reads **Current Active Task** from `MVP_ROADMAP.md`
+2. Appends task to **Completed** table
+3. Promotes next queue item to **Current Active Task**
+4. Updates workspace and backend `PROJECT_STATUS.md`
+5. Commits/pushes roadmap docs in backend repo
+6. Workspace commit (step 9) includes updated workspace status
 
 ### Examples
 
 ```powershell
-# Preview active task, next task, and safety status
+# Preview full plan, no prompts
 py finish_task.py --dry-run
 
-# Normal release; prompted Y/N or ADVANCE if multi-phase
+# Normal release - one Proceed? prompt
 py finish_task.py
 
-# Auto-advance only when not a multi-phase epic
+# Skip frontend, custom backend message
+py finish_task.py --skip-frontend --backend-message "Add webpay phase 2 backend"
+
+# Advance simple milestone after release
 py finish_task.py --advance-roadmap
 
-# Override safety (entire epic verified complete)
+# Force advance multi-phase epic (verified complete)
 py finish_task.py --advance-roadmap --force-advance-roadmap
 ```
-
-### What it does (when you answer Y)
-
-1. Reads **Current Active Task** from backend `MVP_ROADMAP.md` (`melomanos_paths.ROADMAP_FILE`)
-2. Appends that task to the **Completed** table (if not already there)
-3. Removes it from **Current Priority Queue** and renumbers remaining items
-4. Sets the next **TODO/READY** queue item as **Current Active Task** (`Status: READY`)
-5. Updates workspace and backend `PROJECT_STATUS.md` (paths from `melomanos_paths.py`)
-6. Commits and pushes `MVP_ROADMAP.md` + backend `PROJECT_STATUS.md` in the backend repo
-7. Commits and pushes workspace repo (includes updated workspace `PROJECT_STATUS.md`)
-
-If the queue has no remaining **TODO/READY** items:
-
-```
-Current Active Task: None
-Status: Backlog complete / needs planning
-```
-
-### Safety (will not advance)
-
-| Condition | Result |
-|-----------|--------|
-| Quality Gate failed | Skipped |
-| Release aborted | Skipped |
-| No successful commit/push | Skipped |
-| Current Active Task not detected | Warning; file unchanged |
-| Priority queue not parseable | Warning; file unchanged |
-| Parsing uncertain / write error | Warning; file unchanged |
-| **Multi-phase epic / IN_PROGRESS** (see policy) | Interactive: requires `ADVANCE`; `--advance-roadmap` refused unless `--force-advance-roadmap` |
-
-### Dry-run preview example (WebPay — multi-phase safety ON)
-
-```
---- Roadmap Auto-Advance Preview ---
-Current active task: Payment Provider Integration (WebPay placeholder)
-Next detected task: Notifications
-Can auto-advance: YES
-Multi-phase safety triggered: YES
-  Signal: contains 'Phase'
-  Signal: contains 'Remaining'
-  Signal: Status is IN_PROGRESS
-Note: interactive advance requires typing ADVANCE; --advance-roadmap requires --force-advance-roadmap.
-```
-
-### When to override manually
-
-- Shipped work that does **not** match the current active task
-- Multiple milestones in one release
-- Roadmap structure was edited by hand and no longer matches expected sections
-- You need custom **Completed** notes or milestone counts beyond auto-increment
-
-In those cases, answer **N** and edit `MVP_ROADMAP.md` manually (or ask Cursor with the usual prompt).

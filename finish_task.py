@@ -12,7 +12,6 @@ from pathlib import Path
 from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, WORKSPACE_DIR
 from project_status import update_project_status
 from roadmap_advance import (
-    MULTI_PHASE_WARNING,
     ROADMAP_FILE,
     RoadmapAdvancePreview,
     apply_roadmap_advance,
@@ -53,11 +52,6 @@ AI_OS_DOC_MARKERS = (
     "quality_gate",
     ".cursor/rules",
 )
-WORKSPACE_DOC_MARKERS = (
-    "project_status",
-    "mvp_roadmap",
-    "readme",
-)
 
 
 @dataclass
@@ -75,16 +69,32 @@ class RepoState:
     has_changes: bool
     changed_files: list[str]
     message: str = ""
+    skipped: bool = False
+    warn_mismatch: bool = False
 
     @property
     def release_action(self) -> str:
-        if not self.has_changes or not self.message:
+        if self.skipped:
+            return "SKIP"
+        if not self.has_changes:
+            return "Clean"
+        if not self.message:
             return "SKIP"
         return "Commit + Push"
 
     @property
     def will_commit(self) -> bool:
-        return self.has_changes and bool(self.message)
+        return (
+            not self.skipped
+            and self.has_changes
+            and bool(self.message)
+        )
+
+
+@dataclass
+class RoadmapPlan:
+    preview: RoadmapAdvancePreview
+    summary: str
 
 
 def parse_args() -> argparse.Namespace:
@@ -94,18 +104,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show git status and suggested messages only; no audit, commit, or push.",
+        help="Show release plan only; no audit, commit, or push.",
     )
     parser.add_argument(
         "--advance-roadmap",
         action="store_true",
-        help="After successful release, auto-advance MVP_ROADMAP.md without Y/N prompt.",
+        help="After successful release, advance MVP_ROADMAP.md when policy allows.",
     )
     parser.add_argument(
         "--force-advance-roadmap",
         action="store_true",
-        help="Override multi-phase safety when used with --advance-roadmap or apply.",
+        help="Override multi-phase safety when used with --advance-roadmap.",
     )
+    parser.add_argument("--backend-message", default=None, help="Custom backend commit message.")
+    parser.add_argument("--frontend-message", default=None, help="Custom frontend commit message.")
+    parser.add_argument("--workspace-message", default=None, help="Custom workspace commit message.")
+    parser.add_argument("--skip-backend", action="store_true", help="Skip backend commit/push.")
+    parser.add_argument("--skip-frontend", action="store_true", help="Skip frontend commit/push.")
+    parser.add_argument("--skip-workspace", action="store_true", help="Skip workspace commit/push.")
     return parser.parse_args()
 
 
@@ -128,14 +144,6 @@ def run_command(command: list[str], cwd: Path) -> int:
 
 
 def format_git_status_file(raw_line: str) -> str:
-    """Extract the filename from a git status --short line exactly as git reports it.
-
-    git status --short format: XY<space>filename
-    where XY is always two status characters (e.g. ' M', 'M ', '??', 'MM', 'R ').
-    The filename starts at position 3.  For renames git emits 'old -> new'; we keep
-    the destination path.  We do NOT strip() first because that would eat the leading
-    space in codes like ' M', shifting the filename left.
-    """
     if len(raw_line) < 4:
         return raw_line.strip()
     path_part = raw_line[3:]
@@ -171,13 +179,6 @@ def git_status_data(repo: Path, *, echo: bool = True) -> tuple[str, list[str]]:
         sys.exit(result.returncode)
     output = result.stdout
     return output, parse_changed_files(output)
-
-
-def print_repo_status(name: str, has_changes: bool) -> None:
-    print(f"{name}:")
-    if not has_changes:
-        print("Clean")
-    print()
 
 
 def read_active_task_from_roadmap(roadmap_path: Path) -> str | None:
@@ -340,48 +341,102 @@ def suggest_from_changed_files(
     return SuggestionResult(message=None, source="manual")
 
 
-def print_changed_files_summary(name: str, files: list[str]) -> None:
-    print(f"{name} changes detected:")
-    for path in files:
-        print(f"- {path}")
-    print()
-
-
-def prompt_smart_commit_message(
-    name: str,
+def resolve_repo_message(
     files: list[str],
-    suggestion: SuggestionResult | None,
-) -> str:
-    print_changed_files_summary(name, files)
+    *,
+    repo_label: str,
+    active_task: str | None,
+    custom_message: str | None,
+    skipped: bool,
+    workspace: bool = False,
+) -> tuple[str, bool]:
+    if skipped or not files:
+        return "", False
 
-    if suggestion and suggestion.message:
-        print("Suggested commit message:")
-        print(suggestion.message)
-        print()
-        if suggestion.warn_mismatch:
-            print("WARNING:")
-            print(
-                "Suggested message is based on roadmap, but changed files "
-                "may not match."
+    if custom_message:
+        return custom_message, False
+
+    suggestion = (
+        suggest_workspace_message(files)
+        if workspace
+        else suggest_from_changed_files(files, repo_label, active_task)
+    )
+    return suggestion.message or "", suggestion.warn_mismatch
+
+
+def build_repo_state(
+    name: str,
+    repo: Path,
+    branch: str,
+    files: list[str],
+    *,
+    active_task: str | None,
+    custom_message: str | None,
+    skipped: bool,
+    workspace: bool = False,
+) -> RepoState:
+    message, warn_mismatch = resolve_repo_message(
+        files,
+        repo_label=name,
+        active_task=active_task,
+        custom_message=custom_message,
+        skipped=skipped,
+        workspace=workspace,
+    )
+    return RepoState(
+        name=name,
+        repo=repo,
+        branch=branch,
+        has_changes=bool(files),
+        changed_files=files,
+        message=message,
+        skipped=skipped,
+        warn_mismatch=warn_mismatch,
+    )
+
+
+def plan_roadmap_advance(*, advance_flag: bool, force_flag: bool) -> RoadmapPlan:
+    preview = preview_roadmap_advance(ROADMAP_FILE)
+
+    if not advance_flag:
+        if preview.multi_phase_safety:
+            return RoadmapPlan(
+                preview=preview,
+                summary=(
+                    "Will skip - Roadmap advance skipped by policy: "
+                    "multi-phase or IN_PROGRESS."
+                ),
             )
-            print("Please review before accepting.")
-            print()
-        print("Press ENTER to accept, type a custom message, or type SKIP.")
-        print("(SKIP = this repo will not be committed.)")
-        line = input("> ").strip()
-        if line.upper() == "SKIP":
-            print(f"{name}: skipped (no commit for this repo).\n")
-            return ""
-        if line == "":
-            return suggestion.message
-        return line
+        return RoadmapPlan(
+            preview=preview,
+            summary="Will skip (use --advance-roadmap to enable).",
+        )
 
-    print(f"{name} commit message:")
-    line = input("> ").strip()
-    if line.upper() == "SKIP":
-        print(f"{name}: skipped (no commit for this repo).\n")
-        return ""
-    return line
+    if not preview.can_advance:
+        warnings = "; ".join(preview.warnings) or "roadmap not ready"
+        return RoadmapPlan(
+            preview=preview,
+            summary=f"Will skip - {warnings}.",
+        )
+
+    if preview.multi_phase_safety and not force_flag:
+        return RoadmapPlan(
+            preview=preview,
+            summary=(
+                "Will skip - multi-phase epic safety "
+                "(use --force-advance-roadmap to override)."
+            ),
+        )
+
+    next_label = preview.next_task or "None (backlog complete)"
+    return RoadmapPlan(
+        preview=preview,
+        summary=f"Will auto-advance → active task: {next_label}.",
+    )
+
+
+def roadmap_should_advance(plan: RoadmapPlan) -> bool:
+    return plan.summary.startswith("Will auto-advance")
 
 
 def run_quality_gate() -> None:
@@ -393,63 +448,54 @@ def run_quality_gate() -> None:
     print("\nQuality Gate passed.\n")
 
 
-def _print_repo_release_line(state: RepoState) -> None:
-    print(f"{state.name}:\n{state.release_action}\n")
+def _print_repo_plan(state: RepoState) -> None:
+    print(f"{state.name}:")
+    print(state.release_action)
     if state.message:
-        print(f"Message:\n{state.message}\n")
+        print(f"Message:\n{state.message}")
+    elif state.skipped:
+        print("Message:\n(skipped via --skip-* flag)")
     elif state.has_changes:
-        print("Message:\n(skipped)\n")
+        print("Message:\n(no suggestion - use --*-message or --skip-*)")
+    else:
+        print("Message:\n(none)")
+    if state.warn_mismatch:
+        print("WARNING: Suggested message may not match changed files.")
+    print()
 
 
 def print_release_summary(
     backend: RepoState,
     frontend: RepoState,
     workspace: RepoState,
+    roadmap_plan: RoadmapPlan,
 ) -> None:
     print("================================")
     print("Release Summary")
     print("================================\n")
-    _print_repo_release_line(backend)
-    _print_repo_release_line(frontend)
-    _print_repo_release_line(workspace)
-    print(
-        "Note: Workspace commits run after PROJECT_STATUS and roadmap updates "
-        "so the push includes final status state.\n"
-    )
+    _print_repo_plan(backend)
+    _print_repo_plan(frontend)
+    _print_repo_plan(workspace)
+    print("Project Status:")
+    print("Will update automatically\n")
+    print("Roadmap:")
+    print(roadmap_plan.summary)
+    print()
+    if workspace.will_commit:
+        print(
+            "Note: Workspace commit runs after PROJECT_STATUS and roadmap "
+            "updates so the push includes final status state.\n"
+        )
 
 
-def confirm_yes_no(prompt: str) -> bool:
+def confirm_proceed() -> bool:
     while True:
-        answer = input(f"{prompt}\n> ").strip().upper()
+        answer = input("Proceed? (Y/N)\n> ").strip().upper()
         if answer in ("Y", "YES"):
             return True
         if answer in ("N", "NO"):
             return False
         print("Please enter Y or N.")
-
-
-def confirm_proceed() -> bool:
-    return confirm_yes_no("Proceed? (Y/N)")
-
-
-def print_multi_phase_warning(preview: RoadmapAdvancePreview) -> None:
-    print(MULTI_PHASE_WARNING)
-    for signal in preview.multi_phase_signals:
-        print(f"  - {signal}")
-    print()
-
-
-def confirm_roadmap_advance(preview: RoadmapAdvancePreview) -> bool:
-    if preview.multi_phase_safety:
-        print_multi_phase_warning(preview)
-        print("Type ADVANCE to confirm roadmap advance:")
-        answer = input("> ").strip()
-        if answer == "ADVANCE":
-            return True
-        if answer.upper() in ("Y", "YES"):
-            print("Y alone is not enough for multi-phase epics. Type ADVANCE to confirm.")
-        return False
-    return confirm_yes_no("Advance MVP_ROADMAP.md current task? (Y/N)")
 
 
 def commit_and_push(state: RepoState) -> str:
@@ -472,10 +518,12 @@ def commit_and_push(state: RepoState) -> str:
 def final_outcome(state: RepoState, result: str | None) -> str:
     if result:
         return result
+    if state.skipped:
+        return "Skipped (--skip-* flag)"
     if not state.has_changes:
         return "Clean"
     if not state.message:
-        return "Skipped (SKIP or empty message)"
+        return "Skipped (no message)"
     return "Not committed"
 
 
@@ -501,33 +549,6 @@ def print_final_summary(
         print("Status:\nABORTED\n")
     else:
         print("Status:\nSUCCESS\n")
-
-
-def show_roadmap_advance_preview() -> None:
-    preview = preview_roadmap_advance(ROADMAP_FILE)
-    print("--- Roadmap Auto-Advance Preview ---")
-    print(f"Current active task: {preview.current_task or '(not detected)'}")
-    if preview.backlog_complete:
-        print("Next detected task: (none — backlog complete)")
-    else:
-        print(f"Next detected task: {preview.next_task or '(not detected)'}")
-    if preview.warnings:
-        for warning in preview.warnings:
-            print(f"WARNING: {warning}")
-    print(f"Can auto-advance: {'YES' if preview.can_advance else 'NO'}")
-    print(
-        f"Multi-phase safety triggered: "
-        f"{'YES' if preview.multi_phase_safety else 'NO'}"
-    )
-    if preview.multi_phase_signals:
-        for signal in preview.multi_phase_signals:
-            print(f"  Signal: {signal}")
-    if preview.multi_phase_safety:
-        print(
-            "Note: interactive advance requires typing ADVANCE; "
-            "--advance-roadmap requires --force-advance-roadmap."
-        )
-    print()
 
 
 def release_had_successful_commit(
@@ -565,49 +586,26 @@ def commit_roadmap_docs(repo: Path, branch: str, message: str) -> None:
     print("Committed and pushed roadmap/status docs in backend.\n")
 
 
-def maybe_advance_roadmap(
+def execute_roadmap_advance(
+    plan: RoadmapPlan,
     *,
-    auto: bool,
     force_advance: bool,
-    audit_passed: bool,
     aborted: bool,
     backend_result: str | None,
     frontend_result: str | None,
 ) -> None:
-    if not audit_passed or aborted:
+    if aborted:
         return
+
+    if not roadmap_should_advance(plan):
+        print(f"{plan.summary}\n")
+        return
+
     if not release_had_successful_commit(backend_result, frontend_result):
-        print("Roadmap auto-advance skipped (no successful commit/push).\n")
+        print("Roadmap auto-advance skipped (no successful backend/frontend commit/push).\n")
         return
 
-    preview = preview_roadmap_advance(ROADMAP_FILE)
-    if not preview.can_advance:
-        print("Roadmap auto-advance skipped:")
-        for warning in preview.warnings:
-            print(f"  - {warning}")
-        print()
-        return
-
-    if preview.multi_phase_safety and not force_advance:
-        if auto:
-            print("Roadmap auto-advance blocked: multi-phase epic safety.")
-            print_multi_phase_warning(preview)
-            print(
-                "Refusing --advance-roadmap without --force-advance-roadmap.\n"
-            )
-            return
-
-    print()
-    should_advance = False
-    if auto:
-        should_advance = True
-    else:
-        should_advance = confirm_roadmap_advance(preview)
-
-    if not should_advance:
-        print("MVP_ROADMAP.md unchanged.\n")
-        return
-
+    preview = plan.preview
     previous_task = preview.current_task
     if not previous_task:
         print("WARNING: Current Active Task not detected; roadmap not modified.\n")
@@ -649,22 +647,23 @@ def maybe_advance_roadmap(
 def maybe_commit_workspace(
     workspace: RepoState,
     *,
+    custom_message: str | None,
     aborted: bool,
 ) -> str | None:
-    if aborted:
+    if aborted or workspace.skipped:
         return None
 
     _, current_files = git_status_data(WORKSPACE, echo=True)
     if not current_files:
         return None
 
-    message = workspace.message
+    message = workspace.message or custom_message or ""
     if not message:
         suggestion = suggest_workspace_message(current_files)
-        message = prompt_smart_commit_message("Workspace", current_files, suggestion)
-        if not message:
-            print("Workspace: skipped (no commit).\n")
-            return None
+        message = suggestion.message or ""
+    if not message:
+        print("Workspace: skipped (no commit message).\n")
+        return None
 
     state = RepoState(
         "Workspace",
@@ -677,213 +676,15 @@ def maybe_commit_workspace(
     return commit_and_push(state)
 
 
-def show_dry_run_suggestion(
-    name: str,
-    files: list[str],
-    active_task: str | None,
-    *,
-    workspace: bool = False,
-) -> None:
-    if not files:
-        print(f"{name}: Clean\n")
-        return
-    if workspace:
-        result = suggest_workspace_message(files)
-    else:
-        result = suggest_from_changed_files(files, name, active_task)
-    print_changed_files_summary(name, files)
-    if result.message:
-        print(f"Suggested commit message ({result.source}):")
-        print(result.message)
-        if result.warn_mismatch:
-            print()
-            print("WARNING: Roadmap suggestion may not match changed files.")
-    else:
-        print("Suggested commit message: (manual prompt required)")
-    print()
-
-
-def collect_repo_messages(
-    *,
-    backend_files: list[str],
-    frontend_files: list[str],
-    workspace_files: list[str],
-    active_task: str | None,
-    interactive: bool,
-) -> tuple[str, str, str]:
-    backend_message = ""
-    if backend_files:
-        if interactive:
-            suggestion = suggest_from_changed_files(
-                backend_files, "Backend", active_task
-            )
-            backend_message = prompt_smart_commit_message(
-                "Backend", backend_files, suggestion
-            )
-        else:
-            backend_message = ""
-
-    frontend_message = ""
-    if frontend_files:
-        if interactive:
-            suggestion = suggest_from_changed_files(
-                frontend_files, "Frontend", active_task
-            )
-            frontend_message = prompt_smart_commit_message(
-                "Frontend", frontend_files, suggestion
-            )
-        else:
-            frontend_message = ""
-
-    workspace_message = ""
-    if workspace_files:
-        if interactive:
-            suggestion = suggest_workspace_message(workspace_files)
-            workspace_message = prompt_smart_commit_message(
-                "Workspace", workspace_files, suggestion
-            )
-        else:
-            workspace_message = ""
-
-    return backend_message, frontend_message, workspace_message
-
-
-def main() -> None:
-    args = parse_args()
-    print("Melomanos finish task v2\n")
-
-    active_task = read_active_task_from_roadmap(BACKEND / "MVP_ROADMAP.md")
-
-    _, backend_files = git_status_data(BACKEND, echo=not args.dry_run)
-    _, frontend_files = git_status_data(FRONTEND, echo=not args.dry_run)
-    _, workspace_files = git_status_data(WORKSPACE, echo=not args.dry_run)
-
-    if args.dry_run:
-        print("=== DRY RUN (no audit, commit, or push) ===\n")
-        if active_task:
-            print(f"Roadmap active task: {active_task}\n")
-        show_dry_run_suggestion("Backend", backend_files, active_task)
-        show_dry_run_suggestion("Frontend", frontend_files, active_task)
-        show_dry_run_suggestion(
-            "Workspace", workspace_files, active_task, workspace=True
-        )
-        show_roadmap_advance_preview()
-        print("Dry run complete.\n")
-        return
-
-    run_quality_gate()
-
-    backend_changes = bool(backend_files)
-    frontend_changes = bool(frontend_files)
-    workspace_changes = bool(workspace_files)
-
-    if active_task:
-        print(f"Roadmap active task: {active_task}\n")
-
-    print_repo_status("Backend", backend_changes)
-    print_repo_status("Frontend", frontend_changes)
-    print_repo_status("Workspace", workspace_changes)
-
-    backend_message, frontend_message, workspace_message = collect_repo_messages(
-        backend_files=backend_files,
-        frontend_files=frontend_files,
-        workspace_files=workspace_files,
-        active_task=active_task,
-        interactive=True,
-    )
-
-    backend = RepoState(
-        "Backend",
-        BACKEND,
-        BACKEND_BRANCH,
-        backend_changes,
-        backend_files,
-        backend_message,
-    )
-    frontend = RepoState(
-        "Frontend",
-        FRONTEND,
-        FRONTEND_BRANCH,
-        frontend_changes,
-        frontend_files,
-        frontend_message,
-    )
-    workspace = RepoState(
-        "Workspace",
-        WORKSPACE,
-        WORKSPACE_BRANCH,
-        workspace_changes,
-        workspace_files,
-        workspace_message,
-    )
-
-    backend_result: str | None = None
-    frontend_result: str | None = None
-    workspace_result: str | None = None
-    aborted = False
-
-    if backend.will_commit or frontend.will_commit or workspace.will_commit:
-        print()
-        print_release_summary(backend, frontend, workspace)
-        if not confirm_proceed():
-            print("\nAborted. No commits were made.\n")
-            aborted = True
-            print_final_summary(
-                backend=backend,
-                frontend=frontend,
-                workspace=workspace,
-                backend_result=None,
-                frontend_result=None,
-                workspace_result=None,
-                audit_passed=True,
-                aborted=True,
-            )
-            sys.exit(0)
-
-        if backend.will_commit:
-            backend_result = commit_and_push(backend)
-        if frontend.will_commit:
-            frontend_result = commit_and_push(frontend)
-
-    if not aborted:
-        maybe_update_project_status(
-            backend=backend,
-            frontend=frontend,
-            backend_result=backend_result,
-            frontend_result=frontend_result,
-        )
-        maybe_advance_roadmap(
-            auto=args.advance_roadmap,
-            force_advance=args.force_advance_roadmap,
-            audit_passed=True,
-            aborted=aborted,
-            backend_result=backend_result,
-            frontend_result=frontend_result,
-        )
-        workspace_result = maybe_commit_workspace(workspace, aborted=aborted)
-
-    print_final_summary(
-        backend=backend,
-        frontend=frontend,
-        workspace=workspace,
-        backend_result=backend_result,
-        frontend_result=frontend_result,
-        workspace_result=workspace_result,
-        audit_passed=True,
-        aborted=aborted,
-    )
-
-
-def maybe_update_project_status(
+def update_project_status_after_release(
     *,
     backend: RepoState,
     frontend: RepoState,
     backend_result: str | None,
     frontend_result: str | None,
+    aborted: bool,
 ) -> None:
-    print()
-    if not confirm_yes_no("Update PROJECT_STATUS.md? (Y/N)"):
-        print("PROJECT_STATUS.md unchanged.\n")
+    if aborted:
         return
 
     try:
@@ -898,6 +699,170 @@ def maybe_update_project_status(
         sys.exit(1)
 
     print(f"Updated {WORKSPACE / 'PROJECT_STATUS.md'}\n")
+
+
+def show_dry_run_plan(
+    *,
+    backend: RepoState,
+    frontend: RepoState,
+    workspace: RepoState,
+    roadmap_plan: RoadmapPlan,
+    active_task: str | None,
+) -> None:
+    print("=== DRY RUN (no audit, commit, or push) ===\n")
+    if active_task:
+        print(f"Roadmap active task: {active_task}\n")
+
+    for state in (backend, frontend, workspace):
+        if not state.changed_files:
+            print(f"{state.name}: Clean\n")
+            continue
+        print(f"{state.name} changes detected:")
+        for path in state.changed_files:
+            print(f"- {path}")
+        print()
+        if state.message:
+            print(f"Chosen commit message:\n{state.message}\n")
+        elif state.skipped:
+            print("Chosen action: SKIP (--skip-* flag)\n")
+        else:
+            print("Chosen action: SKIP (no suggested message)\n")
+        if state.warn_mismatch:
+            print("WARNING: Suggested message may not match changed files.\n")
+
+    print("Project Status:")
+    print("Will update automatically\n")
+    print("Roadmap:")
+    print(roadmap_plan.summary)
+    preview = roadmap_plan.preview
+    if preview.current_task:
+        print(f"  Current active task: {preview.current_task}")
+    if preview.backlog_complete:
+        print("  Next detected task: (none - backlog complete)")
+    elif preview.next_task:
+        print(f"  Next detected task: {preview.next_task}")
+    if preview.multi_phase_signals:
+        for signal in preview.multi_phase_signals:
+            print(f"  Signal: {signal}")
+    print("\nInteractive prompts: none (only Proceed? in a real run)\n")
+    print("Dry run complete.\n")
+
+
+def main() -> None:
+    args = parse_args()
+    print("Melomanos finish task v2\n")
+
+    active_task = read_active_task_from_roadmap(BACKEND / "MVP_ROADMAP.md")
+    roadmap_plan = plan_roadmap_advance(
+        advance_flag=args.advance_roadmap,
+        force_flag=args.force_advance_roadmap,
+    )
+
+    _, backend_files = git_status_data(BACKEND, echo=not args.dry_run)
+    _, frontend_files = git_status_data(FRONTEND, echo=not args.dry_run)
+    _, workspace_files = git_status_data(WORKSPACE, echo=not args.dry_run)
+
+    backend = build_repo_state(
+        "Backend",
+        BACKEND,
+        BACKEND_BRANCH,
+        backend_files,
+        active_task=active_task,
+        custom_message=args.backend_message,
+        skipped=args.skip_backend,
+    )
+    frontend = build_repo_state(
+        "Frontend",
+        FRONTEND,
+        FRONTEND_BRANCH,
+        frontend_files,
+        active_task=active_task,
+        custom_message=args.frontend_message,
+        skipped=args.skip_frontend,
+    )
+    workspace = build_repo_state(
+        "Workspace",
+        WORKSPACE,
+        WORKSPACE_BRANCH,
+        workspace_files,
+        active_task=active_task,
+        custom_message=args.workspace_message,
+        skipped=args.skip_workspace,
+        workspace=True,
+    )
+
+    if args.dry_run:
+        show_dry_run_plan(
+            backend=backend,
+            frontend=frontend,
+            workspace=workspace,
+            roadmap_plan=roadmap_plan,
+            active_task=active_task,
+        )
+        return
+
+    run_quality_gate()
+
+    if active_task:
+        print(f"Roadmap active task: {active_task}\n")
+
+    backend_result: str | None = None
+    frontend_result: str | None = None
+    workspace_result: str | None = None
+    aborted = False
+
+    print_release_summary(backend, frontend, workspace, roadmap_plan)
+    if not confirm_proceed():
+        print("\nAborted. No commits were made.\n")
+        aborted = True
+        print_final_summary(
+            backend=backend,
+            frontend=frontend,
+            workspace=workspace,
+            backend_result=None,
+            frontend_result=None,
+            workspace_result=None,
+            audit_passed=True,
+            aborted=True,
+        )
+        sys.exit(0)
+
+    if backend.will_commit:
+        backend_result = commit_and_push(backend)
+    if frontend.will_commit:
+        frontend_result = commit_and_push(frontend)
+
+    if not aborted:
+        update_project_status_after_release(
+            backend=backend,
+            frontend=frontend,
+            backend_result=backend_result,
+            frontend_result=frontend_result,
+            aborted=aborted,
+        )
+        execute_roadmap_advance(
+            plan=roadmap_plan,
+            force_advance=args.force_advance_roadmap,
+            aborted=aborted,
+            backend_result=backend_result,
+            frontend_result=frontend_result,
+        )
+        workspace_result = maybe_commit_workspace(
+            workspace,
+            custom_message=args.workspace_message,
+            aborted=aborted,
+        )
+
+    print_final_summary(
+        backend=backend,
+        frontend=frontend,
+        workspace=workspace,
+        backend_result=backend_result,
+        frontend_result=frontend_result,
+        workspace_result=workspace_result,
+        audit_passed=True,
+        aborted=aborted,
+    )
 
 
 if __name__ == "__main__":
