@@ -37,6 +37,20 @@ COMPLETED_TABLE_END_PATTERN = re.compile(
 )
 BACKLOG_COMPLETE_STATUS = "Backlog complete / needs planning"
 
+PHASE_PATTERN = re.compile(r"\bphase\b", re.IGNORECASE)
+REMAINING_PATTERN = re.compile(r"\*\*Remaining:\*\*", re.IGNORECASE)
+SEVEN_PHASES_PATTERN = re.compile(r"\b7\s+phases\b", re.IGNORECASE)
+STATUS_IN_PROGRESS_PATTERN = re.compile(
+    r"\*\*Status:\*\*\s+IN_PROGRESS\b",
+    re.IGNORECASE,
+)
+UNCHECKED_CHECKBOX_PATTERN = re.compile(r"^\s*[-*]\s*\[\s*\]", re.MULTILINE)
+
+MULTI_PHASE_WARNING = (
+    "WARNING: Current active task appears to be a multi-phase epic or still "
+    "IN_PROGRESS.\nAuto-advance may be premature."
+)
+
 
 @dataclass
 class QueueItem:
@@ -57,6 +71,8 @@ class RoadmapAdvancePreview:
     can_advance: bool
     warnings: list[str] = field(default_factory=list)
     backlog_complete: bool = False
+    multi_phase_safety: bool = False
+    multi_phase_signals: list[str] = field(default_factory=list)
 
 
 def _normalize_title(title: str) -> str:
@@ -71,6 +87,58 @@ def read_active_task(text: str) -> str | None:
     if title.lower() == "none":
         return None
     return title
+
+
+def read_active_task_section(text: str) -> str:
+    start = text.find(SECTION_ACTIVE)
+    if start == -1:
+        return ""
+    content_start = start + len(SECTION_ACTIVE)
+    rest = text[content_start:]
+    end_match = re.search(r"\n---\s*\n", rest)
+    if end_match:
+        return rest[: end_match.start()]
+    workflow = rest.find(SECTION_WORKFLOW)
+    if workflow != -1:
+        return rest[:workflow]
+    return rest
+
+
+def detect_multi_phase_signals(section_text: str) -> list[str]:
+    if not section_text.strip():
+        return []
+
+    signals: list[str] = []
+    if PHASE_PATTERN.search(section_text):
+        signals.append("contains 'Phase'")
+    if REMAINING_PATTERN.search(section_text):
+        signals.append("contains 'Remaining'")
+    if SEVEN_PHASES_PATTERN.search(section_text):
+        signals.append("contains '7 phases'")
+    if STATUS_IN_PROGRESS_PATTERN.search(section_text):
+        signals.append("Status is IN_PROGRESS")
+    if UNCHECKED_CHECKBOX_PATTERN.search(section_text):
+        signals.append("contains unfinished checklist items [ ]")
+    return signals
+
+
+def collect_multi_phase_signals(text: str, current_task: str | None) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+
+    def add(signals: list[str]) -> None:
+        for signal in signals:
+            if signal not in seen:
+                seen.add(signal)
+                ordered.append(signal)
+
+    add(detect_multi_phase_signals(read_active_task_section(text)))
+    if current_task:
+        for item in parse_queue_items(text):
+            if _normalize_title(item.title) == _normalize_title(current_task):
+                add(detect_multi_phase_signals(item.body))
+                break
+    return ordered
 
 
 def _extract_section(text: str, start_header: str, end_header: str) -> str | None:
@@ -112,6 +180,8 @@ def preview_roadmap_advance(roadmap_path: Path = ROADMAP_FILE) -> RoadmapAdvance
 
     text = roadmap_path.read_text(encoding="utf-8")
     current_task = read_active_task(text)
+    multi_phase_signals = collect_multi_phase_signals(text, current_task)
+    multi_phase_safety = bool(multi_phase_signals)
     if not current_task:
         warnings.append("Current Active Task not detected in MVP_ROADMAP.md")
         return RoadmapAdvancePreview(
@@ -119,6 +189,8 @@ def preview_roadmap_advance(roadmap_path: Path = ROADMAP_FILE) -> RoadmapAdvance
             next_task=None,
             can_advance=False,
             warnings=warnings,
+            multi_phase_safety=multi_phase_safety,
+            multi_phase_signals=multi_phase_signals,
         )
 
     queue_items = parse_queue_items(text)
@@ -129,6 +201,8 @@ def preview_roadmap_advance(roadmap_path: Path = ROADMAP_FILE) -> RoadmapAdvance
             next_task=None,
             can_advance=False,
             warnings=warnings,
+            multi_phase_safety=multi_phase_safety,
+            multi_phase_signals=multi_phase_signals,
         )
 
     remaining = [
@@ -145,12 +219,16 @@ def preview_roadmap_advance(roadmap_path: Path = ROADMAP_FILE) -> RoadmapAdvance
             next_task=None,
             can_advance=True,
             backlog_complete=True,
+            multi_phase_safety=multi_phase_safety,
+            multi_phase_signals=multi_phase_signals,
         )
 
     return RoadmapAdvancePreview(
         current_task=current_task,
         next_task=eligible[0].title,
         can_advance=True,
+        multi_phase_safety=multi_phase_safety,
+        multi_phase_signals=multi_phase_signals,
     )
 
 
@@ -244,6 +322,7 @@ def apply_roadmap_advance(
     *,
     roadmap_path: Path = ROADMAP_FILE,
     previous_task: str | None = None,
+    force_advance: bool = False,
 ) -> tuple[str, str | None, bool]:
     """Return (new_roadmap_text, next_task_title, backlog_complete)."""
     if not roadmap_path.is_file():
@@ -253,6 +332,13 @@ def apply_roadmap_advance(
     if not preview.can_advance:
         raise ValueError(
             "Roadmap advance blocked: " + "; ".join(preview.warnings or ["unknown error"])
+        )
+    if preview.multi_phase_safety and not force_advance:
+        signal_summary = ", ".join(preview.multi_phase_signals) or "multi-phase signals"
+        raise ValueError(
+            "Roadmap advance blocked: multi-phase epic safety "
+            f"({signal_summary}). Type ADVANCE to confirm or use "
+            "--force-advance-roadmap."
         )
 
     current_task = previous_task or preview.current_task
