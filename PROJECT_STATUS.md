@@ -5,7 +5,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LAST_QUALITY_GATE_START -->
 ## Last Quality Gate
 
-- Date: 2026-06-17 23:08
+- Date: 2026-06-17 23:52
 - Backend tests: PASSED
 - Frontend build: PASSED
 - E2E tests: PASSED
@@ -15,18 +15,17 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LATEST_RELEASE_START -->
 ## Latest Release
 
-- Backend: Update workspace documentation
-- Frontend: No changes.
+- Backend: Add dispute resolution backend
+- Frontend: Add notifications frontend
 - Quality Gate: PASSED
-- Date: 2026-06-17 23:08
+- Date: 2026-06-17 23:52
 <!-- STATUS:LATEST_RELEASE_END -->
 
 <!-- STATUS:ROADMAP_FOCUS_START -->
 ## Roadmap Focus
 
-- **Current Active Task:** Notifications
-- **Status:** TODO
-- **Next in queue:** Production Deployment
+- **Current Active Task:** Production Deployment
+- **Last completed task:** Notifications
 <!-- STATUS:ROADMAP_FOCUS_END -->
 
 ## AI Dev OS Foundation Sync
@@ -55,7 +54,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Next Milestone
 
-**Notifications** — in-app notification store + optional email hooks. See [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
+**Notifications** — implementation complete (Phases 1–4); formal roadmap close via `finish_task.py`. Next queue item: **Production Deployment**. See [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
 
 ## Current MVP Features
 
@@ -75,6 +74,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 - Digging Score
 - Subscription plans
 - Protected messaging
+- **In-app notifications** (bell, dropdown, `/notifications`; no email/push yet)
 - Seller shipping profile
 - Disputes with evidence
 - Dispute resolution (admin)
@@ -89,14 +89,14 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Current Quality Gate
 
-- Backend: `py -m pytest` — **215** tests
+- Backend: `py -m pytest` — **231** tests
 - Frontend: `npm run build`
-- E2E: `npm run test:e2e` — **31** tests
+- E2E: `npm run test:e2e` — **33** tests
 - Full audit: `py run_audit.py`
 
 ## Next Recommended Work
 
-1. Notifications (in-app + optional email)
+1. Close Notifications milestone (`finish_task.py`) → Production deployment
 2. Production deployment
 3. Closed beta
 4. Public launch
@@ -121,7 +121,7 @@ Workspace docs (`AI_CONTEXT`, `TASKS`, `SPEC`, `DESIGN`, `RELEASE_NOTES`) are **
 
 **Priority on conflict:** `backend/BUSINESS_RULES.md` → `backend/ARCHITECTURE.md` → `backend/MVP_ROADMAP.md` → workspace summaries.
 
-**Constraint pass:** 2026-06-18 — WebPay milestone completed; Notifications active.
+**Constraint pass:** 2026-06-18 — Notifications Phases 1–4 complete; roadmap advance pending `finish_task.py`.
 
 ## Source Documents
 

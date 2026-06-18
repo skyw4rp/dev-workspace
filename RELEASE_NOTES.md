@@ -1,7 +1,7 @@
 # RELEASE_NOTES — Melómanos Marketplace
 
 **Purpose:** Release **index** for auditors and agents.  
-**Last synced:** 2026-06-18 (WebPay Phase 7)
+**Last synced:** 2026-06-18 (Notifications Phase 4)
 
 > **Milestone definitions and completion criteria:** [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) — Completed  
 > **Detailed changelog:** [`backend/CHANGELOG.md`](../backend/CHANGELOG.md)  
@@ -15,13 +15,29 @@
 |---|-----------|------|--------|
 | 1–12 | See roadmap Completed table | **UNKNOWN** | [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) |
 | 13 | Admin Panel MVP | **2026-06-05** | Below + [`backend/PROJECT_STATUS.md`](../backend/PROJECT_STATUS.md) |
-| 14 | Payment Provider Integration (WebPay placeholder) | **2026-06-18** (validation; commit pending) | Below + [`WEBPAY_PHASE7_REPORT.md`](WEBPAY_PHASE7_REPORT.md) |
+| 14 | Payment Provider Integration (WebPay placeholder) | **2026-06-18** | Below + [`WEBPAY_PHASE7_REPORT.md`](WEBPAY_PHASE7_REPORT.md) |
+| 15 | Notifications (in-app MVP) | **2026-06-18** (validation; roadmap advance pending) | Below + [`NOTIFICATIONS_SCOPE_REPORT.md`](NOTIFICATIONS_SCOPE_REPORT.md) |
 
-**Shipped count:** 13 committed + 1 ready (WebPay placeholder). **Pending queue:** 5 (per roadmap).
+**Shipped count:** 14 committed + Notifications ready for formal close. **Pending queue:** 4 (per roadmap).
 
 ---
 
-## Latest Documented Release — Payment Provider Integration (WebPay placeholder)
+## Latest Documented Release — Notifications (in-app MVP)
+
+**Date:** 2026-06-18 (Quality Gate validation; `finish_task.py` / roadmap advance not run in Phase 4 pass)
+
+Source: [`NOTIFICATIONS_SCOPE_REPORT.md`](NOTIFICATIONS_SCOPE_REPORT.md), [`backend/PROJECT_STATUS.md`](../backend/PROJECT_STATUS.md)
+
+| Area | Summary |
+|------|---------|
+| Backend | `notifications` table; list/unread/mark-read API; event hooks (message, order, payment, ship, complete, dispute) |
+| Frontend | Navbar **Alertas** bell, dropdown, `/notifications`; Spanish copy |
+| Tests | 231 pytest; 33 E2E (`notifications.spec.ts`) |
+| Out of scope | Email, push, mark-all-read, WebSockets |
+
+---
+
+## Prior Release — Payment Provider Integration (WebPay placeholder)
 
 **Date:** 2026-06-18 (Quality Gate validation; commit/push pending)
 
@@ -63,9 +79,8 @@ Listed in [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) Completed table.
 
 | Milestone | Status | Spec |
 |-----------|--------|------|
-| Payment Provider Integration (WebPay placeholder) | READY (commit pending) | [`WEBPAY_PHASE7_REPORT.md`](WEBPAY_PHASE7_REPORT.md) |
-| Notifications | TODO | Same |
-| Production Deployment | TODO | Same |
+| Notifications | READY (roadmap advance pending) | [`NOTIFICATIONS_SCOPE_REPORT.md`](NOTIFICATIONS_SCOPE_REPORT.md) |
+| Production Deployment | TODO | [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) |
 | Closed Beta | TODO | Same |
 | Public Launch | TODO | Same |
 
