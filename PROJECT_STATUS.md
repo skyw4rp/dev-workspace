@@ -5,7 +5,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LAST_QUALITY_GATE_START -->
 ## Last Quality Gate
 
-- Date: 2026-06-17 21:23
+- Date: 2026-06-17 22:47
 - Backend tests: PASSED
 - Frontend build: PASSED
 - E2E tests: PASSED
@@ -15,17 +15,17 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LATEST_RELEASE_START -->
 ## Latest Release
 
-- Backend: No changes.
+- Backend: Update AI Operating System documentation
 - Frontend: Add payment provider integration (webpay placeholder) frontend
 - Quality Gate: PASSED
-- Date: 2026-06-17 21:23
+- Date: 2026-06-17 22:47
 <!-- STATUS:LATEST_RELEASE_END -->
 
 <!-- STATUS:ROADMAP_FOCUS_START -->
 ## Roadmap Focus
 
 - **Current Active Task:** Payment Provider Integration (WebPay placeholder)
-- **Status:** IN_PROGRESS (Phase 1 complete — shared payment confirmation service)
+- **Status:** IN_PROGRESS — Phases 1–7 implementation **DONE**; milestone pending commit/push and explicit roadmap advance
 - **Next in queue:** Notifications
 <!-- STATUS:ROADMAP_FOCUS_END -->
 
@@ -40,23 +40,23 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 | Field | Value |
 |-------|-------|
-| **Phase** | Implementation |
+| **Phase** | Implementation (WebPay placeholder complete; release pending) |
 | **Active task** | Payment Provider Integration (WebPay placeholder) |
-| **Task status** | IN_PROGRESS (Phase 1 complete) |
+| **Task status** | IN_PROGRESS (awaiting commit/push) |
 | **Roadmap source** | `backend/MVP_ROADMAP.md` |
-| **MVP progress** | 13 / 18 roadmap milestones completed (~72%) |
+| **MVP progress** | 13 / 18 roadmap milestones completed (~72%); WebPay #14 ready after release |
 
 ## Open Risks
 
-1. **WebPay not implemented** — payments remain simulate-only; blocks production checkout.
-2. **Workspace path defaults** — `melomanos_paths.py` defaults to legacy `C:\melomanos_market` unless `MELOMANOS_*_DIR` env vars are set.
-3. **Documentation drift** — `/releases` catalog documented in backend README/CHANGELOG but not registered in `app/main.py`.
-4. **Dual PROJECT_STATUS** — this file and `backend/PROJECT_STATUS.md` must be kept aligned after releases.
-5. **Quality Gate staleness** — last PASS documented 2026-06-05; current test status **UNKNOWN** until re-run.
+1. **Real Transbank not integrated** — production WebPay credentials and SDK still required for live checkout.
+2. **E2E WebPay mode** — full placeholder lifecycle E2E requires `PAYMENT_PROVIDER_MODE=webpay_placeholder` on backend (`run_melomanos.py --e2e-webpay` or `.env.local`).
+3. **Pytest isolation** — `conftest.py` forces `PAYMENT_PROVIDER_MODE=simulate`; local `.env.local` must not leak into tests.
+4. **Workspace path defaults** — `melomanos_paths.py` defaults to legacy `C:\melomanos_market` unless `MELOMANOS_*_DIR` env vars are set.
+5. **Dual PROJECT_STATUS** — this file and `backend/PROJECT_STATUS.md` must be kept aligned after releases.
 
 ## Next Milestone
 
-**Payment Provider Integration (WebPay placeholder)** — Phase 1 complete (`confirm_order_payment_held`). Remaining: checkout, webhook, frontend, E2E. **Notifications** is next after WebPay ships.
+**Payment Provider Integration (WebPay placeholder)** — implementation complete. Run `finish_task.py`, commit/push all three repos, then explicit roadmap advance. **Notifications** is next in queue.
 
 ## Current MVP Features
 
@@ -68,6 +68,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 - Favorites
 - Orders
 - Compra Segura / Escrow MVP
+- **WebPay placeholder checkout** (sandbox + callback; simulate mode for dev default)
 - Tracking
 - Reviews
 - Seller reputation
@@ -89,18 +90,18 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Current Quality Gate
 
-- Backend: `py -m pytest`
+- Backend: `py -m pytest` — **215** tests
 - Frontend: `npm run build`
-- E2E: `npm run test:e2e`
+- E2E: `npm run test:e2e` — **31** tests
 - Full audit: `py run_audit.py`
 
 ## Next Recommended Work
 
-- Payment provider integration (WebPay placeholder)
-- Notifications (in-app + optional email)
-- Production deployment
-- Closed beta
-- Public launch
+1. `finish_task.py` release (backend, frontend, workspace)
+2. Explicit roadmap advance (Payment Provider → Completed)
+3. Notifications (in-app + optional email)
+4. Production deployment
+5. Closed beta / public launch
 
 ## AI Dev OS Document Map
 
@@ -111,6 +112,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 | SPEC.md | workspace | Consolidated MVP spec |
 | DESIGN.md | workspace | Flows and technical design |
 | RELEASE_NOTES.md | workspace | Milestone history |
+| WEBPAY_PHASE7_REPORT.md | workspace | WebPay placeholder release audit |
 | MVP_ROADMAP.md | backend | Authoritative backlog |
 | BUSINESS_RULES.md | backend | Authoritative business rules |
 | ARCHITECTURE.md | backend | Authoritative architecture |
@@ -121,7 +123,7 @@ Workspace docs (`AI_CONTEXT`, `TASKS`, `SPEC`, `DESIGN`, `RELEASE_NOTES`) are **
 
 **Priority on conflict:** `backend/BUSINESS_RULES.md` → `backend/ARCHITECTURE.md` → `backend/MVP_ROADMAP.md` → workspace summaries.
 
-**Constraint pass:** 2026-06-17 — workspace foundation docs refactored to prefer references over duplicated content.
+**Constraint pass:** 2026-06-18 — WebPay Phase 7 docs aligned with implementation.
 
 ## Source Documents
 
@@ -133,5 +135,5 @@ Workspace docs (`AI_CONTEXT`, `TASKS`, `SPEC`, `DESIGN`, `RELEASE_NOTES`) are **
 | 4 | Agent rules | `backend/AGENT_RULES.md` |
 | 5 | Backend project status | `backend/PROJECT_STATUS.md` |
 | 6 | Quality gate | `workspace/QUALITY_GATE.md` |
-| 7 | Project scan | `workspace/AI_DEV_OS_PROJECT_SCAN.md` |
-| 8 | Foundation sync report | `workspace/AI_DEV_OS_FOUNDATION_SYNC_REPORT.md` |
+| 7 | WebPay phase 7 report | `workspace/WEBPAY_PHASE7_REPORT.md` |
+| 8 | WebPay implementation plan | `workspace/WEBPAY_IMPLEMENTATION_PLAN.md` |

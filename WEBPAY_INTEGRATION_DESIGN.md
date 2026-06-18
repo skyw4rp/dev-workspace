@@ -3,7 +3,7 @@
 **Document type:** Implementation Preparation — Solution Architecture  
 **Phase:** Implementation Preparation  
 **Active task:** Payment Provider Integration (WebPay placeholder)  
-**Status:** DESIGN ONLY — no code changes  
+**Status:** IMPLEMENTED (WebPay placeholder MVP — Phases 1–7 complete; real Transbank production integration not included)  
 **Date:** 2026-06-17  
 **Author:** AI Dev OS Solution Architect
 

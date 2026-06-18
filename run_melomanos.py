@@ -47,15 +47,36 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Kill processes listening on ports 8000 and 3000 before starting.",
     )
+    parser.add_argument(
+        "--e2e-webpay",
+        action="store_true",
+        help="Start backend with WebPay placeholder env (Phase 6 E2E).",
+    )
     return parser.parse_args()
 
 
-def start_process(command: list[str], cwd: Path) -> subprocess.Popen:
+def start_process(
+    command: list[str],
+    cwd: Path,
+    env: dict[str, str] | None = None,
+) -> subprocess.Popen:
+    proc_env = os.environ.copy()
+    if env:
+        proc_env.update(env)
     return subprocess.Popen(
         command,
         cwd=cwd,
         shell=sys.platform == "win32",
+        env=proc_env,
     )
+
+
+def webpay_e2e_env() -> dict[str, str]:
+    return {
+        "PAYMENT_PROVIDER_MODE": "webpay_placeholder",
+        "WEBPAY_CALLBACK_SECRET": "e2e-webpay-callback-secret",
+        "WEBPAY_RETURN_URL_BASE": "http://localhost:3000/orders",
+    }
 
 
 def terminate_process(proc: subprocess.Popen | None) -> None:
@@ -199,7 +220,10 @@ def main() -> None:
     keep_running = False
 
     try:
-        backend_proc = start_process(["py", "run.py"], BACKEND_DIR)
+        backend_env = webpay_e2e_env() if args.e2e_webpay else None
+        if args.e2e_webpay:
+            print("E2E WebPay mode: PAYMENT_PROVIDER_MODE=webpay_placeholder\n")
+        backend_proc = start_process(["py", "run.py"], BACKEND_DIR, env=backend_env)
         frontend_proc = start_process(["npm", "run", "dev"], FRONTEND_DIR)
 
         if not wait_until_ready("Backend", BACKEND_HEALTH_URL):
