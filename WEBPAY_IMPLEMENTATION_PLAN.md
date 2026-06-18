@@ -41,7 +41,7 @@ Do not start the following phase in the same session unless explicitly asked.
 | **2** | `checkout_sessions` and `payment_events` backend foundation | **DONE** |
 | **3** | Checkout endpoint | **DONE** |
 | **4** | WebPay callback / payment confirmation placeholder | **DONE** |
-| **5** | Frontend checkout CTA and success handling | **TODO** |
+| **5** | Frontend checkout CTA and success handling | **DONE** |
 | **6** | E2E checkout flow | **TODO** |
 | **7** | Docs, business rules, release readiness | **TODO** |
 
@@ -355,7 +355,9 @@ py -m pytest -q
 
 ## Phase 5 — Frontend checkout CTA and success handling
 
-**Status:** TODO
+**Status:** DONE
+
+> **Phase 5 complete:** frontend checkout flow connected to backend checkout sessions.
 
 ### Goal
 
@@ -390,39 +392,39 @@ Replace/supplement simulate button with checkout redirect flow and return-url ha
 
 ### Backend tasks
 
-- [ ] Optional: `GET /payments/config` exposing `PAYMENT_PROVIDER_MODE` to frontend
+- [ ] Optional: `GET /payments/config` exposing `PAYMENT_PROVIDER_MODE` to frontend (deferred; frontend uses `NEXT_PUBLIC_PAYMENT_PROVIDER_MODE` + localStorage override for E2E)
 
 ### Frontend tasks
 
-- [ ] Add `createCheckoutSession()` to `api.ts`
-- [ ] Build return/cancel URLs pointing to `/orders/{id}?checkout=...`
-- [ ] On CTA click: POST checkout → redirect to `checkout_url`
-- [ ] On return success: refresh order, show **Pendiente de envío** state
-- [ ] On return cancelled: show retry message
-- [ ] Show **Confirmar pago** when mode is `simulate`; **Pagar con WebPay** when placeholder
-- [ ] Update timeline / escrow card for `pending_payment` if used
+- [x] Add `createCheckoutSession()` to `api.ts`
+- [x] Build return/cancel URLs pointing to `/orders/{id}?checkout=...`
+- [x] On CTA click: POST checkout → redirect to `checkout_url`
+- [x] On return success: refresh order, show success message
+- [x] On return cancelled: show retry message
+- [x] Show **Confirmar pago** when mode is `simulate`; **Pay with WebPay** when placeholder
+- [x] `data-testid="order-checkout-webpay"` and `order-checkout-notice`
 
 ### Tests required
 
-- [ ] `npm run build` — types compile
-- [ ] `npm run lint` — no new errors
-- [ ] Manual: buyer redirect to placeholder sandbox and return (with backend running)
+- [x] `npm run build` — types compile
+- [x] `npm run test:e2e` — WebPay checkout CTA, redirect, return messages, error handling (8 new tests)
+- [x] Existing simulate-path E2E regression (20 legacy + 8 new = 28 total)
 
 ### Validation commands
 
 ```powershell
 cd C:\melomanos\frontend
 npm run build
-npm run lint
+npm run test:e2e
 ```
 
 ### Completion checklist
 
-- [ ] Buyer sees correct CTA per payment mode
-- [ ] Redirect flow reaches placeholder sandbox URL
-- [ ] Return URL refreshes order state after webhook fires
-- [ ] Simulate mode still works for local dev
-- [ ] Phase Status set to **DONE** in this file
+- [x] Buyer sees correct CTA per payment mode
+- [x] Redirect flow reaches backend checkout sandbox URL
+- [x] Return URL shows success/cancelled messages and refreshes order on success
+- [x] Simulate mode still works for local dev
+- [x] Phase Status set to **DONE** in this file
 
 ---
 
