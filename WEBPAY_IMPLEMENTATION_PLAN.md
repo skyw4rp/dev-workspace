@@ -512,7 +512,7 @@ py run_melomanos.py --kill-stale --e2e-webpay --no-wait
 
 **Status:** DONE
 
-> **Phase 7 complete:** governance docs aligned, Quality Gate validated, `WEBPAY_PHASE7_REPORT.md` published. Roadmap advance pending commit/push.
+> **Phase 7 complete:** governance docs aligned, Quality Gate validated, `WEBPAY_PHASE7_REPORT.md` published. WebPay milestone completed on roadmap (2026-06-18).
 
 ### Goal
 
@@ -523,7 +523,7 @@ Align governance docs with implemented gateway placeholder, run full Quality Gat
 - Update `BUSINESS_RULES.md` — Compra Segura gateway in scope for placeholder
 - Update `ARCHITECTURE.md` — payment module, escrow diagram, new routes
 - Update `TESTING_STRATEGY.md` / quality baselines if test counts changed
-- Update `MVP_ROADMAP.md` progress notes (all phases DONE — still **IN_PROGRESS** until release)
+- Update `MVP_ROADMAP.md` — WebPay moved to Completed (milestone #14)
 - Update `workspace/RELEASE_NOTES.md`, `PROJECT_STATUS.md` (backend + workspace)
 - `backend/.env.example` final review
 - Release via `finish_task.py` (all three repos)
@@ -580,8 +580,8 @@ npm run test:e2e
 - [x] `BUSINESS_RULES.md` no longer contradicts placeholder gateway
 - [x] `ARCHITECTURE.md` documents payment module and webhook flow
 - [x] Quality Gate PASS recorded in `PROJECT_STATUS.md`
-- [ ] Release committed/pushed (backend, frontend, workspace) — **pending user `finish_task.py`**
-- [ ] Roadmap **Remaining** / phase notes cleared; epic ready for advance per policy — **not auto-advanced**
+- [x] Release committed/pushed (backend, frontend, workspace)
+- [x] Roadmap updated; WebPay in Completed table; Notifications active
 - [x] Phase Status set to **DONE** in this file
 
 ---
@@ -616,4 +616,4 @@ confirm_order_payment_held(order):
 
 ---
 
-*Last updated: Phase 7 DONE — all WebPay phases complete; roadmap advance pending commit/push.*
+*Last updated: All 7 WebPay steps DONE; milestone #14 completed on roadmap; Notifications active.*

@@ -5,7 +5,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LAST_QUALITY_GATE_START -->
 ## Last Quality Gate
 
-- Date: 2026-06-17 22:47
+- Date: 2026-06-17 23:08
 - Backend tests: PASSED
 - Frontend build: PASSED
 - E2E tests: PASSED
@@ -15,18 +15,18 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LATEST_RELEASE_START -->
 ## Latest Release
 
-- Backend: Update AI Operating System documentation
-- Frontend: Add payment provider integration (webpay placeholder) frontend
+- Backend: Update workspace documentation
+- Frontend: No changes.
 - Quality Gate: PASSED
-- Date: 2026-06-17 22:47
+- Date: 2026-06-17 23:08
 <!-- STATUS:LATEST_RELEASE_END -->
 
 <!-- STATUS:ROADMAP_FOCUS_START -->
 ## Roadmap Focus
 
-- **Current Active Task:** Payment Provider Integration (WebPay placeholder)
-- **Status:** IN_PROGRESS — Phases 1–7 implementation **DONE**; milestone pending commit/push and explicit roadmap advance
-- **Next in queue:** Notifications
+- **Current Active Task:** Notifications
+- **Status:** TODO
+- **Next in queue:** Production Deployment
 <!-- STATUS:ROADMAP_FOCUS_END -->
 
 ## AI Dev OS Foundation Sync
@@ -40,11 +40,10 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 | Field | Value |
 |-------|-------|
-| **Phase** | Implementation (WebPay placeholder complete; release pending) |
-| **Active task** | Payment Provider Integration (WebPay placeholder) |
-| **Task status** | IN_PROGRESS (awaiting commit/push) |
+| **Active task** | Notifications |
+| **Task status** | TODO |
 | **Roadmap source** | `backend/MVP_ROADMAP.md` |
-| **MVP progress** | 13 / 18 roadmap milestones completed (~72%); WebPay #14 ready after release |
+| **MVP progress** | 14 / 18 roadmap milestones completed (~78%) |
 
 ## Open Risks
 
@@ -56,7 +55,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Next Milestone
 
-**Payment Provider Integration (WebPay placeholder)** — implementation complete. Run `finish_task.py`, commit/push all three repos, then explicit roadmap advance. **Notifications** is next in queue.
+**Notifications** — in-app notification store + optional email hooks. See [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
 
 ## Current MVP Features
 
@@ -97,11 +96,10 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Next Recommended Work
 
-1. `finish_task.py` release (backend, frontend, workspace)
-2. Explicit roadmap advance (Payment Provider → Completed)
-3. Notifications (in-app + optional email)
-4. Production deployment
-5. Closed beta / public launch
+1. Notifications (in-app + optional email)
+2. Production deployment
+3. Closed beta
+4. Public launch
 
 ## AI Dev OS Document Map
 
@@ -123,7 +121,7 @@ Workspace docs (`AI_CONTEXT`, `TASKS`, `SPEC`, `DESIGN`, `RELEASE_NOTES`) are **
 
 **Priority on conflict:** `backend/BUSINESS_RULES.md` → `backend/ARCHITECTURE.md` → `backend/MVP_ROADMAP.md` → workspace summaries.
 
-**Constraint pass:** 2026-06-18 — WebPay Phase 7 docs aligned with implementation.
+**Constraint pass:** 2026-06-18 — WebPay milestone completed; Notifications active.
 
 ## Source Documents
 
