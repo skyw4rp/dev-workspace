@@ -16,7 +16,8 @@ from pathlib import Path
 from melomanos_paths import BACKEND_DIR, FRONTEND_DIR
 
 BACKEND_URL = "http://127.0.0.1:8000"
-BACKEND_HEALTH_URL = "http://127.0.0.1:8000/listings?limit=1"
+BACKEND_HEALTH_URL = "http://127.0.0.1:8000/health"
+BACKEND_LISTINGS_PROBE_URL = "http://127.0.0.1:8000/listings?limit=1"
 FRONTEND_URL = "http://localhost:3000"
 FRONTEND_FALLBACK_URL = "http://localhost:3001"
 
@@ -51,6 +52,16 @@ def parse_args() -> argparse.Namespace:
         "--e2e-webpay",
         action="store_true",
         help="Start backend with WebPay placeholder env (Phase 6 E2E).",
+    )
+    parser.add_argument(
+        "--auto-migrate",
+        action="store_true",
+        help="Run `alembic upgrade head` when the database is behind migration head.",
+    )
+    parser.add_argument(
+        "--skip-migration-check",
+        action="store_true",
+        help="Skip Alembic current-vs-head check (not recommended for local dev).",
     )
     return parser.parse_args()
 
@@ -162,7 +173,7 @@ def kill_stale_on_ports(ports: list[int]) -> None:
 
 
 def check_readiness(*, strict_frontend_port: bool) -> bool:
-    backend_ok = wait_until_ready("Backend", BACKEND_HEALTH_URL)
+    backend_ok = check_backend_ready()
     frontend_ok = wait_until_ready("Frontend", FRONTEND_URL)
     if backend_ok and frontend_ok:
         print("Melomanos READY")
@@ -190,6 +201,52 @@ def validate_paths() -> None:
         sys.exit(1)
 
 
+def ensure_database_migrations(
+    *,
+    auto_migrate: bool,
+    skip_check: bool,
+) -> None:
+    """Abort (or auto-upgrade) when Postgres is behind Alembic head."""
+    if skip_check:
+        print("Skipping Alembic migration check (--skip-migration-check).\n")
+        return
+
+    script = BACKEND_DIR / "scripts" / "migration_status.py"
+    if not script.is_file():
+        print(f"WARNING: migration check script missing: {script}\n")
+        return
+
+    mode = "upgrade" if auto_migrate else "check"
+    print(f"Checking Alembic migrations ({mode})...")
+    cmd = [sys.executable, str(script), f"--{mode}"]
+    result = subprocess.run(cmd, cwd=BACKEND_DIR, text=True, capture_output=True)
+    if result.stdout.strip():
+        print(result.stdout.strip())
+    if result.returncode != 0:
+        if result.stderr.strip():
+            print(result.stderr.strip(), file=sys.stderr)
+        if auto_migrate:
+            print("ERROR: Auto-migrate failed. Fix Alembic/Postgres and retry.")
+        else:
+            print(
+                "ERROR: Refusing to start — database migrations are not at Alembic head."
+            )
+            print(
+                "Re-run with --auto-migrate to apply `alembic upgrade head` automatically."
+            )
+        sys.exit(1)
+    print("Migrations OK (database at Alembic head).\n")
+
+
+def check_backend_ready() -> bool:
+    """Liveness plus a minimal DB-backed listings probe."""
+    health_ok = wait_until_ready("Backend /health", BACKEND_HEALTH_URL)
+    if not health_ok:
+        return False
+    listings_ok = wait_until_ready("Backend /listings", BACKEND_LISTINGS_PROBE_URL)
+    return listings_ok
+
+
 def print_urls() -> None:
     print()
     print(f"Backend:  {BACKEND_URL}")
@@ -200,12 +257,17 @@ def print_urls() -> None:
 def main() -> None:
     args = parse_args()
 
+    validate_paths()
+
+    ensure_database_migrations(
+        auto_migrate=args.auto_migrate,
+        skip_check=args.skip_migration_check,
+    )
+
     if args.check:
         print("Checking Melomanos readiness...\n")
         ok = check_readiness(strict_frontend_port=False)
         sys.exit(0 if ok else 1)
-
-    validate_paths()
 
     if args.kill_stale:
         print("Clearing stale processes on ports 8000 and 3000...\n")
@@ -226,7 +288,7 @@ def main() -> None:
         backend_proc = start_process(["py", "run.py"], BACKEND_DIR, env=backend_env)
         frontend_proc = start_process(["npm", "run", "dev"], FRONTEND_DIR)
 
-        if not wait_until_ready("Backend", BACKEND_HEALTH_URL):
+        if not check_backend_ready():
             sys.exit(1)
 
         if not wait_until_ready("Frontend", FRONTEND_URL):

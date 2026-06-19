@@ -437,6 +437,8 @@ Local validation performed before first GitHub Actions run on remote:
 | Document | Path |
 |----------|------|
 | Deployment plan | [`workspace/PRODUCTION_DEPLOYMENT_PLAN.md`](PRODUCTION_DEPLOYMENT_PLAN.md) |
+| Phase 5 checklist | [`workspace/PRODUCTION_DEPLOYMENT_PHASE5_CHECKLIST.md`](PRODUCTION_DEPLOYMENT_PHASE5_CHECKLIST.md) |
+| Decision report | [`workspace/PRODUCTION_DEPLOYMENT_DECISION_REPORT.md`](PRODUCTION_DEPLOYMENT_DECISION_REPORT.md) |
 | Env matrix | [`workspace/PRODUCTION_ENV_MATRIX.md`](PRODUCTION_ENV_MATRIX.md) |
 | Scope audit | [`workspace/PRODUCTION_DEPLOYMENT_SCOPE_REPORT.md`](PRODUCTION_DEPLOYMENT_SCOPE_REPORT.md) |
 | Deployment guide | [`backend/README_DEPLOYMENT.md`](../backend/README_DEPLOYMENT.md) |

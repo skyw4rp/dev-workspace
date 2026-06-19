@@ -208,11 +208,16 @@ Automate migration smoke and formalize manual deploy checklist.
 
 ## Phase 5 — Production cutover & release readiness
 
-**Status:** TODO
+**Status:** TODO — **operator checklist ready** (cutover not performed)
 
 ### Goal
 
 Live HTTPS deployment; milestone Quality Gate; docs update.
+
+### Operator checklist (preparation complete)
+
+**Use:** [`PRODUCTION_DEPLOYMENT_PHASE5_CHECKLIST.md`](PRODUCTION_DEPLOYMENT_PHASE5_CHECKLIST.md)  
+**Locked stack:** [`PRODUCTION_DEPLOYMENT_DECISION_REPORT.md`](PRODUCTION_DEPLOYMENT_DECISION_REPORT.md) — DigitalOcean GRU, Cloudflare, Vercel, UptimeRobot, pg_dump + B2.
 
 ### Scope
 
@@ -238,7 +243,7 @@ Live HTTPS deployment; milestone Quality Gate; docs update.
 | Role | Assumed provider | Notes |
 |------|------------------|-------|
 | Frontend | **Vercel** (Hobby/Pro) | GitHub integration; env vars in dashboard |
-| VPS | **Hetzner Cloud CPX22** *or* **DigitalOcean Basic $12** | 2 vCPU, 4 GB RAM; final pick at Phase 5 |
+| VPS | **DigitalOcean Basic 4 GB** — **`gru1` (São Paulo)** | See [`PRODUCTION_DEPLOYMENT_DECISION_REPORT.md`](PRODUCTION_DEPLOYMENT_DECISION_REPORT.md) |
 | Domain | **melomanos.cl** via NIC Chile or reseller | Apex + `www` → Vercel; `api` → VPS A record |
 | TLS (API) | **Caddy** + Let's Encrypt | Auto-renew |
 | TLS (frontend) | **Vercel** | Auto |
@@ -249,4 +254,4 @@ Live HTTPS deployment; milestone Quality Gate; docs update.
 
 ---
 
-*Last updated: Phase 4 complete — GitHub Actions CI + deployment validation docs; no VPS cutover.*
+*Last updated: Phase 5 preparation — operator checklist created; no VPS cutover.*

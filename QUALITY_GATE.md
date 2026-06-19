@@ -17,12 +17,14 @@ Ejecutar desde `C:\melomanos\workspace` (o `MELOMANOS_WORKSPACE_DIR`).
 
 - ✓ `py -m pytest` (vía `run_audit.py --backend-only`)
 - No inicia backend ni frontend
+- **No valida** migraciones Alembic en PostgreSQL local (pytest usa SQLite + `create_all`)
 
 ### Quality Gate
 
 - ✓ Backend: `py -m pytest`
 - ✓ Frontend: `npm run build`
 - (E2E omitido; no inicia stack local)
+- **Recomendado** antes de E2E manual: `cd backend && py scripts/migration_status.py --check`
 
 ### Full audit / Release Gate
 
@@ -31,6 +33,8 @@ El **Full audit** verifica backend y frontend antes de Playwright. Si no están 
 ```powershell
 py run_melomanos.py --kill-stale --no-wait
 ```
+
+`run_melomanos.py` compara `alembic current` vs `alembic heads` y **aborta** si la base local está atrasada (salvo `--skip-migration-check`). Usa `--auto-migrate` para aplicar `alembic upgrade head` antes de arrancar.
 
 Si ya están corriendo, no los reinicia.
 
