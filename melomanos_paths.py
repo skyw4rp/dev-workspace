@@ -1,7 +1,7 @@
 """Central path resolution for Melomanos workspace scripts.
 
 Paths resolve from environment variables first, then fall back to the
-current (pre-migration) layout. See README_PROJECT_LAYOUT.md.
+default layout under ``C:\\melomanos\\``. See README_PROJECT_LAYOUT.md.
 """
 
 from __future__ import annotations
@@ -9,9 +9,10 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-_DEFAULT_BACKEND = Path(r"C:\melomanos_market")
-_DEFAULT_FRONTEND = Path(r"C:\melomanos-frontend")
-_DEFAULT_WORKSPACE = Path(r"C:\melomanos_workspace")
+_MELOMANOS_ROOT = Path(r"C:\melomanos")
+_DEFAULT_BACKEND = _MELOMANOS_ROOT / "backend"
+_DEFAULT_FRONTEND = _MELOMANOS_ROOT / "frontend"
+_DEFAULT_WORKSPACE = _MELOMANOS_ROOT / "workspace"
 
 
 def _resolve_dir(env_var: str, default: Path) -> Path:

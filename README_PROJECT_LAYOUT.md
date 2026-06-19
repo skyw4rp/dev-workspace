@@ -4,29 +4,31 @@ This document describes where Melomanos repos live today, the recommended future
 
 ## Current layout (today)
 
-Repos are separate folders on `C:\`:
+Single root folder for Melomanos development:
 
 ```
-C:\
-├── melomanos_market\      # backend (git: main)
-├── melomanos-frontend\    # frontend (git: master)
-└── melomanos_workspace\   # dev scripts, PROJECT_STATUS.md, finish workflow
+C:\melomanos\
+├── backend\     # backend (git: main)
+├── frontend\    # frontend (git: master)
+└── workspace\   # dev scripts, PROJECT_STATUS.md, finish workflow
 ```
 
 Workspace Python scripts resolve these paths via `melomanos_paths.py`. With no environment variables set, defaults match the paths above.
 
+## Legacy layout (pre-migration)
+
+If repos still live at the old paths, set env vars (see below) or move folders into `C:\melomanos\`:
+
+```
+C:\
+├── melomanos_market\      # was backend
+├── melomanos-frontend\    # was frontend
+└── melomanos_workspace\   # was workspace
+```
+
 ## Recommended future layout
 
-Single root folder for all Melomanos development:
-
-```
-C:\melomanos\
-├── backend\     # was C:\melomanos_market
-├── frontend\    # was C:\melomanos-frontend
-└── workspace\   # was C:\melomanos_workspace
-```
-
-**No folders have been moved yet.** Scripts are prepared so migration is mostly a filesystem move plus optional env vars.
+Same as **current layout** — migration to `C:\melomanos\` is complete when all three repos live under that root.
 
 ## Path configuration (`melomanos_paths.py`)
 
@@ -45,13 +47,13 @@ Resolution order: **environment variable → default (current layout)**.
 
 ## Required environment variables (after migration)
 
-Set these if repos are not at the legacy paths:
+Set these only if repos are **not** at `C:\melomanos\{backend,frontend,workspace}` (e.g. legacy paths):
 
-| Variable | After migration example | Current default |
-|----------|-------------------------|-----------------|
-| `MELOMANOS_BACKEND_DIR` | `C:\melomanos\backend` | `C:\melomanos_market` |
-| `MELOMANOS_FRONTEND_DIR` | `C:\melomanos\frontend` | `C:\melomanos-frontend` |
-| `MELOMANOS_WORKSPACE_DIR` | `C:\melomanos\workspace` | `C:\melomanos_workspace` |
+| Variable | Example | Default (no env var) |
+|----------|---------|----------------------|
+| `MELOMANOS_BACKEND_DIR` | `C:\melomanos\backend` | `C:\melomanos\backend` |
+| `MELOMANOS_FRONTEND_DIR` | `C:\melomanos\frontend` | `C:\melomanos\frontend` |
+| `MELOMANOS_WORKSPACE_DIR` | `C:\melomanos\workspace` | `C:\melomanos\workspace` |
 
 ### PowerShell (session)
 
@@ -95,7 +97,7 @@ Restart the terminal after persistent changes.
 
 ### Rollback
 
-Move folders back to the original names and clear the three `MELOMANOS_*` env vars (or unset them). Scripts fall back to legacy defaults.
+Move folders back to the original names and set `MELOMANOS_*` env vars to those legacy paths (or clear them if defaults are changed again).
 
 ## Commands before vs after migration
 
