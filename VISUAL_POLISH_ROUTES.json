@@ -15,12 +15,12 @@
       "name": "Home",
       "path": "/",
       "priority": "P0",
-      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "current_status": "IN_REVIEW",
       "auth_required": false,
       "dynamic": false,
       "dependencies": ["Navbar", "HomeHero", "HomeMetricsBand", "HomeNewArrivals", "Marketplace catalog section"],
       "screenshots_required": ["home-desktop-1440.png", "home-mobile-390.png"],
-      "notes": "Reference anchor surface. Hero rhythm and metrics/confidence band recently tuned; uncommitted UI changes may exist. Requires screenshot compare to reference.",
+      "notes": "Screenshot baseline present (workspace/screenshots/visual-polish/home-desktop-1440.png, home-mobile-390.png). Home Reference Match Review: PASS WITH MINOR WARNINGS (2026-07-01). Pending Daniela/Ernesto human approval — not marked PASS. Minor warnings: logged-out navbar vs logged-in reference, confidence card density, hero micro-rhythm. Uncommitted UI polish on HomeHero/HomeMetricsBand.",
       "visual_goal": "Warm ivory editorial home matching reference: hero, trust row, compact metrics + confidence row, catalog entry."
     },
     {

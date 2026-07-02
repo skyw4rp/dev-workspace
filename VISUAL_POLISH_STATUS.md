@@ -1,6 +1,6 @@
 # Visual Polish Status — Melómanos Market
 
-**Last updated:** Adoption recovery (documentation scaffolding only)
+**Last updated:** Home Reference Match Review recorded (documentation only)
 
 ---
 
@@ -8,21 +8,39 @@
 
 | Field | Value |
 |-------|--------|
-| **Current visual gate** | `ADOPTION_RECOVERY` |
-| **Adoption status** | `IN_PROGRESS` |
+| **Current visual gate** | `HOME_REFERENCE_MATCH` |
+| **Adoption status** | `COMPLETE` |
+| **Visual Polish Adoption Gate** | `PASS WITH WARNINGS` |
+| **Functional Smoke Gate** | `PASS` |
 | **Reference image status** | `PRESENT` |
 | **Canonical reference path** | `workspace/design-references/melomanos_marketplace_reference.jpeg` |
-| **Screenshot baseline status** | `MISSING` |
-| **Human approval status** | `NOT_APPROVED` |
-| **Functional smoke (visual gate)** | `NOT_RUN` — separate gate required |
+| **Screenshot baseline status** | `PRESENT` |
+| **Home Reference Match Review** | `PASS WITH MINOR WARNINGS` |
+| **Human approval status** | `PENDING` (Daniela / Ernesto) |
 
 ---
 
-## Adoption recovery context
+## Home screenshot baseline
 
-The Visual Polish Adoption Gate initially **FAILED** because control files, route inventory, and screenshot folder were missing while frontend visual polish work had already begun as uncommitted changes.
+| Capture | Path | Viewport |
+|---------|------|----------|
+| Desktop | `workspace/screenshots/visual-polish/home-desktop-1440.png` | 1440×900 (full page) |
+| Mobile | `workspace/screenshots/visual-polish/home-mobile-390.png` | 390×844 (full page) |
 
-This recovery pass adds documentation/scaffolding only. **No product UI files were modified** during recovery.
+Compared against: `workspace/design-references/melomanos_marketplace_reference.jpeg`
+
+**Home route status:** `IN_REVIEW` — pending Daniela/Ernesto human visual approval. **Not** marked final PASS.
+
+---
+
+## Home Reference Match — minor warnings
+
+1. **Logged-out navbar** — Screenshot captured unauthenticated (“Iniciar sesión”); reference shows logged-in Daniela profile, message icon, and notification badge. Environmental difference; logged-in Home screenshot recommended for parity.
+2. **Confidence card density** — MM stamp + copy + link fit in compact `lg:h-28` band; slightly denser than reference.
+3. **Hero micro-rhythm** — Improved vs prior builds; not pixel-perfect vs reference (minor air between trust row and metrics).
+4. **New arrivals content** — Live API listings vs reference static mock cards (acceptable).
+
+No P0 blockers identified. No legacy purple/neon/dark-dashboard on Home capture.
 
 ---
 
@@ -30,7 +48,7 @@ This recovery pass adds documentation/scaffolding only. **No product UI files we
 
 | Route | Priority | Status | Notes |
 |-------|----------|--------|-------|
-| `/` | P0 | NEEDS_SCREENSHOT_VERIFICATION | Home reference anchor |
+| `/` | P0 | **IN_REVIEW** | Screenshot baseline present; Reference Match PASS WITH MINOR WARNINGS; human approval pending |
 | `/login` | P1 | NEEDS_SCREENSHOT_VERIFICATION | |
 | `/sell` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
 | `/favorites` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
@@ -48,18 +66,18 @@ Full machine-readable inventory: `VISUAL_POLISH_ROUTES.json`
 
 ## Known visual debt
 
-1. **Home reference match** — Needs desktop/mobile screenshot verification against canonical reference.
-2. **Listing detail** — Active/uncommitted visual polish changes in frontend (seller card, message form, video section, etc.); not human-approved.
-3. **Order detail / disputes** — Uncommitted polish on dispute section; WebPay UI needs screenshot verification.
-4. **Admin route** — Likely still uses legacy dark/violet internal styling (`OUT_OF_SCOPE`).
-5. **No screenshot baseline** — `workspace/screenshots/visual-polish/` folder exists but contains no route captures yet.
-6. **Implementation before adoption** — 14 frontend UI files were reported changed before adoption artifacts existed; process violation remediated by this scaffolding, not by accepting the changes.
+1. **Home human sign-off** — Reference match acceptable with minor warnings; awaiting Daniela/Ernesto approval before route PASS or frontend commit.
+2. **Logged-in Home screenshot** — Recommended second capture after demo login for navbar parity with reference.
+3. **Listing detail** — Active/uncommitted visual polish changes in frontend; not human-approved.
+4. **Order detail / disputes** — Uncommitted polish on dispute section; WebPay UI needs screenshot verification.
+5. **Admin route** — Legacy dark/violet internal styling (`OUT_OF_SCOPE`).
+6. **Other routes** — No screenshot baseline beyond Home.
 
 ---
 
 ## Uncommitted product UI changes (record only)
 
-Gate review reported **14 modified frontend files** (not staged, not judged as accepted):
+**14 modified frontend files** — still `IN_REVIEW`, **not accepted**:
 
 ```
 src/app/listings/[id]/page.tsx
@@ -78,19 +96,17 @@ src/components/home/HomeHero.tsx
 src/components/home/HomeMetricsBand.tsx
 ```
 
-**Status:** `IN_REVIEW` — requires Functional Smoke Gate + screenshot verification + human approval before any route PASS.
-
-**Recovery task action:** None — these files were intentionally not modified, reverted, staged, or committed during adoption recovery.
+Functional Smoke Gate **PASS** with these changes present (37/37 E2E, build OK, `run_melomanos.py --check` OK). Visual acceptance and commit remain blocked pending human approval.
 
 ---
 
 ## Next recommended actions
 
-1. **Re-run Visual Polish Adoption Gate** — Confirm all required files and folders exist; JSON validates.
-2. **Run Functional Smoke Gate** — `py run_melomanos.py --check` (and full audit if releasing).
-3. **Capture Home screenshots** — `home-desktop-1440.png`, `home-mobile-390.png` → `workspace/screenshots/visual-polish/`.
-4. **Home Reference Match review** — Compare captures to reference; update route status in this file and JSON.
-5. **Human approval** — Daniela/Ernesto sign-off before marking Home or gate PASS.
+1. **Human visual approval** — Daniela/Ernesto review Home screenshots vs reference; approve or flag P2 corrections.
+2. **Optional logged-in Home capture** — `home-desktop-1440.png` (authenticated) for navbar parity.
+3. **Targeted Home correction** — Only if Daniela flags P2 items (confidence density, hero micro-rhythm).
+4. **Frontend commit** — Allowed only after human visual approval of Home (+ agreed scope for 14 files).
+5. **Other routes** — Capture screenshots and run reference/system review per `VISUAL_POLISH_ROUTES.json`.
 
 ---
 
@@ -98,7 +114,10 @@ src/components/home/HomeMetricsBand.tsx
 
 | Date | Route / Gate | Approver | Result | Notes |
 |------|----------------|----------|--------|-------|
-| — | — | — | — | No approvals recorded |
+| 2026-07-01 | Adoption gate | AI Dev OS review | PASS WITH WARNINGS | Scaffolding versioned in workspace `main` |
+| 2026-07-01 | Functional Smoke Gate | AI Dev OS review | PASS | 37/37 E2E with uncommitted UI |
+| 2026-07-01 | Home Reference Match | AI Dev OS review | PASS WITH MINOR WARNINGS | Screenshots captured; human approval pending |
+| — | Home `/` final PASS | Daniela / Ernesto | PENDING | — |
 
 ---
 
