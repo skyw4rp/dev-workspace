@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "product": "Melómanos Market",
+  "reference_image": "workspace/design-references/melomanos_marketplace_reference.jpeg",
+  "status_values": [
+    "PASS",
+    "PARTIAL",
+    "FAIL",
+    "IN_REVIEW",
+    "OUT_OF_SCOPE",
+    "NEEDS_SCREENSHOT_VERIFICATION"
+  ],
+  "routes": [
+    {
+      "name": "Home",
+      "path": "/",
+      "priority": "P0",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": false,
+      "dynamic": false,
+      "dependencies": ["Navbar", "HomeHero", "HomeMetricsBand", "HomeNewArrivals", "Marketplace catalog section"],
+      "screenshots_required": ["home-desktop-1440.png", "home-mobile-390.png"],
+      "notes": "Reference anchor surface. Hero rhythm and metrics/confidence band recently tuned; uncommitted UI changes may exist. Requires screenshot compare to reference.",
+      "visual_goal": "Warm ivory editorial home matching reference: hero, trust row, compact metrics + confidence row, catalog entry."
+    },
+    {
+      "name": "Login",
+      "path": "/login",
+      "priority": "P1",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": false,
+      "dynamic": false,
+      "dependencies": ["Navbar (minimal)", "login form"],
+      "screenshots_required": ["login-desktop-1440.png", "login-mobile-390.png"],
+      "notes": "Prior polish pass reported editorial styling; no screenshot baseline yet.",
+      "visual_goal": "Ivory editorial login card; Melómanos Market branding; shared input/button classes."
+    },
+    {
+      "name": "Sell",
+      "path": "/sell",
+      "priority": "P1",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["Navbar", "sell form", "subscription usage display"],
+      "screenshots_required": ["sell-desktop-1440.png", "sell-mobile-390.png"],
+      "notes": "Protected route; prior polish reported. Verify form fields and CTAs on capture.",
+      "visual_goal": "Premium sell flow shell; editorial labels; no legacy dark panels."
+    },
+    {
+      "name": "Favorites",
+      "path": "/favorites",
+      "priority": "P1",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["Navbar", "ListingCard grid", "empty state"],
+      "screenshots_required": ["favorites-desktop-1440.png", "favorites-mobile-390.png"],
+      "notes": "Empty and populated states both need capture when possible.",
+      "visual_goal": "Editorial collection page; ListingCard consistency; readable empty state."
+    },
+    {
+      "name": "Listing detail",
+      "path": "/listings/[id]",
+      "priority": "P0",
+      "current_status": "IN_REVIEW",
+      "auth_required": false,
+      "dynamic": true,
+      "dependencies": ["VinylCover", "ListingDetailActions", "SellerCard", "MessageForm", "ListingVideoSection", "DiggingScorePanel compact"],
+      "screenshots_required": ["listing-detail-desktop-1440.png", "listing-detail-mobile-390.png"],
+      "notes": "Active uncommitted visual polish changes reported (listing detail chain). Do not mark PASS until reviewed and screenshotted.",
+      "visual_goal": "Ivory page; editorial cards; gold accents; seller reputation compact; no purple legacy shell."
+    },
+    {
+      "name": "Messages",
+      "path": "/messages",
+      "priority": "P1",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["Navbar", "conversation list", "MessageBubble", "MessageForm"],
+      "screenshots_required": ["messages-desktop-1440.png", "messages-mobile-390.png"],
+      "notes": "Prior editorial pass reported; verify thread list and compose UI on capture.",
+      "visual_goal": "Light editorial messaging UI aligned with marketplace identity."
+    },
+    {
+      "name": "Notifications",
+      "path": "/notifications",
+      "priority": "P2",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["Navbar", "NotificationItem list", "NotificationBell dropdown"],
+      "screenshots_required": ["notifications-desktop-1440.png", "notifications-mobile-390.png"],
+      "notes": "Page and bell dropdown are separate surfaces; capture both if possible.",
+      "visual_goal": "Editorial notification list; dropdown-panel styling; readable unread states."
+    },
+    {
+      "name": "Orders list",
+      "path": "/orders",
+      "priority": "P1",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["Navbar", "buying/selling tabs", "order cards"],
+      "screenshots_required": ["orders-desktop-1440.png", "orders-mobile-390.png"],
+      "notes": "Tabbed list; empty states should be captured when available.",
+      "visual_goal": "Editorial transaction list; shared badges and cards."
+    },
+    {
+      "name": "Order detail",
+      "path": "/orders/[id]",
+      "priority": "P0",
+      "current_status": "IN_REVIEW",
+      "auth_required": true,
+      "dynamic": true,
+      "dependencies": ["OrderEscrowCard", "OrderDisputeSection", "WebPay checkout UI", "review flow"],
+      "screenshots_required": ["order-detail-desktop-1440.png", "order-detail-mobile-390.png"],
+      "notes": "Dispute section had uncommitted polish changes. WebPay/checkout states need separate captures when testable.",
+      "visual_goal": "Light editorial order shell; protected payment messaging; dispute UI on ivory system."
+    },
+    {
+      "name": "Profile",
+      "path": "/profile",
+      "priority": "P1",
+      "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["DiggingScorePanel editorial", "TrustBadgesPanel editorial", "SubscriptionCard", "SellerShippingProfileSection"],
+      "screenshots_required": ["profile-desktop-1440.png", "profile-mobile-390.png"],
+      "notes": "Digging Score and trust badges use editorial mode on profile.",
+      "visual_goal": "Collector profile on ivory system; reputation panels editorial; no violet legacy."
+    },
+    {
+      "name": "Admin",
+      "path": "/admin",
+      "priority": "P3",
+      "current_status": "OUT_OF_SCOPE",
+      "auth_required": true,
+      "dynamic": false,
+      "dependencies": ["admin tables", "dispute resolution controls"],
+      "screenshots_required": [],
+      "notes": "Internal-only surface; still uses legacy dark/violet styling per prior audit. Visual polish deferred unless explicitly scoped.",
+      "visual_goal": "Optional future pass to ivory system or documented internal-only dark theme."
+    }
+  ]
+}
