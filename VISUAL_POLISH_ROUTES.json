@@ -15,12 +15,15 @@
       "name": "Home",
       "path": "/",
       "priority": "P0",
-      "current_status": "IN_REVIEW",
+      "current_status": "PASS",
       "auth_required": false,
       "dynamic": false,
       "dependencies": ["Navbar", "HomeHero", "HomeMetricsBand", "HomeNewArrivals", "Marketplace catalog section"],
-      "screenshots_required": ["home-desktop-1440.png", "home-mobile-390.png"],
-      "notes": "Screenshot baseline present (workspace/screenshots/visual-polish/home-desktop-1440.png, home-mobile-390.png). Home Reference Match Review: PASS WITH MINOR WARNINGS (2026-07-01). Pending Daniela/Ernesto human approval — not marked PASS. Minor warnings: logged-out navbar vs logged-in reference, confidence card density, hero micro-rhythm. Uncommitted UI polish on HomeHero/HomeMetricsBand.",
+      "screenshots_required": [
+        "home-hero-v2-underline-fix-desktop-1440.png",
+        "home-hero-v2-underline-fix-mobile-390.png"
+      ],
+      "notes": "Daniela approved the current Home/Hero visual state (2026-07-01) after Hero V2 copy refinement and underline removal micro-hotfix. Route PASS applies to the approved Home baseline screenshots only (home-hero-v2-underline-fix-desktop-1440.png, home-hero-v2-underline-fix-mobile-390.png). Prior captures retained: home-hero-v2-*.png, home-desktop-1440.png, home-mobile-390.png. Home Reference Match Review: PASS WITH MINOR WARNINGS (2026-07-01). Minor warnings acknowledged: logged-out navbar vs logged-in reference, confidence card density, hero micro-rhythm. Non-Home route-specific UI changes in shared components remain IN_REVIEW; no other routes marked PASS.",
       "visual_goal": "Warm ivory editorial home matching reference: hero, trust row, compact metrics + confidence row, catalog entry."
     },
     {
