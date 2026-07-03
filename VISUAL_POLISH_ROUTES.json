@@ -32,7 +32,7 @@
       "current_status": "PASS",
       "auth_required": false,
       "dynamic": false,
-      "dependencies": ["Navbar", "HomeHero", "HomeMetricsBand", "HomeNewArrivals", "HomeBenefitsStrip", "HomeCommunityCard"],
+      "dependencies": ["Navbar (two-row IA C1)", "HomeHero", "HomeMetricsBand", "HomeNewArrivals", "HomeBenefitsStrip", "HomeCommunityCard"],
       "screenshots_required": [
         "home-hero-v2-underline-fix-desktop-1440.png",
         "home-hero-v2-underline-fix-mobile-390.png",
@@ -41,7 +41,7 @@
         "runs/<timestamp>/home/logged-in-desktop-1440.png",
         "runs/<timestamp>/home/logged-in-mobile-390.png"
       ],
-      "notes": "Daniela approved the current Home/Hero visual state (2026-07-01) after Hero V2 copy refinement and underline removal micro-hotfix. Route PASS applies to the approved Home baseline screenshots only (home-hero-v2-underline-fix-desktop-1440.png, home-hero-v2-underline-fix-mobile-390.png). Prior captures retained: home-hero-v2-*.png, home-desktop-1440.png, home-mobile-390.png. Home Reference Match Review: PASS WITH MINOR WARNINGS (2026-07-01). Minor warnings acknowledged: logged-out navbar vs logged-in reference, confidence card density, hero micro-rhythm. Non-Home route-specific UI changes in shared components remain IN_REVIEW; no other routes marked PASS.",
+      "notes": "Daniela approved the current Home/Hero visual state (2026-07-01) after Hero V2 copy refinement and underline removal micro-hotfix. Route PASS applies to the approved Home baseline screenshots only (home-hero-v2-underline-fix-desktop-1440.png, home-hero-v2-underline-fix-mobile-390.png). Prior captures retained: home-hero-v2-*.png, home-desktop-1440.png, home-mobile-390.png. Home Reference Match Review: PASS WITH MINOR WARNINGS (2026-07-01). Minor warnings acknowledged: logged-out navbar vs logged-in reference, confidence card density, hero micro-rhythm. Header IA Refactor C1 (2026-07-03): two-row Navbar — utility row + product row; shared Navbar IN_REVIEW pending human approval (see runs/20260703-1938/). Non-Home route-specific UI changes in shared components remain IN_REVIEW; no other routes marked PASS.",
       "visual_goal": "Warm ivory editorial home matching reference: hero, trust row, compact metrics + confidence row, new arrivals rail, community entry (catalog moved to /explorar in Phase 1)."
     },
     {
@@ -51,12 +51,12 @@
       "current_status": "NEEDS_SCREENSHOT_VERIFICATION",
       "auth_required": false,
       "dynamic": false,
-      "dependencies": ["Navbar", "CatalogExplore", "CatalogFilterSidebar (inline form)", "ListingCard grid"],
+      "dependencies": ["Navbar (two-row IA C1)", "CatalogExplore", "CatalogFilterSidebar (inline form)", "ListingCard grid"],
       "screenshots_required": [
         "runs/<timestamp>/explorar/logged-out-desktop-1440.png",
         "runs/<timestamp>/explorar/logged-out-mobile-390.png"
       ],
-      "notes": "Phase 1 catalog route split from Home (2026-07-03). Full catalog filters and listing grid live here. Not marked PASS until Daniela/Ernesto review post-split captures. Visual-polish spec may add dedicated /explorar captures in a follow-up.",
+      "notes": "Phase 1 catalog route split from Home (2026-07-03). Full catalog filters and listing grid live here. Header IA Refactor C1 (2026-07-03): shared two-row Navbar IN_REVIEW (runs/20260703-1938/). Not marked PASS until Daniela/Ernesto review post-split captures. Visual-polish spec may add dedicated /explorar captures in a follow-up.",
       "visual_goal": "Dedicated catalog browse: filter form, listing grid, editorial ivory shell consistent with marketplace identity."
     },
     {
