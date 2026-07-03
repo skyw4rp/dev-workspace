@@ -1,6 +1,6 @@
 # Visual Polish Status — Melómanos Market
 
-**Last updated:** Home/Hero human approval recorded (Daniela)
+**Last updated:** Full-site screenshot automation tooling added
 
 ---
 
@@ -65,6 +65,24 @@ No P0 blockers identified. No legacy purple/neon/dark-dashboard on Home capture.
 | `/admin` | P3 | OUT_OF_SCOPE | Legacy internal styling |
 
 Full machine-readable inventory: `VISUAL_POLISH_ROUTES.json`
+
+---
+
+## Full-site screenshot coverage
+
+| Field | Value |
+|-------|--------|
+| **Automation status** | `TOOLING_READY` |
+| **Capture status** | `LATEST_RUN_AVAILABLE` — `runs/20260702-2038/` (28 captures, 0 skipped) |
+| **Spec** | `frontend/e2e/visual-polish-screenshots.spec.ts` |
+| **Config** | `frontend/playwright.visual-polish.config.ts` |
+| **Output** | `workspace/screenshots/visual-polish/runs/<YYYY-MM-DD-HHMM>/` |
+| **Manifest** | `manifest.json` per run |
+| **Excluded from default E2E** | Yes (`testIgnore` in `playwright.config.ts`) |
+
+Runbook: `workspace/screenshots/visual-polish/README.md`
+
+**Note:** Automated screenshots are visual evidence only. They do **not** mark any route PASS and do not replace Daniela/Ernesto human approval.
 
 ---
 

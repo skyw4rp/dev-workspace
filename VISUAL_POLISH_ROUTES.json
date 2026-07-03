@@ -2,6 +2,20 @@
   "schema_version": "1.0",
   "product": "Melómanos Market",
   "reference_image": "workspace/design-references/melomanos_marketplace_reference.jpeg",
+  "screenshot_automation": {
+    "status": "TOOLING_READY",
+    "spec": "frontend/e2e/visual-polish-screenshots.spec.ts",
+    "config": "frontend/playwright.visual-polish.config.ts",
+    "npm_script": "npm run test:e2e:visual-polish",
+    "output_root": "workspace/screenshots/visual-polish/runs",
+    "run_folder_pattern": "workspace/screenshots/visual-polish/runs/<YYYY-MM-DD-HHMM>/",
+    "manifest_file": "manifest.json",
+    "viewports": {
+      "desktop": "1440x900",
+      "mobile": "390x844"
+    },
+    "notes": "Manual Playwright capture only; excluded from default test:e2e. Screenshots are evidence, not route PASS."
+  },
   "status_values": [
     "PASS",
     "PARTIAL",
@@ -21,7 +35,11 @@
       "dependencies": ["Navbar", "HomeHero", "HomeMetricsBand", "HomeNewArrivals", "Marketplace catalog section"],
       "screenshots_required": [
         "home-hero-v2-underline-fix-desktop-1440.png",
-        "home-hero-v2-underline-fix-mobile-390.png"
+        "home-hero-v2-underline-fix-mobile-390.png",
+        "runs/<timestamp>/home/logged-out-desktop-1440.png",
+        "runs/<timestamp>/home/logged-out-mobile-390.png",
+        "runs/<timestamp>/home/logged-in-desktop-1440.png",
+        "runs/<timestamp>/home/logged-in-mobile-390.png"
       ],
       "notes": "Daniela approved the current Home/Hero visual state (2026-07-01) after Hero V2 copy refinement and underline removal micro-hotfix. Route PASS applies to the approved Home baseline screenshots only (home-hero-v2-underline-fix-desktop-1440.png, home-hero-v2-underline-fix-mobile-390.png). Prior captures retained: home-hero-v2-*.png, home-desktop-1440.png, home-mobile-390.png. Home Reference Match Review: PASS WITH MINOR WARNINGS (2026-07-01). Minor warnings acknowledged: logged-out navbar vs logged-in reference, confidence card density, hero micro-rhythm. Non-Home route-specific UI changes in shared components remain IN_REVIEW; no other routes marked PASS.",
       "visual_goal": "Warm ivory editorial home matching reference: hero, trust row, compact metrics + confidence row, catalog entry."
@@ -34,7 +52,12 @@
       "auth_required": false,
       "dynamic": false,
       "dependencies": ["Navbar (minimal)", "login form"],
-      "screenshots_required": ["login-desktop-1440.png", "login-mobile-390.png"],
+      "screenshots_required": [
+        "login-desktop-1440.png",
+        "login-mobile-390.png",
+        "runs/<timestamp>/login/login-desktop-1440.png",
+        "runs/<timestamp>/login/login-mobile-390.png"
+      ],
       "notes": "Prior polish pass reported editorial styling; no screenshot baseline yet.",
       "visual_goal": "Ivory editorial login card; Melómanos Market branding; shared input/button classes."
     },
@@ -70,7 +93,16 @@
       "auth_required": false,
       "dynamic": true,
       "dependencies": ["VinylCover", "ListingDetailActions", "SellerCard", "MessageForm", "ListingVideoSection", "DiggingScorePanel compact"],
-      "screenshots_required": ["listing-detail-desktop-1440.png", "listing-detail-mobile-390.png"],
+      "screenshots_required": [
+        "listing-detail-desktop-1440.png",
+        "listing-detail-mobile-390.png",
+        "runs/<timestamp>/listing-detail/logged-out-desktop-1440.png",
+        "runs/<timestamp>/listing-detail/logged-out-mobile-390.png",
+        "runs/<timestamp>/listing-detail/logged-in-desktop-1440.png",
+        "runs/<timestamp>/listing-detail/logged-in-mobile-390.png",
+        "runs/<timestamp>/listing-detail/message-form-expanded-desktop-1440.png",
+        "runs/<timestamp>/listing-detail/message-form-expanded-mobile-390.png"
+      ],
       "notes": "Active uncommitted visual polish changes reported (listing detail chain). Do not mark PASS until reviewed and screenshotted.",
       "visual_goal": "Ivory page; editorial cards; gold accents; seller reputation compact; no purple legacy shell."
     },
