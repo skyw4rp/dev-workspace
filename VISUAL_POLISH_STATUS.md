@@ -33,7 +33,7 @@
 
 Compared against: `workspace/design-references/melomanos_marketplace_reference.jpeg`
 
-**Home route status:** `PASS` — Daniela approved the current Home/Hero visual state after Hero V2 copy refinement and underline fix (2026-07-01). This route PASS applies to the approved Home baseline screenshots only; non-Home route-specific components in shared or uncommitted files remain `IN_REVIEW`.
+**Home route status:** `PASS` — Daniela approved the current Home/Hero visual state after Hero V2 copy refinement and underline fix (2026-07-01). This route PASS applies to the **approved Home baseline screenshots only** (`home-hero-v2-underline-fix-*.png`). **Post–Phase 1 split (2026-07-03):** catalog/filters moved to `/explorar`; new Home captures in `runs/20260703-1759/` require Daniela/Ernesto review before updating PASS baseline. Do **not** extend Home PASS to post-split layout without human approval.
 
 ---
 
@@ -52,7 +52,8 @@ No P0 blockers identified. No legacy purple/neon/dark-dashboard on Home capture.
 
 | Route | Priority | Status | Notes |
 |-------|----------|--------|-------|
-| `/` | P0 | **PASS** | Daniela approved Home/Hero (2026-07-01); PASS tied to approved baseline screenshots; non-Home components IN_REVIEW |
+| `/` | P0 | **PASS** | Daniela approved Home/Hero (2026-07-01); PASS tied to approved baseline screenshots only; **post-split Home captures need review** (catalog removed) |
+| `/explorar` | P0 | NEEDS_SCREENSHOT_VERIFICATION | Phase 1 catalog route; filters + ListingCard grid; human review pending |
 | `/login` | P1 | NEEDS_SCREENSHOT_VERIFICATION | |
 | `/sell` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
 | `/favorites` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
@@ -73,7 +74,7 @@ Full machine-readable inventory: `VISUAL_POLISH_ROUTES.json`
 | Field | Value |
 |-------|--------|
 | **Automation status** | `TOOLING_READY` |
-| **Capture status** | `LATEST_RUN_AVAILABLE` — `runs/20260702-2038/` (28 captures, 0 skipped) |
+| **Capture status** | `LATEST_RUN_AVAILABLE` — `runs/20260703-1759/` (frontend @ 148986a; 28 captures, 0 skipped) |
 | **Spec** | `frontend/e2e/visual-polish-screenshots.spec.ts` |
 | **Config** | `frontend/playwright.visual-polish.config.ts` |
 | **Output** | `workspace/screenshots/visual-polish/runs/<YYYY-MM-DD-HHMM>/` |
