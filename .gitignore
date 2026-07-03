@@ -4,3 +4,6 @@ __pycache__/
 .env.*
 .DS_Store
 node_modules/
+
+# Generated visual polish screenshot runs (evidence only; not for Git)
+screenshots/visual-polish/runs/
