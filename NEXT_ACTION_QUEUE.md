@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-09 (OS stack/tool intelligence + UI mission candidates)  
+**Last updated:** 2026-07-09 (M-011 governance correction — explorar capture DONE; Listing Card → M-016)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -39,11 +39,12 @@
 | M-008 | Messaging flow audit | A | P2 | READY |
 | M-009 | Favorites flow audit | A | P2 | READY |
 | M-010 | Bounties product spec | G | P3 | READY |
-| M-011 | Listing card visual improvement | C | P1 | READY |
+| M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | READY |
 | M-013 | Product detail page layout | C | P1 | BLOCKED |
 | M-014 | Empty states visual pass | C | P2 | READY |
 | M-015 | Mobile navigation polish | C | P2 | READY |
+| M-016 | Listing card visual improvement | C | P1 | READY |
 
 ---
 
@@ -259,25 +260,24 @@
 
 ---
 
-### M-011 — Listing card visual improvement
+### M-011 — Add /explorar visual-polish screenshot capture
 
 | Field | Value |
 |-------|--------|
 | **ID** | M-011 |
-| **Title** | Listing card visual improvement |
-| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Title** | Add /explorar visual-polish screenshot capture |
+| **Mission type** | TYPE D — Test / Tooling / Verification |
 | **Priority** | P1 |
-| **Status** | READY |
-| **Scope** | Visual polish of `ListingCard` (and shared cover/badge chrome only) within ivory/black/gold system; preserve test ids and buy/favorite behavior |
-| **Forbidden changes** | No backend; no pricing/reservation logic; no HomeHero; no route PASS; no commits without token |
-| **Tooling** | **Cursor** primary. Optional **v0** sketch only if brief allows; Cursor integrates; repo is source of truth |
-| **Acceptance criteria** | Cards match editorial system on `/explorar` (and any shared grid); build + E2E pass; screenshot run path; IN_REVIEW pending human |
-| **Verification required** | `npm run build`; `npm run test:e2e`; visual-polish capture if brief requires |
-| **Dependencies** | Prefer M-001 DONE (met). Optional skim of latest listing-grid screenshots |
-| **Stop conditions** | Business-rule or API change needed → STOP (TYPE F); scope expands to full Explore IA → STOP |
-| **Brief** | `missions/M-011_LISTING_CARD_VISUAL_IMPROVEMENT.md` *(create at execution start if missing)* |
+| **Status** | DONE (2026-07-09) — report [`reports/missions/M-011_EXECUTION_REPORT.md`](reports/missions/M-011_EXECUTION_REPORT.md) |
+| **Scope** | Visual-polish screenshot tooling only — add `/explorar` desktop + mobile logged-out captures to `frontend/e2e/visual-polish-screenshots.spec.ts`; preserve existing captures |
+| **Forbidden changes** | No product UI; no backend; no business logic; no route PASS; no staging screenshot runs; no commits without token |
+| **Acceptance criteria** | `/explorar` desktop + mobile visual-polish evidence generated (`runs/<ts>/explorar/`); build + E2E + `test:e2e:visual-polish` pass |
+| **Verification required** | `npm run build`; `npm run test:e2e`; `npm run test:e2e:visual-polish`; `py run_melomanos.py --check` |
+| **Dependencies** | M-007 recommended first (met); executed per approved brief after M-007 TYPE D recommendation |
+| **Stop conditions** | Explore layout polish → STOP (TYPE C); marking PASS → STOP |
+| **Brief** | M-007 recommendation + `APPROVE_MISSION_EXECUTION` prompt (2026-07-09) |
 | **Report path** | `reports/missions/M-011_EXECUTION_REPORT.md` |
-| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-011 — TYPE C ListingCard only |
+| **Recommended executor prompt** | Completed — governance note: queue originally listed Listing Card as M-011; see M-016 |
 
 ---
 
@@ -369,19 +369,41 @@
 
 ---
 
+### M-016 — Listing card visual improvement
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-016 |
+| **Title** | Listing card visual improvement |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P1 |
+| **Status** | READY |
+| **Scope** | Visual polish of `ListingCard` (and shared cover/badge chrome only) within ivory/black/gold system; preserve test ids and buy/favorite behavior |
+| **Forbidden changes** | No backend; no pricing/reservation logic; no HomeHero; no route PASS; no commits without token |
+| **Tooling** | **Cursor** primary. Optional **v0** sketch only if brief allows; Cursor integrates; repo is source of truth |
+| **Acceptance criteria** | Cards match editorial system on `/explorar` (and any shared grid); build + E2E pass; screenshot run path; IN_REVIEW pending human |
+| **Verification required** | `npm run build`; `npm run test:e2e`; visual-polish capture if brief requires |
+| **Dependencies** | M-011 DONE (explorar capture evidence). Prefer M-001 DONE (met) |
+| **Stop conditions** | Business-rule or API change needed → STOP (TYPE F); scope expands to full Explore IA → STOP |
+| **Brief** | `missions/M-016_LISTING_CARD_VISUAL_IMPROVEMENT.md` *(create at execution start if missing)* |
+| **Report path** | `reports/missions/M-016_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-016 — TYPE C ListingCard only |
+| **Notes** | Former queue entry M-011 (Listing Card); renumbered after M-011 executed as explorar capture TYPE D |
+
+---
+
 ## Suggested execution order
 
-1. **M-002** (next recommended) — Profile UX audit (TYPE A); unblocks M-003  
-2. **M-007** or **M-004** — Home/Explore or route matrix (closes `/explorar` evidence gap awareness)  
-3. **M-011** — Listing card visual improvement (TYPE C; Cursor; optional v0 sketch)  
-4. **M-005** → **M-013** — Listing detail audit then layout polish  
-5. **M-012** — Explore filters chrome (after or with M-007 if IA risk)  
-6. **M-003** — Profile polish after M-002  
-7. **M-014 / M-015** — Empty states / mobile nav  
-8. **M-006 / M-008 / M-009** — verification & flow audits  
-9. **M-010** — product design when capacity allows  
+1. **M-005** → **M-013** — Listing detail audit then layout polish  
+2. **M-016** — Listing card visual improvement (TYPE C; explorar evidence from M-011)  
+3. **M-012** — Explore filters chrome  
+4. **M-014 / M-015** — Empty states / mobile nav  
+5. **M-006 / M-008 / M-009** — verification & flow audits  
+6. **M-010** — product design when capacity allows  
 
-**First recommended mission (do not auto-execute):** **M-002**.
+**Completed (recent):** M-011 explorar visual-polish capture (TYPE D). M-002/M-003/M-004/M-007 reports committed — queue statuses may lag; refresh in TYPE B if needed.
+
+**First recommended mission (do not auto-execute):** **M-005** (Listing Detail polish audit).
 
 ---
 
@@ -390,4 +412,5 @@
 - Briefs for M-002+ may be created at mission start from this queue + [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md); **M-001 brief + report exist**.
 - Do not weaken Visual Polish human approval gates via this queue.
 - Header search-width microfix is **committed** (`frontend` `d09225b`); do not reopen as dirty work.
-- UI candidates M-011–M-015 follow [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) tool rules.
+- UI candidates M-012, M-013, M-014, M-015, M-016 follow [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) tool rules.
+- **M-011 governance (2026-07-09):** M-011 executed as explorar visual-polish capture (TYPE D, DONE). Former Listing Card mission renumbered to **M-016**.
