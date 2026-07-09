@@ -1,12 +1,13 @@
 # AI_CONTEXT — Melómanos Marketplace
 
 **Purpose:** Workspace onboarding index for humans and AI agents.  
-**Last synced:** 2026-07-08 (Bounded Autonomous Mission Execution adoption)  
+**Last synced:** 2026-07-09 (Stack constraints + tool intelligence + UI mission candidates)  
 **Root layout:** `C:\melomanos\{backend, frontend, workspace}`
 
 > **This file is an index, not a specification.**  
 > On conflict, **`backend/BUSINESS_RULES.md`**, **`backend/ARCHITECTURE.md`**, and **`backend/MVP_ROADMAP.md`** override any summary here.  
-> Operational Cursor missions use **`workspace/NEXT_ACTION_QUEUE.md`** — they do not override roadmap or visual human PASS gates.
+> Operational Cursor missions use **`workspace/NEXT_ACTION_QUEUE.md`** — they do not override roadmap or visual human PASS gates.  
+> Stack, isolation, and tool rules: **[`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)**.
 
 ---
 
@@ -25,6 +26,7 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 | Workspace doc | Role |
 |---------------|------|
 | [`AI_CONTEXT.md`](AI_CONTEXT.md) | This file — start here |
+| [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) | Project isolation, registered stack, tool intelligence (Cursor / v0) |
 | [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) | Bounded mission execution (one mission → one report → one gate) |
 | [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) | Ready missions (TYPE A–H) for Cursor sessions |
 | [`TASKS.md`](TASKS.md) | Task board index → roadmap |
@@ -54,15 +56,30 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 ## Agent Onboarding (minimal)
 
 1. Read this file.
-2. Read [`backend/AGENT_RULES.md`](../backend/AGENT_RULES.md).
-3. Confirm active task in [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
-4. Read [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md).
-5. For Cursor execution sessions: read [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) and pick one mission from [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md).
-6. Read the relevant section of [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) before implementing (TYPE F/H only with explicit approval).
+2. Read [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) (stack + Cursor/v0 rules).
+3. Read [`backend/AGENT_RULES.md`](../backend/AGENT_RULES.md).
+4. Confirm active task in [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
+5. Read [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md).
+6. For Cursor execution sessions: read [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) and pick one mission from [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md).
+7. Read the relevant section of [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) before implementing (TYPE F/H only with explicit approval).
 
 **Path config:** [`workspace/README_PROJECT_LAYOUT.md`](README_PROJECT_LAYOUT.md) — set `MELOMANOS_*_DIR` when not using legacy defaults.
 
 **Quality Gate commands:** [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md).
+
+**Tool default:** Implement in **Cursor**. Do not use **v0** for backend, auth, DB, reservations, security, tests, or production integration.
+
+---
+
+## Registered stack (summary)
+
+| Side | Stack |
+|------|--------|
+| Frontend | Next.js + TypeScript + React + Tailwind |
+| Backend | FastAPI + SQLAlchemy + Alembic + PostgreSQL |
+| Domains | Auth, listings, reservations/orders, messaging, payments, favorites, notifications, profile, admin |
+
+Full constraints: [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md).
 
 ---
 
@@ -92,6 +109,7 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 | Document | Path |
 |----------|------|
 | Quality gate | [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md) |
+| Stack constraints | [`workspace/STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) |
 | Mission execution guide | [`workspace/MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) |
 | Next action queue | [`workspace/NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) |
 | Mission briefs | [`workspace/missions/`](missions/) |

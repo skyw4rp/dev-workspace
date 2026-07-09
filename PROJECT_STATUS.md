@@ -39,9 +39,19 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 - **Guide:** `MISSION_EXECUTION_GUIDE.md`
 - **Queue:** `NEXT_ACTION_QUEUE.md`
-- **First mission:** M-001 (TYPE A) — Visual Polish / Feedback Loop audit — READY
+- **M-001:** DONE — `reports/missions/M-001_EXECUTION_REPORT.md`
 - **Pattern:** One mission → one execution report → one gate review
 - Does **not** replace Visual Polish human PASS or Quality Gate DoD
+
+## AI Dev OS Stack + Tool Intelligence (2026-07-09)
+
+- **Stack constraints:** `STACK_CONSTRAINTS.md`
+- **Frontend:** Next.js + TypeScript + Tailwind
+- **Backend:** FastAPI + SQLAlchemy + Alembic + PostgreSQL
+- **Primary implementation tool:** Cursor
+- **v0:** Optional UI prototype only; never backend/auth/DB/reservations/security/tests/production
+- **UI mission candidates:** M-011–M-015 (listing card, explore filters, product detail, empty states, mobile nav)
+- **Next recommended mission (not auto-executed):** **M-002** — Profile UX audit (TYPE A)
 
 ## Current Phase & Focus
 
@@ -104,6 +114,13 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Next Recommended Work
 
+### Mission layer (operational)
+
+1. **M-002** — Profile UX audit (TYPE A) — first recommended; do not auto-start without `APPROVE_MISSION_EXECUTION`
+2. Then M-003 (Profile polish) or M-011 (Listing card) / M-007 as prioritized in `NEXT_ACTION_QUEUE.md`
+
+### Product roadmap (authoritative backlog)
+
 1. Close Notifications milestone (`finish_task.py`) → Production deployment
 2. Production deployment
 3. Closed beta
@@ -114,6 +131,9 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 | Document | Location | Role |
 |----------|----------|------|
 | AI_CONTEXT.md | workspace | Onboarding hub |
+| STACK_CONSTRAINTS.md | workspace | Isolation, stack, Cursor/v0 rules |
+| MISSION_EXECUTION_GUIDE.md | workspace | Mission pattern + approval tokens |
+| NEXT_ACTION_QUEUE.md | workspace | Operational missions |
 | TASKS.md | workspace | Task board |
 | SPEC.md | workspace | Consolidated MVP spec |
 | DESIGN.md | workspace | Flows and technical design |

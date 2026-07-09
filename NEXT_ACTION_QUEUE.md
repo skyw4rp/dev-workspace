@@ -3,11 +3,13 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-08
+**Last updated:** 2026-07-09 (OS stack/tool intelligence + UI mission candidates)  
+**Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
 > Product backlog authority remains [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).  
-> Visual PASS authority remains Visual Polish / Visual Feedback Loop (human approval).
+> Visual PASS authority remains Visual Polish / Visual Feedback Loop (human approval).  
+> **Cursor** is the primary implementation tool. **v0** is optional UI prototype only — see stack constraints.
 
 ---
 
@@ -27,7 +29,7 @@
 
 | ID | Title | Type | Priority | Status |
 |----|-------|------|----------|--------|
-| M-001 | Audit Visual Polish / Visual Feedback Loop status | A | P0 | READY |
+| M-001 | Audit Visual Polish / Visual Feedback Loop status | A | P0 | DONE |
 | M-002 | Profile UX audit | A | P1 | READY |
 | M-003 | Profile Visual Polish Pass | C | P1 | BLOCKED |
 | M-004 | Route Readiness Matrix | A | P1 | READY |
@@ -37,6 +39,11 @@
 | M-008 | Messaging flow audit | A | P2 | READY |
 | M-009 | Favorites flow audit | A | P2 | READY |
 | M-010 | Bounties product spec | G | P3 | READY |
+| M-011 | Listing card visual improvement | C | P1 | READY |
+| M-012 | Explore filters/sidebar improvement | C | P1 | READY |
+| M-013 | Product detail page layout | C | P1 | BLOCKED |
+| M-014 | Empty states visual pass | C | P2 | READY |
+| M-015 | Mobile navigation polish | C | P2 | READY |
 
 ---
 
@@ -50,7 +57,7 @@
 | **Title** | Audit Visual Polish / Visual Feedback Loop status |
 | **Mission type** | TYPE A — Review Only |
 | **Priority** | P0 |
-| **Status** | READY |
+| **Status** | DONE (2026-07-08) — report [`reports/missions/M-001_EXECUTION_REPORT.md`](reports/missions/M-001_EXECUTION_REPORT.md) |
 | **Scope** | Read Visual Polish + Visual Feedback Loop control docs, route JSON, status, screenshot strategy, visual-audit reports; produce execution report recommending safest next TYPE C mission |
 | **Forbidden changes** | No frontend/backend code; no business logic; no screenshot edits; no route PASS changes; no commits |
 | **Acceptance criteria** | Execution report exists; current gate/route snapshot summarized; safest next TYPE C mission identified with rationale; risks/warnings listed |
@@ -252,19 +259,135 @@
 
 ---
 
+### M-011 — Listing card visual improvement
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-011 |
+| **Title** | Listing card visual improvement |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P1 |
+| **Status** | READY |
+| **Scope** | Visual polish of `ListingCard` (and shared cover/badge chrome only) within ivory/black/gold system; preserve test ids and buy/favorite behavior |
+| **Forbidden changes** | No backend; no pricing/reservation logic; no HomeHero; no route PASS; no commits without token |
+| **Tooling** | **Cursor** primary. Optional **v0** sketch only if brief allows; Cursor integrates; repo is source of truth |
+| **Acceptance criteria** | Cards match editorial system on `/explorar` (and any shared grid); build + E2E pass; screenshot run path; IN_REVIEW pending human |
+| **Verification required** | `npm run build`; `npm run test:e2e`; visual-polish capture if brief requires |
+| **Dependencies** | Prefer M-001 DONE (met). Optional skim of latest listing-grid screenshots |
+| **Stop conditions** | Business-rule or API change needed → STOP (TYPE F); scope expands to full Explore IA → STOP |
+| **Brief** | `missions/M-011_LISTING_CARD_VISUAL_IMPROVEMENT.md` *(create at execution start if missing)* |
+| **Report path** | `reports/missions/M-011_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-011 — TYPE C ListingCard only |
+
+---
+
+### M-012 — Explore filters/sidebar improvement
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-012 |
+| **Title** | Explore filters/sidebar improvement |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P1 |
+| **Status** | READY |
+| **Scope** | Visual/layout polish of `/explorar` filter form / sidebar chrome only; keep filter query behavior intact |
+| **Forbidden changes** | No new catalog presets (Header C2); no backend filter semantics; no Home restructure; no PASS; no commits without token |
+| **Tooling** | **Cursor** primary. Optional **v0** for sidebar layout sketch only; Cursor integrates |
+| **Acceptance criteria** | Filters readable on desktop/mobile; build + E2E; evidence run; IN_REVIEW |
+| **Verification required** | `npm run build`; E2E covering explorar/filters; visual-polish if required |
+| **Dependencies** | Prefer M-007 (Home vs Explore validation) before large IA claims; not hard-blocked for chrome-only polish |
+| **Stop conditions** | Changing sort/query contracts or adding Sellos/Artistas modes → STOP (C2 / TYPE G) |
+| **Brief** | `missions/M-012_EXPLORE_FILTERS_SIDEBAR.md` *(create at execution start if missing)* |
+| **Report path** | `reports/missions/M-012_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-012 |
+
+---
+
+### M-013 — Product detail page layout
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-013 |
+| **Title** | Product detail page layout |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P1 |
+| **Status** | BLOCKED |
+| **Scope** | Layout/visual polish for `/listings/[id]` within design system after audit defines file scope |
+| **Forbidden changes** | No buy/message/order business logic; no backend; no PASS; no commits without token |
+| **Tooling** | **Cursor** primary. Optional **v0** layout sketch only after M-005; Cursor integrates |
+| **Acceptance criteria** | Detail layout editorial; build + E2E; evidence; IN_REVIEW |
+| **Verification required** | `npm run build`; listing-related E2E; visual-polish |
+| **Dependencies** | **Blocked on M-005** (Listing Detail polish audit) |
+| **Stop conditions** | Touching escrow/message rules → STOP (TYPE F) |
+| **Brief** | `missions/M-013_PRODUCT_DETAIL_LAYOUT.md` *(create after M-005)* |
+| **Report path** | `reports/missions/M-013_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | Only after M-005 DONE + `APPROVE_MISSION_EXECUTION` for M-013 |
+
+---
+
+### M-014 — Empty states visual pass
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-014 |
+| **Title** | Empty states visual pass |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P2 |
+| **Status** | READY |
+| **Scope** | Editorial empty states for favorites, messages, orders, and/or explorar-as-scoped in brief — copy + layout only |
+| **Forbidden changes** | No API empty-contract changes; no backend; no PASS; no commits without token |
+| **Tooling** | **Cursor** primary. Optional **v0** for empty-state composition; Cursor integrates |
+| **Acceptance criteria** | Empty states on-system; build + relevant E2E; evidence if capturable |
+| **Verification required** | `npm run build`; targeted E2E |
+| **Dependencies** | None |
+| **Stop conditions** | Inventing new product flows → STOP (TYPE G) |
+| **Brief** | `missions/M-014_EMPTY_STATES_VISUAL_PASS.md` *(create at execution start if missing)* |
+| **Report path** | `reports/missions/M-014_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-014 |
+
+---
+
+### M-015 — Mobile navigation polish
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-015 |
+| **Title** | Mobile navigation polish |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P2 |
+| **Status** | READY |
+| **Scope** | Mobile utility/product header behavior within Header IA C1 (spacing, search row, product links) — no IA redesign |
+| **Forbidden changes** | No C2 presets; no hamburger redesign unless brief explicitly allows; no backend; no PASS; no commits without token |
+| **Tooling** | **Cursor** only (Navbar is production-integrated; avoid v0 full-header rewrite) |
+| **Acceptance criteria** | Mobile header usable; E2E header tests pass; evidence mobile captures; IN_REVIEW |
+| **Verification required** | `npm run build`; `npm run test:e2e`; visual-polish mobile |
+| **Dependencies** | Header C1 + search-width already committed |
+| **Stop conditions** | Reopening full Header IA / Home restructure → STOP |
+| **Brief** | `missions/M-015_MOBILE_NAVIGATION_POLISH.md` *(create at execution start if missing)* |
+| **Report path** | `reports/missions/M-015_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-015 |
+
+---
+
 ## Suggested execution order
 
-1. **M-001** (P0) — establish visual system truth  
-2. **M-004** or **M-007** — route / Home–Explore clarity  
-3. **M-002** → **M-003** — Profile audit then polish  
-4. **M-005** — Listing detail audit  
-5. **M-006 / M-008 / M-009** — verification & flow audits  
-6. **M-010** — product design when capacity allows  
+1. **M-002** (next recommended) — Profile UX audit (TYPE A); unblocks M-003  
+2. **M-007** or **M-004** — Home/Explore or route matrix (closes `/explorar` evidence gap awareness)  
+3. **M-011** — Listing card visual improvement (TYPE C; Cursor; optional v0 sketch)  
+4. **M-005** → **M-013** — Listing detail audit then layout polish  
+5. **M-012** — Explore filters chrome (after or with M-007 if IA risk)  
+6. **M-003** — Profile polish after M-002  
+7. **M-014 / M-015** — Empty states / mobile nav  
+8. **M-006 / M-008 / M-009** — verification & flow audits  
+9. **M-010** — product design when capacity allows  
+
+**First recommended mission (do not auto-execute):** **M-002**.
 
 ---
 
 ## Notes
 
-- Briefs for M-002+ may be created at mission start from this queue + [`MISSION_BRIEF` expectations in the guide](MISSION_EXECUTION_GUIDE.md); **M-001 brief already exists**.
+- Briefs for M-002+ may be created at mission start from this queue + [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md); **M-001 brief + report exist**.
 - Do not weaken Visual Polish human approval gates via this queue.
-- Uncommitted header search width work (if any) is **out of band** — handle via its own TYPE C mission or explicit commit approval, not by mixing into M-001.
+- Header search-width microfix is **committed** (`frontend` `d09225b`); do not reopen as dirty work.
+- UI candidates M-011–M-015 follow [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) tool rules.

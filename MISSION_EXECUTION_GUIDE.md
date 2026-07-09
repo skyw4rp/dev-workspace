@@ -26,6 +26,7 @@ Humans approve with short tokens instead of rewriting full prompts each time.
 | Artifact | Path |
 |----------|------|
 | Next Action Queue | `workspace/NEXT_ACTION_QUEUE.md` |
+| Stack constraints / tools | `workspace/STACK_CONSTRAINTS.md` |
 | Mission briefs | `workspace/missions/M-XXX_*.md` |
 | Mission execution reports | `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md` |
 | This guide | `workspace/MISSION_EXECUTION_GUIDE.md` |
@@ -59,6 +60,15 @@ Use the **most conservative** type when uncertain.
 - **Product / UX redesign / specs** → **TYPE G** until implementation is explicitly approved.
 - **Backend / business rules** → **TYPE F** or **H**; never self-start from a TYPE A/C queue item.
 - If unsure between implementation and review → choose **TYPE A**.
+
+### Tool intelligence (summary)
+
+Full rules: [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md).
+
+- **Cursor** = primary tool for all real repo changes.
+- **v0** = optional UI prototype for compatible TYPE C visual missions only.
+- **Never** use v0 for backend, auth, database, reservations, security, tests, or production integration.
+- v0 may propose UI; **Cursor integrates**; Melómanos git repos remain source of truth.
 
 ---
 
