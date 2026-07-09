@@ -275,6 +275,8 @@ Same as `VISUAL_POLISH_CONTROL.md` — do not reintroduce:
 | `VISUAL_POLISH_STATUS.md` | Living gate status, debt, approval log |
 | `screenshots/visual-polish/README.md` | Capture runbook |
 | `reports/visual-audit/VISUAL_FEEDBACK_LOOP_ADOPTION_REPORT.md` | Adoption record for this capability |
+| `MISSION_EXECUTION_GUIDE.md` | Bounded missions — Feedback Loop audits are typically TYPE A |
+| `NEXT_ACTION_QUEUE.md` | Operational mission queue (starts with M-001) |
 
 ---
 

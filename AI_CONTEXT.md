@@ -1,11 +1,12 @@
 # AI_CONTEXT — Melómanos Marketplace
 
 **Purpose:** Workspace onboarding index for humans and AI agents.  
-**Last synced:** 2026-06-17 (Foundation Sync, constraint pass)  
+**Last synced:** 2026-07-08 (Bounded Autonomous Mission Execution adoption)  
 **Root layout:** `C:\melomanos\{backend, frontend, workspace}`
 
 > **This file is an index, not a specification.**  
-> On conflict, **`backend/BUSINESS_RULES.md`**, **`backend/ARCHITECTURE.md`**, and **`backend/MVP_ROADMAP.md`** override any summary here.
+> On conflict, **`backend/BUSINESS_RULES.md`**, **`backend/ARCHITECTURE.md`**, and **`backend/MVP_ROADMAP.md`** override any summary here.  
+> Operational Cursor missions use **`workspace/NEXT_ACTION_QUEUE.md`** — they do not override roadmap or visual human PASS gates.
 
 ---
 
@@ -24,11 +25,15 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 | Workspace doc | Role |
 |---------------|------|
 | [`AI_CONTEXT.md`](AI_CONTEXT.md) | This file — start here |
+| [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) | Bounded mission execution (one mission → one report → one gate) |
+| [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) | Ready missions (TYPE A–H) for Cursor sessions |
 | [`TASKS.md`](TASKS.md) | Task board index → roadmap |
 | [`SPEC.md`](SPEC.md) | MVP coverage index → authoritative specs |
 | [`DESIGN.md`](DESIGN.md) | Flow and layout index → architecture |
 | [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Release index → roadmap / status |
 | [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Living snapshot |
+| [`VISUAL_POLISH_CONTROL.md`](VISUAL_POLISH_CONTROL.md) | Visual polish gate (human PASS) |
+| [`VISUAL_FEEDBACK_LOOP_CONTROL.md`](VISUAL_FEEDBACK_LOOP_CONTROL.md) | Screenshot evidence feedback loop |
 | [`AI_DEV_OS_PROJECT_SCAN.md`](AI_DEV_OS_PROJECT_SCAN.md) | Audit scan (2026-06-17) |
 
 ---
@@ -52,7 +57,8 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 2. Read [`backend/AGENT_RULES.md`](../backend/AGENT_RULES.md).
 3. Confirm active task in [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
 4. Read [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md).
-5. Read the relevant section of [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) before implementing.
+5. For Cursor execution sessions: read [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) and pick one mission from [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md).
+6. Read the relevant section of [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) before implementing (TYPE F/H only with explicit approval).
 
 **Path config:** [`workspace/README_PROJECT_LAYOUT.md`](README_PROJECT_LAYOUT.md) — set `MELOMANOS_*_DIR` when not using legacy defaults.
 
@@ -86,7 +92,13 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 | Document | Path |
 |----------|------|
 | Quality gate | [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md) |
+| Mission execution guide | [`workspace/MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) |
+| Next action queue | [`workspace/NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) |
+| Mission briefs | [`workspace/missions/`](missions/) |
+| Mission reports | [`workspace/reports/missions/`](reports/missions/) |
 | Project status | [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md) |
+| Visual polish control | [`workspace/VISUAL_POLISH_CONTROL.md`](VISUAL_POLISH_CONTROL.md) |
+| Visual feedback loop | [`workspace/VISUAL_FEEDBACK_LOOP_CONTROL.md`](VISUAL_FEEDBACK_LOOP_CONTROL.md) |
 | Project scan | [`workspace/AI_DEV_OS_PROJECT_SCAN.md`](AI_DEV_OS_PROJECT_SCAN.md) |
 | Foundation sync report | [`workspace/AI_DEV_OS_FOUNDATION_SYNC_REPORT.md`](AI_DEV_OS_FOUNDATION_SYNC_REPORT.md) |
 

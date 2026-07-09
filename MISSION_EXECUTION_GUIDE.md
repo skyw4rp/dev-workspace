@@ -1,0 +1,253 @@
+# Mission Execution Guide — Melómanos Market
+
+**System:** AI Dev OS Bounded Autonomous Mission Execution Layer (Melómanos adoption)  
+**Product:** Melómanos Market  
+**Pattern:** **One mission → one execution report → one gate review**
+
+This guide adapts the base AI Dev OS bounded autonomy layer to Melómanos without replacing Visual Polish, Visual Feedback Loop, Quality Gate, or roadmap authority.
+
+---
+
+## Purpose
+
+Reduce human mediation (copying long prompts between ChatGPT and Cursor) by:
+
+1. Queuing **bounded missions** with explicit type, scope, and stop conditions.
+2. Letting an executor run **one mission** to completion (or stop).
+3. Writing **one execution report**.
+4. Running a **separate gate review** before any commit.
+
+Humans approve with short tokens instead of rewriting full prompts each time.
+
+---
+
+## Artifact layout
+
+| Artifact | Path |
+|----------|------|
+| Next Action Queue | `workspace/NEXT_ACTION_QUEUE.md` |
+| Mission briefs | `workspace/missions/M-XXX_*.md` |
+| Mission execution reports | `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md` |
+| This guide | `workspace/MISSION_EXECUTION_GUIDE.md` |
+| Visual Polish control | `workspace/VISUAL_POLISH_CONTROL.md` |
+| Visual Feedback Loop | `workspace/VISUAL_FEEDBACK_LOOP_CONTROL.md` |
+| Quality Gate | `workspace/QUALITY_GATE.md` |
+
+Do **not** put mission briefs under `frontend/` or `backend/`.
+
+---
+
+## Mission type taxonomy (TYPE A–H)
+
+Use the **most conservative** type when uncertain.
+
+| Type | Name | Typical Melómanos use | Default commit policy |
+|------|------|----------------------|------------------------|
+| **A** | Review Only | Audits, status reads, route readiness, UX diagnosis | No code changes; docs/reports only if in scope |
+| **B** | Docs / Governance | Queue updates, control docs, reports | Workspace docs only |
+| **C** | Frontend Low-Risk | Visual polish, layout microfixes, shared CSS, E2E selector updates for IA | Frontend only; no business logic |
+| **D** | Frontend Verification | E2E / visual-polish capture / build validation | Tests or capture only; prefer no product edits |
+| **E** | Backend Low-Risk | Non-rule helpers, logging, test fixtures (rare) | Backend only; **no** BUSINESS_RULES changes |
+| **F** | Backend / Business Logic | Auth, escrow, messaging, payment, listings, orders, WebPay | Explicit approval required |
+| **G** | Product Design | Specs, IA plans, bounties product brief | Docs only; **no** implementation |
+| **H** | Cross-cutting / High Risk | Multi-repo features, migrations, production deploy | Explicit multi-token approval |
+
+### Melómanos mapping rules
+
+- **Visual Polish** work → **TYPE C** (unless it becomes product redesign → **G** first).
+- **Visual Feedback Loop** audits / evidence review → **TYPE A**.
+- **Product / UX redesign / specs** → **TYPE G** until implementation is explicitly approved.
+- **Backend / business rules** → **TYPE F** or **H**; never self-start from a TYPE A/C queue item.
+- If unsure between implementation and review → choose **TYPE A**.
+
+---
+
+## How to run a mission
+
+### 1. Pick one mission from the queue
+
+Open `workspace/NEXT_ACTION_QUEUE.md`. Select a mission with status `READY` (or `BLOCKED` only if unblocking is the mission itself).
+
+### 2. Confirm approval
+
+Require an explicit human token:
+
+```text
+APPROVE_MISSION_EXECUTION
+Mission: M-XXX
+```
+
+Without this token, do **not** execute product or code work. Docs-only TYPE A/B may proceed when the user explicitly asks to run that mission ID.
+
+### 3. Read the brief
+
+Open `workspace/missions/M-XXX_*.md`. Treat the brief as the contract:
+
+- scope
+- forbidden changes
+- acceptance criteria
+- verification required
+- stop conditions
+
+### 4. Execute within bounds
+
+- Do only what the brief allows.
+- Prefer the smallest change set.
+- Do not start a second mission in the same session unless the human explicitly queues it after gate review.
+
+### 5. Write the execution report
+
+Create or update:
+
+`workspace/reports/missions/M-XXX_EXECUTION_REPORT.md`
+
+Minimum sections:
+
+- Verdict (`PASS` / `PASS WITH WARNINGS` / `FAIL` / `STOPPED`)
+- What was inspected or changed
+- Validation results
+- Recommended next mission
+- Git Gate Review (files safe / not safe to commit)
+- Stop conditions hit (if any)
+
+### 6. Stop for gate review
+
+Do **not** commit or push unless a separate commit approval token is given.
+
+---
+
+## Continue conditions
+
+The executor **may continue** within the same mission when:
+
+- Work remains inside the brief scope.
+- No stop condition has fired.
+- Validation steps listed in the brief are still runnable.
+- Changes stay in the allowed repos/files.
+- The mission has not yet produced its final report.
+
+---
+
+## Stop conditions
+
+The executor **must stop** and write a report when any of these occur:
+
+| Condition | Action |
+|-----------|--------|
+| Scope would expand into another mission | STOP; recommend next mission ID |
+| Forbidden path touched (backend rules, HomeHero when forbidden, Admin redesign, etc.) | STOP |
+| Business logic / auth / payment / messaging / escrow change needed | STOP; reclassify as TYPE F/H |
+| Visual route PASS requested without human approval | STOP; do not mark PASS |
+| Tests fail and fix is out of scope | STOP with FAIL |
+| Ambiguous product decision requires Daniela/Ernesto | STOP; ask |
+| Commit requested without approval token | STOP; provide Git Gate Review only |
+| Screenshot evidence would be staged without approval | STOP; leave runs unstaged |
+
+---
+
+## Gate review (separate step)
+
+After the execution report exists, run a **gate review** (same or new session) that only:
+
+1. Reads the mission brief + execution report.
+2. Confirms scope compliance.
+3. Lists files safe / not safe to commit.
+4. Proposes commit message(s).
+5. Waits for an approval token.
+
+Gate review must **not** continue implementation.
+
+---
+
+## Approval tokens
+
+| Token | Meaning |
+|-------|---------|
+| `APPROVE_MISSION_EXECUTION` | Run the named mission per its brief |
+| `APPROVE_FRONTEND_COMMIT` | Stage/commit/push listed frontend files only |
+| `APPROVE_BACKEND_COMMIT` | Stage/commit/push listed backend files only |
+| `APPROVE_WORKSPACE_COMMIT` | Stage/commit/push listed workspace files only |
+| `HOLD` | Pause; do not commit; do not continue |
+| `REJECT` | Reject outcome; do not commit; may require rework mission |
+
+Commit approvals must list **exact file paths**. Use file-by-file staging. Never `git add .`.
+
+---
+
+## Commits
+
+- Default: **do not commit**.
+- One mission may produce changes in at most the repos allowed by its type.
+- Prefer separate commits per repo (frontend / backend / workspace).
+- Never stage:
+  - `workspace/screenshots/visual-polish/runs/**`
+  - unapproved `*.png` / `*.zip` evidence
+  - `.env` / secrets
+  - `test-results/**`, `playwright-report/**`, `logs/**`
+- Visual route `PASS` is never granted by commit alone — human visual approval required per Visual Polish Control.
+
+---
+
+## Preventing scope mixing
+
+| Anti-pattern | Correct pattern |
+|--------------|-----------------|
+| “While here, also polish Profile and fix messaging” | One mission only |
+| Mixing TYPE G spec with TYPE C implementation | Spec mission first; implement later |
+| Marking routes PASS after a polish pass | Leave IN_REVIEW; wait for Daniela/Ernesto |
+| Backend “small fix” inside a frontend polish mission | STOP; open TYPE F mission |
+| Committing screenshots with code | Separate evidence policy; usually do not commit runs |
+
+---
+
+## Integration with existing Melómanos systems
+
+| System | Relationship |
+|--------|--------------|
+| **Visual Polish** | Still authoritative for palette, route status, human PASS |
+| **Visual Feedback Loop** | Still authoritative for Capture → Approve evidence workflow |
+| **Quality Gate** | Still required for functional DoD (`QUALITY_GATE.md`) |
+| **MVP Roadmap** | Still authoritative for product backlog (`backend/MVP_ROADMAP.md`) |
+| **Mission Queue** | Operational execution layer for bounded Cursor sessions |
+
+Missions **orchestrate** work; they do not override business rules or visual human gates.
+
+---
+
+## Recommended session prompts
+
+### Execute a mission
+
+```text
+APPROVE_MISSION_EXECUTION
+Mission: M-001
+
+Read workspace/MISSION_EXECUTION_GUIDE.md and workspace/missions/M-001_AUDIT_VISUAL_POLISH_FEEDBACK_LOOP.md.
+Execute only that mission. Produce workspace/reports/missions/M-001_EXECUTION_REPORT.md.
+Do not commit. Do not push.
+```
+
+### Gate review only
+
+```text
+GATE_REVIEW for M-001
+
+Read the mission brief and workspace/reports/missions/M-001_EXECUTION_REPORT.md.
+Confirm scope compliance and list files safe to commit.
+Do not implement. Do not commit unless a separate APPROVE_*_COMMIT token is provided.
+```
+
+---
+
+## How this reduces human mediation
+
+| Before | After |
+|--------|-------|
+| Human pastes long custom prompts each turn | Human sends short mission ID + approval token |
+| Scope drifts across ChatGPT ↔ Cursor | Brief + stop conditions bound the session |
+| Mixed polish + product + commit in one go | One mission → one report → one gate → optional commit |
+| Unclear next step | `NEXT_ACTION_QUEUE.md` holds READY missions |
+
+---
+
+*Adoption date: 2026-07-08. Docs-only; does not replace Visual Polish or Visual Feedback Loop.*

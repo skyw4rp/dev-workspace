@@ -35,6 +35,14 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 - **Foundation report:** `AI_DEV_OS_FOUNDATION_SYNC_REPORT.md`
 - **New governance artifacts:** `AI_CONTEXT.md`, `TASKS.md`, `SPEC.md`, `DESIGN.md`, `RELEASE_NOTES.md`
 
+## Bounded Autonomous Mission Execution (2026-07-08)
+
+- **Guide:** `MISSION_EXECUTION_GUIDE.md`
+- **Queue:** `NEXT_ACTION_QUEUE.md`
+- **First mission:** M-001 (TYPE A) — Visual Polish / Feedback Loop audit — READY
+- **Pattern:** One mission → one execution report → one gate review
+- Does **not** replace Visual Polish human PASS or Quality Gate DoD
+
 ## Current Phase & Focus
 
 | Field | Value |

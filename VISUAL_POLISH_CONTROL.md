@@ -105,7 +105,10 @@ See `workspace/screenshots/visual-polish/README.md` for naming conventions.
 |------|---------|
 | `VISUAL_POLISH_ROUTES.json` | Route inventory, priority, status, screenshot requirements |
 | `VISUAL_POLISH_STATUS.md` | Living gate status, debt, next actions |
+| `VISUAL_FEEDBACK_LOOP_CONTROL.md` | Capture → approve evidence workflow |
 | `UX_BRAND_POLISH_IMPLEMENTATION_PLAN.md` | Historical implementation plan (not a substitute for this control file) |
+| `MISSION_EXECUTION_GUIDE.md` | Bounded missions (Visual Polish work is typically TYPE C) |
+| `NEXT_ACTION_QUEUE.md` | Operational mission queue — does not grant route PASS |
 
 ---
 
