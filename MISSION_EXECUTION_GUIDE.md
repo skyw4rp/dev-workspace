@@ -259,9 +259,11 @@ Mission types: A,B,C,D
 Missions: auto
 ```
 
-Session output: per-mission reports plus `SESSION-<YYYYMMDD-HHMM>_REPORT.md`.
+Session output: per-mission reports plus **one** consolidated `SESSION-<YYYYMMDD-HHMM>_REPORT.md`.
 
-**Mandatory closure:** Every autonomous session **must** end with session state synchronization (Phase F in `AUTONOMOUS_SESSION_PROMPT.md` or standalone `APPROVE_SESSION_CLOSURE`). A session is **not complete** until the queue reflects execution reports and gate results.
+**Melómanos session policy:** Count only gate `PASS` / `PASS_WITH_WARNINGS` toward max missions; sync queue after each completed mission; commit each repo separately; never push in-session; stop on mandatory stop conditions.
+
+**Mandatory closure:** Every autonomous session **must** end with session state synchronization (Phase G in `AUTONOMOUS_SESSION_PROMPT.md` or standalone `APPROVE_SESSION_CLOSURE`). A session is **not complete** until the queue reflects execution reports and gate results.
 
 **PASS WITH WARNINGS (S-21):** Closure **must not** auto-mark DONE. Set `BLOCKED` (or `IN_PROGRESS`) with `human_disposition: pending`. Human resolves via `APPROVE_SESSION_CLOSURE` + `Disposition:` — not manual queue edits.
 

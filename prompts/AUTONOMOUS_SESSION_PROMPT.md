@@ -47,7 +47,7 @@ This reduces human mediation versus sending `APPROVE_NEXT_MISSION` repeatedly, w
 
 | Parameter | Default | Notes |
 |-----------|---------|-------|
-| **Max missions** | `3` | Hard stop after N missions complete (execute + report), whether or not committed |
+| **Max missions** | `3` | Hard stop after **N gate-completed** missions (`PASS` or `PASS_WITH_WARNINGS` only) |
 | **Commits** | `disabled` | `enabled` only if user explicitly sets `Commits: enabled` in the approval message |
 | **Mission types** | `A,B,C,D` | Never auto-run **TYPE F** or **TYPE H** unless user explicitly lists them in `Mission types:` |
 | **Missions** | `auto` | `auto` = pick from queue per `RUN_NEXT_MISSION` rules; or explicit list e.g. `M-015,M-006` |
@@ -55,6 +55,19 @@ This reduces human mediation versus sending `APPROVE_NEXT_MISSION` repeatedly, w
 | **Visual polish** | `no PASS` | Never mark route PASS in a session |
 
 If the user omits parameters, use defaults.
+
+---
+
+## Melómanos session policy (mandatory)
+
+| Rule | Requirement |
+|------|-------------|
+| **Completed mission count** | Count **only** missions whose **gate** verdict is `PASS` or `PASS_WITH_WARNINGS` toward `Max missions`. Execute-only or gate `FAIL` / `HOLD` / `STOPPED` do **not** count as completed slots. |
+| **Per-mission queue sync** | After **every** gate `PASS` or `PASS_WITH_WARNINGS`, synchronize `NEXT_ACTION_QUEUE.md` for that mission **before** starting the next mission. Do **not** defer all queue updates to session end. |
+| **Separate repo commits** | When `Commits: enabled`, commit **each repository separately** (frontend, workspace, backend) — one commit per repo per mission when that repo has safe files. Never batch cross-repo commits. |
+| **No push in session** | **Never** push during an autonomous session — even if `SAFE_COMMIT_GATE_PROMPT.md` mentions push. Record `push_status: pending_approval` on queue rows. |
+| **Mandatory stops** | **Stop** the session on any mandatory stop condition: gate `FAIL` or `HOLD` (when `Stop on` includes them), scope violation, unexpected staged files, commit failure, contradictory evidence, PASS WITH WARNINGS when session must halt (S-21), or `Max missions` reached. |
+| **Consolidated session report** | At session end, produce **one** consolidated `SESSION-<YYYYMMDD-HHMM>_REPORT.md` covering all missions, commits, queue sync results, and final git state. Phase F finalizes this report; do not scatter session verdicts across multiple session files. |
 
 ---
 
@@ -85,34 +98,47 @@ Follow `workspace/prompts/GATE_REVIEW_PROMPT.md` for the same `M-XXX`.
 
 Record gate verdict in the session log.
 
-If gate is `FAIL` or `HOLD` and `Stop on` includes it → go to **Session end**.
+If gate is `FAIL` or `HOLD` and `Stop on` includes it → go to **Session end** (does **not** count toward `Max missions`).
+
+If gate is `PASS` or `PASS_WITH_WARNINGS` → mission counts as **completed** toward `Max missions`.
 
 Do **not** implement fixes during gate review.
 
-### D. Commit (only if enabled)
+### D. Per-mission queue sync (mandatory)
+
+Immediately after gate `PASS` or `PASS_WITH_WARNINGS`, update `NEXT_ACTION_QUEUE.md` for **this mission only**:
+
+- Apply evidence fields per [`SESSION_STATE_SYNC_PROMPT.md`](SESSION_STATE_SYNC_PROMPT.md)
+- `PASS` → may set `DONE`
+- `PASS WITH WARNINGS` → `BLOCKED` + `human_disposition: pending`; preserve warnings
+- Update summary row and **Last updated** metadata
+
+If commits are enabled, include the queue update in the **workspace** commit for this mission (same mission batch).
+
+### E. Commit (only if enabled)
 
 If `Commits: enabled` **and** gate verdict is `PASS` or `PASS_WITH_WARNINGS`:
 
-Follow `workspace/prompts/SAFE_COMMIT_GATE_PROMPT.md` for `M-XXX`.
+Follow `workspace/prompts/SAFE_COMMIT_GATE_PROMPT.md` for `M-XXX` — **except do not push** (Melómanos session policy).
+
+Commit **each repository separately** when that repo has safe files from the report.
 
 If commit fails or unexpected staged files → **STOP** session.
 
 If `Commits: disabled` — record safe-to-commit files; do not commit.
 
-### E. Continue
+### F. Continue
 
-If more mission slots remain and no stop fired → next mission.
+If gate-completed count < `Max missions` and no stop fired → next mission.
 
-### F. Session closure (mandatory)
+### G. Session closure (mandatory — finalize consolidated report)
 
-After the last mission slot or early stop, follow [`workspace/prompts/SESSION_STATE_SYNC_PROMPT.md`](SESSION_STATE_SYNC_PROMPT.md) (Mode A unless human sends `Disposition:`).
+After the last mission slot or early stop:
 
-1. Reconcile `workspace/NEXT_ACTION_QUEUE.md` with execution reports and gate results.
-2. **PASS** → may set `DONE` with evidence fields.
-3. **PASS WITH WARNINGS** → **must not** auto-DONE; set `BLOCKED` + `human_disposition: pending`; preserve warnings verbatim.
-4. Recompute dependencies and next-mission recommendation.
-5. Finalize session report with pre-session / post-session queue state and closure sync result.
-6. **No commit. No push.**
+1. Verify per-mission queue sync is complete (repair any gap idempotently).
+2. Recompute dependencies and next-mission recommendation across all session missions.
+3. Finalize **one** consolidated `SESSION-<YYYYMMDD-HHMM>_REPORT.md` with pre-session / post-session queue state and closure sync result.
+4. **No commit** for closure-only artifacts unless `Commits: enabled` and queue/report listed in a final workspace batch — **never push**.
 
 If any mission ended with PASS WITH WARNINGS, session report **must** recommend `APPROVE_SESSION_CLOSURE` + `Disposition:` — not manual queue edit.
 
@@ -123,11 +149,14 @@ If any mission ended with PASS WITH WARNINGS, session report **must** recommend 
 - Do **not** exceed **Max missions**.
 - Do **not** run TYPE **F** / **H** unless explicitly allowed in session parameters.
 - Do **not** commit when `Commits: disabled` (default).
+- Do **not** **push** during the session — **ever** (record `push_status: pending_approval`).
+- Do **not** defer `NEXT_ACTION_QUEUE.md` updates to session end — sync after each gate-completed mission.
+- Do **not** count missions toward `Max missions` unless gate is `PASS` or `PASS_WITH_WARNINGS`.
 - Do **not** use `git add .`.
 - Do **not** stage `runs/**`, PNG/ZIP evidence, `.env`, `test-results/**`, `playwright-report/**`, `logs/**`.
 - Do **not** mark Visual Polish route `PASS`.
 - Do **not** weaken stop conditions from mission briefs.
-- One mission at a time — finish execute → gate → (commit) → **closure** before treating session complete.
+- One mission at a time — finish execute → gate → queue sync → (commit per repo) before the next mission.
 
 ---
 
@@ -143,7 +172,7 @@ Include:
 |---------|---------|
 | Verdict | `PASS` / `PASS_WITH_WARNINGS` / `STOPPED` / `FAIL` |
 | Parameters used | Max missions, commits, types, mission list |
-| Per-mission table | ID, execute verdict, gate verdict, committed? (Y/N), SHAs |
+| Per-mission table | ID, execute verdict, gate verdict, queue synced? (Y/N), committed? (Y/N), SHAs |
 | Missions skipped / not started | Reason |
 | Stop condition hit | If any |
 | Git status | `frontend/`, `workspace/`, `backend/` |

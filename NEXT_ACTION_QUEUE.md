@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (M-008 disposition: remediation_required — M-019 proposed)  
+**Last updated:** 2026-07-10 (SESSION-20260710-1811 closure sync)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -40,13 +40,13 @@
 | M-006 | Create Listing flow verification | D | P2 | DONE |
 | M-007 | Home vs Explore validation | A | P1 | DONE |
 | M-008 | Messaging flow audit | A | P2 | BLOCKED |
-| M-009 | Favorites flow audit | A | P2 | READY |
+| M-009 | Favorites flow audit | A | P2 | DONE |
 | M-010 | Bounties product spec | G | P3 | READY |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | DONE |
 | M-013 | Product detail page layout | C | P1 | DONE |
 | M-014 | Empty states visual pass | C | P2 | DONE |
-| M-015 | Mobile navigation polish | C | P2 | READY |
+| M-015 | Mobile navigation polish | C | P2 | DONE |
 | M-016 | Listing card visual improvement | C | P1 | DONE |
 | M-017 | Adopt reusable mission runner prompts | B | P1 | DONE |
 | M-018 | Autonomous session orchestrator | B | P1 | DONE |
@@ -251,7 +251,15 @@
 | **Title** | Favorites flow audit |
 | **Mission type** | TYPE A — Review Only |
 | **Priority** | P2 |
-| **Status** | READY |
+| **Status** | DONE (2026-07-10) |
+| **execution_report** | [`reports/missions/M-009_EXECUTION_REPORT.md`](reports/missions/M-009_EXECUTION_REPORT.md) |
+| **gate_result** | PASS |
+| **gate_review** | Inline in execution report |
+| **completion_evidence** | Flow audit; M-014 empty state; E2E favorites flow |
+| **commit_sha** | workspace `07329d5` |
+| **push_status** | pending_approval |
+| **completed_in_session** | SESSION-20260710-1811 |
+| **human_disposition** | — |
 | **Scope** | Audit `/favorites` UX/visual readiness; recommend TYPE C polish if warranted |
 | **Forbidden changes** | No code; no PASS; no commits |
 | **Acceptance criteria** | Findings + recommended next mission |
@@ -380,7 +388,15 @@
 | **Title** | Mobile navigation polish |
 | **Mission type** | TYPE C — Frontend Low-Risk |
 | **Priority** | P2 |
-| **Status** | READY |
+| **Status** | DONE (2026-07-10) |
+| **execution_report** | [`reports/missions/M-015_EXECUTION_REPORT.md`](reports/missions/M-015_EXECUTION_REPORT.md) |
+| **gate_result** | PASS |
+| **gate_review** | Inline in execution report |
+| **completion_evidence** | build PASS; E2E 44/44 PASS; mobile header test added |
+| **commit_sha** | frontend `b1a9bf8`; workspace `eb59457` |
+| **push_status** | pending_approval |
+| **completed_in_session** | SESSION-20260710-1811 |
+| **human_disposition** | — |
 | **Scope** | Mobile utility/product header behavior within Header IA C1 (spacing, search row, product links) — no IA redesign |
 | **Forbidden changes** | No C2 presets; no hamburger redesign unless brief explicitly allows; no backend; no PASS; no commits without token |
 | **Tooling** | **Cursor** only (Navbar is production-integrated; avoid v0 full-header rewrite) |
@@ -483,16 +499,14 @@
 
 ## Suggested execution order
 
-1. **M-019** — Messages back link remediation (BLOCKED/proposed — approve before execution)  
-2. **M-015** — Mobile navigation polish (independent READY)  
-3. **M-009** — Favorites flow audit  
-4. **M-010** — product design when capacity allows  
+1. **M-019** — Messages back link remediation (BLOCKED — approve before execution)  
+2. **M-010** — Bounties product spec (TYPE G — not in default autonomous types)  
 
-**Completed (recent):** Autonomous session [`SESSION-20260710-1721`](reports/missions/SESSION-20260710-1721_REPORT.md) — M-006 DONE; M-008 BLOCKED with `remediation_required`; M-019 proposed for F1.
+**Completed (recent):** Session [`SESSION-20260710-1811`](reports/missions/SESSION-20260710-1811_REPORT.md) — M-015 mobile nav polish + M-009 favorites audit; commits local; pushes disabled.
 
-**Primary next human action:** Review M-019 brief → `APPROVE_MISSION_EXECUTION` / Mission: M-019
+**Primary next human action:** `APPROVE_MISSION_EXECUTION` / Mission: M-019 (remediation for M-008 F1)
 
-**First recommended independent mission (do not auto-execute):** **M-015** (Mobile navigation polish — does not cover M-008 F1).
+**No READY missions remain** for types A/B/C/D except M-019 (BLOCKED pending approval).
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
