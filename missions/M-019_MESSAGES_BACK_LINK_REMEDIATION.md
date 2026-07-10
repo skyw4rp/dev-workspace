@@ -3,7 +3,7 @@
 **Mission ID:** M-019  
 **Type:** TYPE C — Frontend Low-Risk  
 **Priority:** P2  
-**Status:** PROPOSED — not executable until human sends `APPROVE_MISSION_EXECUTION`  
+**Status:** APPROVED — executable via `APPROVE_MISSION_EXECUTION` (2026-07-10)  
 **Origin:** M-008 F1 — `human_disposition: remediation_required` (SESSION-20260710-1721)
 
 ---

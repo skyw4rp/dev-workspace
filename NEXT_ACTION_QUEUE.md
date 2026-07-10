@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (SESSION-20260710-1848 — no READY A/B/C/D missions)  
+**Last updated:** 2026-07-10 (M-019 DONE — messages back link remediation)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -50,7 +50,7 @@
 | M-016 | Listing card visual improvement | C | P1 | DONE |
 | M-017 | Adopt reusable mission runner prompts | B | P1 | DONE |
 | M-018 | Autonomous session orchestrator | B | P1 | DONE |
-| M-019 | Messages back link remediation | C | P2 | BLOCKED |
+| M-019 | Messages back link remediation | C | P2 | DONE |
 
 ---
 
@@ -229,7 +229,7 @@
 | **completed_in_session** | SESSION-20260710-1721 |
 | **human_disposition** | remediation_required |
 | **disposition_recorded** | 2026-07-10 via `APPROVE_SESSION_CLOSURE` — Session: SESSION-20260710-1721 |
-| **remediation_mission** | M-019 (proposed — not READY until human approves execution) |
+| **remediation_mission** | M-019 — **DONE** (2026-07-10); F1 href remediated |
 | **Scope** | Audit inbox/thread UX and known reply/contact-leak constraints from docs/tests; no backend changes |
 | **Forbidden changes** | No messaging API/business logic; no code; no commits |
 | **Acceptance criteria** | Flow findings; distinguish UX polish vs backend rule work |
@@ -238,8 +238,8 @@
 | **Stop conditions** | Editing `messages` routers/schemas → STOP (TYPE F) |
 | **Brief** | [`missions/M-008_MESSAGING_FLOW_AUDIT.md`](missions/M-008_MESSAGING_FLOW_AUDIT.md) |
 | **Report path** | `reports/missions/M-008_EXECUTION_REPORT.md` |
-| **Notes** | **Open warning (P2) — remediation required:** `/messages` back link `← Volver al catálogo` still points to `/` — should be `/explorar` (Phase 1 nav drift). TYPE C fix; not TYPE F. **Not accepted as complete.** Proposed fix: M-019. |
-| **Recommended executor prompt** | Disposition applied. Next: `APPROVE_MISSION_EXECUTION` / Mission: M-019 (after brief review) |
+| **Notes** | **F1 remediated by M-019 (2026-07-10).** M-008 remains BLOCKED — eligible for re-audit or `APPROVE_SESSION_CLOSURE` disposition; **not** auto-DONE. Other warnings (F2 mobile thread density) may remain. |
+| **Recommended executor prompt** | Re-audit or disposition after M-019 verification |
 
 ---
 
@@ -462,7 +462,17 @@
 | **Title** | Messages back link remediation |
 | **Mission type** | TYPE C — Frontend Low-Risk |
 | **Priority** | P2 |
-| **Status** | BLOCKED — proposed; awaits human `APPROVE_MISSION_EXECUTION` |
+| **Status** | DONE (2026-07-10) |
+| **execution_report** | [`reports/missions/M-019_EXECUTION_REPORT.md`](reports/missions/M-019_EXECUTION_REPORT.md) |
+| **gate_result** | PASS |
+| **gate_review** | Inline in execution report § Gate review |
+| **completion_evidence** | Back link `/explorar`; messaging E2E 2/2; build + unit PASS |
+| **commit_sha** | pending — post-commit |
+| **push_status** | pending_approval |
+| **completed_in_session** | ACTION-M-019-20260710 |
+| **human_disposition** | — |
+| **human_activation** | 2026-07-10 — explicit `APPROVE_MISSION_EXECUTION` |
+| **m008_remediation** | F1 resolved — M-008 eligible for re-audit; **not** auto-DONE |
 | **Scope** | Fix `/messages` back link destination `/` → `/explorar` in `frontend/src/app/messages/page.tsx`; E2E update only if href asserted |
 | **Forbidden changes** | Messaging API/business logic; mobile header (M-015); backend; route PASS; commits without token |
 | **Acceptance criteria** | Back link → `/explorar`; messaging E2E pass; build pass; execution report |
@@ -471,8 +481,8 @@
 | **Stop conditions** | TYPE F scope; full messages redesign → STOP |
 | **Brief** | [`missions/M-019_MESSAGES_BACK_LINK_REMEDIATION.md`](missions/M-019_MESSAGES_BACK_LINK_REMEDIATION.md) |
 | **Report path** | `reports/missions/M-019_EXECUTION_REPORT.md` |
-| **Origin** | M-008 F1 — SESSION-20260710-1721 disposition |
-| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-019 — **not auto-run** |
+| **Notes** | M-008 F1 remediated. M-008 remains BLOCKED pending re-audit / disposition — do not auto-DONE. |
+| **Recommended executor prompt** | Completed — see M-019 report |
 
 ---
 
@@ -499,14 +509,14 @@
 
 ## Suggested execution order
 
-1. **M-019** — Messages back link remediation (BLOCKED — approve before execution)  
-2. **M-010** — Bounties product spec (TYPE G — not in default autonomous types)  
+1. **M-008** — Re-audit or disposition after M-019 F1 remediation  
+2. **M-010** — Bounties product spec (TYPE G)
 
-**Completed (recent):** Session [`SESSION-20260710-1848`](reports/missions/SESSION-20260710-1848_REPORT.md) — queue exhausted for types A/B/C/D (0 missions). Prior: [`SESSION-20260710-1811`](reports/missions/SESSION-20260710-1811_REPORT.md).
+**Completed (recent):** **M-019** messages back link remediation (2026-07-10).
 
-**Primary next human action:** `APPROVE_MISSION_EXECUTION` / Mission: M-019 (remediation for M-008 F1)
+**Primary next human action:** Re-audit M-008 or `APPROVE_SESSION_CLOSURE` + `Mission: M-008` + `Disposition:`
 
-**No READY missions remain** for types A/B/C/D. M-010 (TYPE G) is READY but excluded from default autonomous types.
+**READY missions:** M-010 only (TYPE G).
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
