@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-09 (M-011 governance correction — explorar capture DONE; Listing Card → M-016)  
+**Last updated:** 2026-07-10 (M-017 reusable mission runner prompts DONE)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -15,11 +15,11 @@
 
 ## How to use
 
-1. Pick the highest-priority mission with status `READY`.
-2. Send `APPROVE_MISSION_EXECUTION` + mission ID (see guide).
+1. Pick the highest-priority mission with status `READY`, or send `APPROVE_NEXT_MISSION` (see [`prompts/RUN_NEXT_MISSION_PROMPT.md`](prompts/RUN_NEXT_MISSION_PROMPT.md)).
+2. Or send `APPROVE_MISSION_EXECUTION` + mission ID (see [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md)).
 3. Executor follows the brief under `workspace/missions/`.
 4. Executor writes `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md`.
-5. Separate gate review; commit only with `APPROVE_*_COMMIT`.
+5. Gate review with `APPROVE_GATE_REVIEW` + mission ID; commit with `APPROVE_SAFE_COMMIT` or repo-specific `APPROVE_*_COMMIT`.
 
 **Statuses:** `READY` | `IN_PROGRESS` | `BLOCKED` | `DONE` | `CANCELLED`
 
@@ -45,6 +45,7 @@
 | M-014 | Empty states visual pass | C | P2 | READY |
 | M-015 | Mobile navigation polish | C | P2 | READY |
 | M-016 | Listing card visual improvement | C | P1 | READY |
+| M-017 | Adopt reusable mission runner prompts | B | P1 | DONE |
 
 ---
 
@@ -392,6 +393,27 @@
 
 ---
 
+### M-017 — Adopt reusable mission runner prompts
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-017 |
+| **Title** | Adopt reusable mission runner prompts |
+| **Mission type** | TYPE B — Docs / Governance |
+| **Priority** | P1 |
+| **Status** | DONE (2026-07-10) — report [`reports/missions/M-017_EXECUTION_REPORT.md`](reports/missions/M-017_EXECUTION_REPORT.md) |
+| **Scope** | Add `workspace/prompts/` short-command interfaces; update mission guide and queue references |
+| **Forbidden changes** | No frontend/backend/product code; no screenshots; no commits during execution |
+| **Acceptance criteria** | Four prompt files; Short Command Interface in guide; M-017 report; queue updated |
+| **Verification required** | Docs inspection; git status shows only expected workspace paths |
+| **Dependencies** | Mission execution layer adopted (M-001 guide + queue) |
+| **Stop conditions** | Any product code change → STOP |
+| **Brief** | User `APPROVE_MISSION_EXECUTION` prompt (2026-07-10) |
+| **Report path** | `reports/missions/M-017_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-017 — completed |
+
+---
+
 ## Suggested execution order
 
 1. **M-005** → **M-013** — Listing detail audit then layout polish  
@@ -401,7 +423,7 @@
 5. **M-006 / M-008 / M-009** — verification & flow audits  
 6. **M-010** — product design when capacity allows  
 
-**Completed (recent):** M-011 explorar visual-polish capture (TYPE D). M-002/M-003/M-004/M-007 reports committed — queue statuses may lag; refresh in TYPE B if needed.
+**Completed (recent):** M-017 reusable prompt interfaces (TYPE B). M-011 explorar visual-polish capture (TYPE D). M-002/M-003/M-004/M-005/M-007/M-013/M-016 reports committed — queue statuses may lag; refresh in TYPE B if needed.
 
 **First recommended mission (do not auto-execute):** **M-005** (Listing Detail polish audit).
 
@@ -409,6 +431,7 @@
 
 ## Notes
 
+- Reusable prompts: [`workspace/prompts/`](prompts/) — `APPROVE_NEXT_MISSION`, `APPROVE_MISSION_EXECUTION`, `APPROVE_GATE_REVIEW`, `APPROVE_SAFE_COMMIT`
 - Briefs for M-002+ may be created at mission start from this queue + [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md); **M-001 brief + report exist**.
 - Do not weaken Visual Polish human approval gates via this queue.
 - Header search-width microfix is **committed** (`frontend` `d09225b`); do not reopen as dirty work.

@@ -29,6 +29,7 @@ Humans approve with short tokens instead of rewriting full prompts each time.
 | Stack constraints / tools | `workspace/STACK_CONSTRAINTS.md` |
 | Mission briefs | `workspace/missions/M-XXX_*.md` |
 | Mission execution reports | `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md` |
+| Reusable prompt interfaces | `workspace/prompts/*.md` |
 | This guide | `workspace/MISSION_EXECUTION_GUIDE.md` |
 | Visual Polish control | `workspace/VISUAL_POLISH_CONTROL.md` |
 | Visual Feedback Loop | `workspace/VISUAL_FEEDBACK_LOOP_CONTROL.md` |
@@ -173,8 +174,11 @@ Gate review must **not** continue implementation.
 
 | Token | Meaning |
 |-------|---------|
-| `APPROVE_MISSION_EXECUTION` | Run the named mission per its brief |
-| `APPROVE_FRONTEND_COMMIT` | Stage/commit/push listed frontend files only |
+| `APPROVE_NEXT_MISSION` | Run highest-priority `READY` mission from queue — see [`prompts/RUN_NEXT_MISSION_PROMPT.md`](prompts/RUN_NEXT_MISSION_PROMPT.md) |
+| `APPROVE_MISSION_EXECUTION` + `Mission: M-XXX` | Run the named mission per its brief — see [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md) |
+| `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | Review-only gate on brief + execution report — see [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) |
+| `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | Inspect diffs, validate, stage/commit/push per report safe list — see [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) |
+| `APPROVE_FRONTEND_COMMIT` | Stage/commit/push listed frontend files only (explicit path list) |
 | `APPROVE_BACKEND_COMMIT` | Stage/commit/push listed backend files only |
 | `APPROVE_WORKSPACE_COMMIT` | Stage/commit/push listed workspace files only |
 | `HOLD` | Pause; do not commit; do not continue |
@@ -224,28 +228,41 @@ Missions **orchestrate** work; they do not override business rules or visual hum
 
 ---
 
-## Recommended session prompts
+## Short Command Interface
 
-### Execute a mission
+Melómanos-local prompt files under `workspace/prompts/` let you send **short tokens** instead of pasting long executor prompts. The agent reads the matching prompt file and follows it.
+
+| You send | Prompt file | Outcome |
+|----------|-------------|---------|
+| `APPROVE_NEXT_MISSION` | [`prompts/RUN_NEXT_MISSION_PROMPT.md`](prompts/RUN_NEXT_MISSION_PROMPT.md) | Picks highest-priority `READY` mission, executes, writes report |
+| `APPROVE_MISSION_EXECUTION` + `Mission: M-XXX` | [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md) | Executes named mission, writes report |
+| `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) | Review-only; lists safe files; no implementation |
+| `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) | Inspects diffs, validates, commits per report safe list |
+
+Repo-specific commit tokens (`APPROVE_FRONTEND_COMMIT`, `APPROVE_WORKSPACE_COMMIT`, `APPROVE_BACKEND_COMMIT`) remain available when you need an explicit path list instead of the report-driven safe-commit gate.
+
+### Examples
+
+```text
+APPROVE_NEXT_MISSION
+```
 
 ```text
 APPROVE_MISSION_EXECUTION
-Mission: M-001
-
-Read workspace/MISSION_EXECUTION_GUIDE.md and workspace/missions/M-001_AUDIT_VISUAL_POLISH_FEEDBACK_LOOP.md.
-Execute only that mission. Produce workspace/reports/missions/M-001_EXECUTION_REPORT.md.
-Do not commit. Do not push.
+Mission: M-012
 ```
-
-### Gate review only
 
 ```text
-GATE_REVIEW for M-001
-
-Read the mission brief and workspace/reports/missions/M-001_EXECUTION_REPORT.md.
-Confirm scope compliance and list files safe to commit.
-Do not implement. Do not commit unless a separate APPROVE_*_COMMIT token is provided.
+APPROVE_GATE_REVIEW
+Mission: M-013
 ```
+
+```text
+APPROVE_SAFE_COMMIT
+Mission: M-013
+```
+
+Default after any mission run: **do not commit** until `APPROVE_GATE_REVIEW` and/or `APPROVE_SAFE_COMMIT` (or a repo-specific `APPROVE_*_COMMIT` with exact paths).
 
 ---
 
