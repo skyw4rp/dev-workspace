@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (M-018 autonomous session orchestrator DONE)  
+**Last updated:** 2026-07-10 (M-008 disposition: remediation_required — M-019 proposed)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -20,8 +20,11 @@
 3. Executor follows the brief under `workspace/missions/`.
 4. Executor writes `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md`.
 5. Gate review with `APPROVE_GATE_REVIEW` + mission ID; commit with `APPROVE_SAFE_COMMIT` or repo-specific `APPROVE_*_COMMIT`.
+6. After autonomous sessions, run `APPROVE_SESSION_CLOSURE` + `Session: SESSION-*` to sync queue (see [`prompts/SESSION_STATE_SYNC_PROMPT.md`](prompts/SESSION_STATE_SYNC_PROMPT.md)).
 
 **Statuses:** `READY` | `IN_PROGRESS` | `BLOCKED` | `DONE` | `CANCELLED`
+
+**Evidence fields (per mission detail — not separate statuses):** `execution_report`, `gate_result`, `gate_review`, `completion_evidence`, `commit_sha`, `push_status`, `completed_in_session`, `human_disposition`, optional `claimed_by` / `active_session_id`. **DONE** requires `gate_result: PASS`, or `PASS WITH WARNINGS` only after `human_disposition: accepted` via `APPROVE_SESSION_CLOSURE` + `Disposition:`.
 
 ---
 
@@ -34,9 +37,9 @@
 | M-003 | Profile Visual Polish Pass | C | P1 | DONE |
 | M-004 | Route Readiness Matrix | A | P1 | DONE |
 | M-005 | Listing Detail polish audit | A | P1 | DONE |
-| M-006 | Create Listing flow verification | D | P2 | READY |
+| M-006 | Create Listing flow verification | D | P2 | DONE |
 | M-007 | Home vs Explore validation | A | P1 | DONE |
-| M-008 | Messaging flow audit | A | P2 | READY |
+| M-008 | Messaging flow audit | A | P2 | BLOCKED |
 | M-009 | Favorites flow audit | A | P2 | READY |
 | M-010 | Bounties product spec | G | P3 | READY |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
@@ -47,6 +50,7 @@
 | M-016 | Listing card visual improvement | C | P1 | DONE |
 | M-017 | Adopt reusable mission runner prompts | B | P1 | DONE |
 | M-018 | Autonomous session orchestrator | B | P1 | DONE |
+| M-019 | Messages back link remediation | C | P2 | BLOCKED |
 
 ---
 
@@ -165,14 +169,22 @@
 | **Title** | Create Listing flow verification |
 | **Mission type** | TYPE D — Frontend Verification |
 | **Priority** | P2 |
-| **Status** | READY |
+| **Status** | DONE (2026-07-10) |
+| **execution_report** | [`reports/missions/M-006_EXECUTION_REPORT.md`](reports/missions/M-006_EXECUTION_REPORT.md) |
+| **gate_result** | PASS |
+| **gate_review** | Inline in execution report § Verdict |
+| **completion_evidence** | build PASS; sell E2E 6/6 PASS; workspace `--check` PASS |
+| **commit_sha** | — |
+| **push_status** | not_requested |
+| **completed_in_session** | SESSION-20260710-1721 |
+| **human_disposition** | — |
 | **Scope** | Verify `/sell` create-listing flow via existing E2E/build; document gaps; **no product redesign**; code changes only if brief later upgrades and approves (default: verification only) |
 | **Forbidden changes** | No backend rules; no subscription/business logic edits; no commits without token; no PASS |
 | **Acceptance criteria** | Verification results table; list of failures/flakes; recommendation (fix mission vs polish mission) |
 | **Verification required** | `npm run build`; relevant sell/listing E2E; note Quality Gate tier used |
 | **Dependencies** | None |
 | **Stop conditions** | Need business-rule change → STOP for TYPE F |
-| **Brief** | `missions/M-006_CREATE_LISTING_FLOW_VERIFICATION.md` *(create at execution start if missing)* |
+| **Brief** | [`missions/M-006_CREATE_LISTING_FLOW_VERIFICATION.md`](missions/M-006_CREATE_LISTING_FLOW_VERIFICATION.md) |
 | **Report path** | `reports/missions/M-006_EXECUTION_REPORT.md` |
 | **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-006 — verification only |
 
@@ -207,16 +219,27 @@
 | **Title** | Messaging flow audit |
 | **Mission type** | TYPE A — Review Only |
 | **Priority** | P2 |
-| **Status** | READY |
+| **Status** | BLOCKED (2026-07-10) — PASS WITH WARNINGS; `human_disposition: remediation_required` |
+| **execution_report** | [`reports/missions/M-008_EXECUTION_REPORT.md`](reports/missions/M-008_EXECUTION_REPORT.md) |
+| **gate_result** | PASS WITH WARNINGS |
+| **gate_review** | Inline in execution report § Verdict |
+| **completion_evidence** | Docs/E2E inspection; messaging flows strong; nav drift documented |
+| **commit_sha** | — |
+| **push_status** | not_requested |
+| **completed_in_session** | SESSION-20260710-1721 |
+| **human_disposition** | remediation_required |
+| **disposition_recorded** | 2026-07-10 via `APPROVE_SESSION_CLOSURE` — Session: SESSION-20260710-1721 |
+| **remediation_mission** | M-019 (proposed — not READY until human approves execution) |
 | **Scope** | Audit inbox/thread UX and known reply/contact-leak constraints from docs/tests; no backend changes |
 | **Forbidden changes** | No messaging API/business logic; no code; no commits |
 | **Acceptance criteria** | Flow findings; distinguish UX polish vs backend rule work |
 | **Verification required** | Read messaging-related E2E names/docs; status routes for `/messages` |
 | **Dependencies** | None |
 | **Stop conditions** | Editing `messages` routers/schemas → STOP (TYPE F) |
-| **Brief** | `missions/M-008_MESSAGING_FLOW_AUDIT.md` *(create at execution start if missing)* |
+| **Brief** | [`missions/M-008_MESSAGING_FLOW_AUDIT.md`](missions/M-008_MESSAGING_FLOW_AUDIT.md) |
 | **Report path** | `reports/missions/M-008_EXECUTION_REPORT.md` |
-| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-008 |
+| **Notes** | **Open warning (P2) — remediation required:** `/messages` back link `← Volver al catálogo` still points to `/` — should be `/explorar` (Phase 1 nav drift). TYPE C fix; not TYPE F. **Not accepted as complete.** Proposed fix: M-019. |
+| **Recommended executor prompt** | Disposition applied. Next: `APPROVE_MISSION_EXECUTION` / Mission: M-019 (after brief review) |
 
 ---
 
@@ -415,6 +438,28 @@
 
 ---
 
+### M-019 — Messages back link remediation (PROPOSED)
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-019 |
+| **Title** | Messages back link remediation |
+| **Mission type** | TYPE C — Frontend Low-Risk |
+| **Priority** | P2 |
+| **Status** | BLOCKED — proposed; awaits human `APPROVE_MISSION_EXECUTION` |
+| **Scope** | Fix `/messages` back link destination `/` → `/explorar` in `frontend/src/app/messages/page.tsx`; E2E update only if href asserted |
+| **Forbidden changes** | Messaging API/business logic; mobile header (M-015); backend; route PASS; commits without token |
+| **Acceptance criteria** | Back link → `/explorar`; messaging E2E pass; build pass; execution report |
+| **Verification required** | `npm run build`; targeted messaging E2E |
+| **Dependencies** | M-008 `human_disposition: remediation_required` (origin) |
+| **Stop conditions** | TYPE F scope; full messages redesign → STOP |
+| **Brief** | [`missions/M-019_MESSAGES_BACK_LINK_REMEDIATION.md`](missions/M-019_MESSAGES_BACK_LINK_REMEDIATION.md) |
+| **Report path** | `reports/missions/M-019_EXECUTION_REPORT.md` |
+| **Origin** | M-008 F1 — SESSION-20260710-1721 disposition |
+| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-019 — **not auto-run** |
+
+---
+
 ### M-018 — Autonomous session orchestrator
 
 | Field | Value |
@@ -438,13 +483,16 @@
 
 ## Suggested execution order
 
-1. **M-015** — Mobile navigation polish  
-2. **M-006 / M-008 / M-009** — verification & flow audits  
-3. **M-010** — product design when capacity allows  
+1. **M-019** — Messages back link remediation (BLOCKED/proposed — approve before execution)  
+2. **M-015** — Mobile navigation polish (independent READY)  
+3. **M-009** — Favorites flow audit  
+4. **M-010** — product design when capacity allows  
 
-**Completed (recent):** M-014 empty states (`065c0e8`). M-018 session orchestrator (TYPE B). Queue synced 2026-07-10.
+**Completed (recent):** Autonomous session [`SESSION-20260710-1721`](reports/missions/SESSION-20260710-1721_REPORT.md) — M-006 DONE; M-008 BLOCKED with `remediation_required`; M-019 proposed for F1.
 
-**First recommended mission (do not auto-execute):** **M-015** (Mobile navigation polish).
+**Primary next human action:** Review M-019 brief → `APPROVE_MISSION_EXECUTION` / Mission: M-019
+
+**First recommended independent mission (do not auto-execute):** **M-015** (Mobile navigation polish — does not cover M-008 F1).
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
@@ -458,3 +506,4 @@ Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `C
 - Header search-width microfix is **committed** (`frontend` `d09225b`); do not reopen as dirty work.
 - UI candidates M-012, M-013, M-014, M-015, M-016 follow [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) tool rules.
 - **M-011 governance (2026-07-09):** M-011 executed as explorar visual-polish capture (TYPE D, DONE). Former Listing Card mission renumbered to **M-016**.
+- **SESSION-20260710-1721 (2026-07-10):** M-008 disposition `remediation_required` (2026-07-10). M-019 proposed for messages back link `/` → `/explorar`. M-015 does **not** cover this defect (header-only scope).

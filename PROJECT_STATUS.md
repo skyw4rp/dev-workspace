@@ -116,8 +116,11 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ### Mission layer (operational)
 
-1. **M-002** — Profile UX audit (TYPE A) — first recommended; do not auto-start without `APPROVE_MISSION_EXECUTION`
-2. Then M-003 (Profile polish) or M-011 (Listing card) / M-007 as prioritized in `NEXT_ACTION_QUEUE.md`
+- **Session closure adoption:** AI Dev OS U7 @ `aafe470` (2026-07-10)
+- **M-008 disposition:** `remediation_required` — M-019 proposed (messages back link `/` → `/explorar`)
+- **Primary human action:** Review M-019 → `APPROVE_MISSION_EXECUTION` / Mission: M-019
+- **Next independent READY mission:** **M-015** — Mobile navigation polish (header scope only; does not remediate M-008 F1)
+- **Queue authority:** `NEXT_ACTION_QUEUE.md` — do not auto-start without approval token
 
 ### Product roadmap (authoritative backlog)
 

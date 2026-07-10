@@ -103,6 +103,19 @@ If `Commits: disabled` — record safe-to-commit files; do not commit.
 
 If more mission slots remain and no stop fired → next mission.
 
+### F. Session closure (mandatory)
+
+After the last mission slot or early stop, follow [`workspace/prompts/SESSION_STATE_SYNC_PROMPT.md`](SESSION_STATE_SYNC_PROMPT.md) (Mode A unless human sends `Disposition:`).
+
+1. Reconcile `workspace/NEXT_ACTION_QUEUE.md` with execution reports and gate results.
+2. **PASS** → may set `DONE` with evidence fields.
+3. **PASS WITH WARNINGS** → **must not** auto-DONE; set `BLOCKED` + `human_disposition: pending`; preserve warnings verbatim.
+4. Recompute dependencies and next-mission recommendation.
+5. Finalize session report with pre-session / post-session queue state and closure sync result.
+6. **No commit. No push.**
+
+If any mission ended with PASS WITH WARNINGS, session report **must** recommend `APPROVE_SESSION_CLOSURE` + `Disposition:` — not manual queue edit.
+
 ---
 
 ## Hard rules (entire session)
@@ -114,7 +127,7 @@ If more mission slots remain and no stop fired → next mission.
 - Do **not** stage `runs/**`, PNG/ZIP evidence, `.env`, `test-results/**`, `playwright-report/**`, `logs/**`.
 - Do **not** mark Visual Polish route `PASS`.
 - Do **not** weaken stop conditions from mission briefs.
-- One mission at a time — finish execute → gate → (commit) before starting the next.
+- One mission at a time — finish execute → gate → (commit) → **closure** before treating session complete.
 
 ---
 
@@ -135,7 +148,11 @@ Include:
 | Stop condition hit | If any |
 | Git status | `frontend/`, `workspace/`, `backend/` |
 | Safe-to-commit backlog | Files not committed when `Commits: disabled` |
-| Recommended next action | Next mission or `APPROVE_AUTONOMOUS_SESSION` with updated params |
+| Recommended next action | Next mission or `APPROVE_SESSION_CLOSURE` with updated params |
+| **Closure sync result** | SYNCED / PARTIAL / FAILED |
+| **Pre-session queue snapshot** | Summary table |
+| **Post-session queue snapshot** | Summary table |
+| **Missions pending human disposition** | IDs with PASS WITH WARNINGS + `human_disposition: pending` |
 
 ---
 

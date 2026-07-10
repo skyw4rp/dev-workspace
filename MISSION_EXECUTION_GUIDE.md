@@ -179,7 +179,9 @@ Gate review must **not** continue implementation.
 | `APPROVE_MISSION_EXECUTION` + `Mission: M-XXX` | Run the named mission per its brief — see [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md) |
 | `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | Review-only gate on brief + execution report — see [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) |
 | `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | Inspect diffs, validate, stage/commit/push per report safe list — see [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) |
-| `APPROVE_AUTONOMOUS_SESSION` | Multi-mission session (execute → gate → optional commit) under limits — see [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) |
+| `APPROVE_AUTONOMOUS_SESSION` | Multi-mission session (execute → gate → optional commit → **mandatory closure**) — see [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) |
+| `APPROVE_SESSION_CLOSURE` + `Session: SESSION-*` | Standalone queue sync / recovery after autonomous session — **no** disposition — see [`prompts/SESSION_STATE_SYNC_PROMPT.md`](prompts/SESSION_STATE_SYNC_PROMPT.md) |
+| `APPROVE_SESSION_CLOSURE` + `Session:` + `Mission:` + `Disposition:` | Resolve PASS WITH WARNINGS for one mission — OS mutates queue; human does not edit disposition manually |
 | `APPROVE_FRONTEND_COMMIT` | Stage/commit/push listed frontend files only (explicit path list) |
 | `APPROVE_BACKEND_COMMIT` | Stage/commit/push listed backend files only |
 | `APPROVE_WORKSPACE_COMMIT` | Stage/commit/push listed workspace files only |
@@ -241,6 +243,7 @@ Melómanos-local prompt files under `workspace/prompts/` let you send **short to
 | `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) | Review-only; lists safe files; no implementation |
 | `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) | Inspects diffs, validates, commits per report safe list |
 | `APPROVE_AUTONOMOUS_SESSION` | [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) | Multi-mission session under limits (default: no commits) |
+| `APPROVE_SESSION_CLOSURE` + `Session: SESSION-*` | [`prompts/SESSION_STATE_SYNC_PROMPT.md`](prompts/SESSION_STATE_SYNC_PROMPT.md) | Mandatory finalization / recovery — sync queue with reports; no commit |
 
 Repo-specific commit tokens (`APPROVE_FRONTEND_COMMIT`, `APPROVE_WORKSPACE_COMMIT`, `APPROVE_BACKEND_COMMIT`) remain available when you need an explicit path list instead of the report-driven safe-commit gate.
 
@@ -257,6 +260,19 @@ Missions: auto
 ```
 
 Session output: per-mission reports plus `SESSION-<YYYYMMDD-HHMM>_REPORT.md`.
+
+**Mandatory closure:** Every autonomous session **must** end with session state synchronization (Phase F in `AUTONOMOUS_SESSION_PROMPT.md` or standalone `APPROVE_SESSION_CLOSURE`). A session is **not complete** until the queue reflects execution reports and gate results.
+
+**PASS WITH WARNINGS (S-21):** Closure **must not** auto-mark DONE. Set `BLOCKED` (or `IN_PROGRESS`) with `human_disposition: pending`. Human resolves via `APPROVE_SESSION_CLOSURE` + `Disposition:` — not manual queue edits.
+
+### Autonomous session closure (mandatory)
+
+After the last mission slot (or early stop):
+
+1. Run [`prompts/SESSION_STATE_SYNC_PROMPT.md`](prompts/SESSION_STATE_SYNC_PROMPT.md) (Mode A — no `Disposition:` unless human sends it).
+2. Update queue evidence fields (`execution_report`, `gate_result`, `completed_in_session`, `human_disposition`, etc.).
+3. Finalize `SESSION-*_REPORT.md` with pre-session / post-session queue state.
+4. **No commit. No push.**
 
 ### Examples
 
