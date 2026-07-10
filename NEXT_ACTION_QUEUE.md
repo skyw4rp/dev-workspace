@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (M-019 DONE — messages back link remediation)  
+**Last updated:** 2026-07-10 (M-008 re-audit closure after M-019 remediation)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -39,7 +39,7 @@
 | M-005 | Listing Detail polish audit | A | P1 | DONE |
 | M-006 | Create Listing flow verification | D | P2 | DONE |
 | M-007 | Home vs Explore validation | A | P1 | DONE |
-| M-008 | Messaging flow audit | A | P2 | BLOCKED |
+| M-008 | Messaging flow audit | A | P2 | DONE |
 | M-009 | Favorites flow audit | A | P2 | DONE |
 | M-010 | Bounties product spec | G | P3 | READY |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
@@ -219,17 +219,18 @@
 | **Title** | Messaging flow audit |
 | **Mission type** | TYPE A — Review Only |
 | **Priority** | P2 |
-| **Status** | BLOCKED (2026-07-10) — PASS WITH WARNINGS; `human_disposition: remediation_required` |
+| **Status** | DONE (2026-07-10) — re-audit closure after M-019 remediation |
 | **execution_report** | [`reports/missions/M-008_EXECUTION_REPORT.md`](reports/missions/M-008_EXECUTION_REPORT.md) |
+| **reaudit_report** | [`reports/missions/M-008_REAUDIT_REPORT.md`](reports/missions/M-008_REAUDIT_REPORT.md) |
 | **gate_result** | PASS WITH WARNINGS |
-| **gate_review** | Inline in execution report § Verdict |
-| **completion_evidence** | Docs/E2E inspection; messaging flows strong; nav drift documented |
-| **commit_sha** | — |
-| **push_status** | not_requested |
-| **completed_in_session** | SESSION-20260710-1721 |
-| **human_disposition** | remediation_required |
-| **disposition_recorded** | 2026-07-10 via `APPROVE_SESSION_CLOSURE` — Session: SESSION-20260710-1721 |
-| **remediation_mission** | M-019 — **DONE** (2026-07-10); F1 href remediated |
+| **gate_review** | Original: execution report § Verdict; closure: re-audit report § Gate result |
+| **completion_evidence** | F1 remediated (M-019); messaging E2E 3/3; contact-leak PASS; build + unit PASS |
+| **commit_sha** | workspace pending — post re-audit commit |
+| **push_status** | pending_approval |
+| **completed_in_session** | SESSION-20260710-1721; closed M-008-REAUDIT 2026-07-10 |
+| **human_disposition** | accepted_after_remediation |
+| **disposition_recorded** | 2026-07-10 — M-008-REAUDIT after M-019 @ frontend `e8b8564` |
+| **remediation_mission** | M-019 — DONE; frontend `e8b8564de09ed81d4c1f02839aae34f14e05169d` |
 | **Scope** | Audit inbox/thread UX and known reply/contact-leak constraints from docs/tests; no backend changes |
 | **Forbidden changes** | No messaging API/business logic; no code; no commits |
 | **Acceptance criteria** | Flow findings; distinguish UX polish vs backend rule work |
@@ -238,8 +239,8 @@
 | **Stop conditions** | Editing `messages` routers/schemas → STOP (TYPE F) |
 | **Brief** | [`missions/M-008_MESSAGING_FLOW_AUDIT.md`](missions/M-008_MESSAGING_FLOW_AUDIT.md) |
 | **Report path** | `reports/missions/M-008_EXECUTION_REPORT.md` |
-| **Notes** | **F1 remediated by M-019 (2026-07-10).** M-008 remains BLOCKED — eligible for re-audit or `APPROVE_SESSION_CLOSURE` disposition; **not** auto-DONE. Other warnings (F2 mobile thread density) may remain. |
-| **Recommended executor prompt** | Re-audit or disposition after M-019 verification |
+| **Notes** | **F1 closed** via M-019. **Non-blocking warnings preserved:** F2 mobile thread density; F3 trust copy density; F4 route IN_REVIEW (human visual gate). `gate_result` not flattened to PASS. |
+| **Recommended executor prompt** | Completed — M-008 closed after re-audit |
 
 ---
 
@@ -509,14 +510,13 @@
 
 ## Suggested execution order
 
-1. **M-008** — Re-audit or disposition after M-019 F1 remediation  
-2. **M-010** — Bounties product spec (TYPE G)
+1. **M-010** — Bounties product spec (TYPE G)
 
-**Completed (recent):** **M-019** messages back link remediation (2026-07-10).
+**Completed (recent):** **M-008** re-audit closure (2026-07-10) after **M-019** remediation.
 
-**Primary next human action:** Re-audit M-008 or `APPROVE_SESSION_CLOSURE` + `Mission: M-008` + `Disposition:`
+**Primary next human action:** `APPROVE_MISSION_EXECUTION` / Mission: M-010 — or autonomous session with `Mission types: G`
 
-**READY missions:** M-010 only (TYPE G).
+**READY missions:** M-010 only (TYPE G). **READY A/B/C/D:** zero. **BLOCKED:** none.
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
