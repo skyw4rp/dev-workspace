@@ -126,6 +126,16 @@ Use `APPROVE_WORKSPACE_COMMIT` with exact paths after review.
 
 ---
 
+## Historical compliance note
+
+- **SESSION-20260710-1811** was executed **before** the per-mission queue synchronization policy became canonical in `AUTONOMOUS_SESSION_PROMPT.md` (encoded later in workspace commit `3996ead`).
+- Queue synchronization for M-015 and M-009 occurred **once during session closure**, not after each completed mission.
+- This report **must not** be read as retrospective compliance with the newer per-mission synchronization policy.
+- **Final Git state** and **Safe-to-commit backlog** below are **point-in-time snapshots** from the end of that session — not the current repository state.
+- Current publication state (local commits, push status, working tree) must be determined from **Git**, not by rewriting these historical sections.
+
+---
+
 ## Recommended next action
 
 **Remediation (M-008 F1):**
