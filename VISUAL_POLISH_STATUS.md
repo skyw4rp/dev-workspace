@@ -1,6 +1,6 @@
 # Visual Polish Status — Melómanos Market
 
-**Last updated:** Full-site screenshot automation tooling added
+**Last updated:** 2026-07-10 (QUEUE-HYGIENE — latest run pointer + committed polish state)
 
 ---
 
@@ -53,16 +53,16 @@ No P0 blockers identified. No legacy purple/neon/dark-dashboard on Home capture.
 | Route | Priority | Status | Notes |
 |-------|----------|--------|-------|
 | `/` | P0 | **PASS** | Daniela approved Home/Hero (2026-07-01); PASS tied to approved baseline screenshots only; **post-split Home captures need review** (catalog removed) |
-| `/explorar` | P0 | NEEDS_SCREENSHOT_VERIFICATION | Phase 1 catalog route; filters + ListingCard grid; human review pending |
+| `/explorar` | P0 | IN_REVIEW | Phase 1 catalog; dedicated visual-polish captures + M-012 sidebar polish committed (`9879842`); human review pending |
 | `/login` | P1 | NEEDS_SCREENSHOT_VERIFICATION | |
 | `/sell` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
 | `/favorites` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
-| `/listings/[id]` | P0 | IN_REVIEW | Uncommitted polish reported |
+| `/listings/[id]` | P0 | IN_REVIEW | M-013 layout polish committed (`d74f34b`); human review pending |
 | `/messages` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
 | `/notifications` | P2 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
 | `/orders` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
 | `/orders/[id]` | P0 | IN_REVIEW | Dispute/checkout surfaces |
-| `/profile` | P1 | NEEDS_SCREENSHOT_VERIFICATION | Auth required |
+| `/profile` | P1 | IN_REVIEW | M-003 profile polish committed (`5857a75`); human review pending |
 | `/admin` | P3 | OUT_OF_SCOPE | Legacy internal styling |
 
 Full machine-readable inventory: `VISUAL_POLISH_ROUTES.json`
@@ -74,7 +74,7 @@ Full machine-readable inventory: `VISUAL_POLISH_ROUTES.json`
 | Field | Value |
 |-------|--------|
 | **Automation status** | `TOOLING_READY` |
-| **Capture status** | `LATEST_RUN_AVAILABLE` — `runs/20260703-1759/` (frontend @ 148986a; 28 captures, 0 skipped) |
+| **Capture status** | `LATEST_RUN_AVAILABLE` — `runs/20260710-1411/` (frontend @ `9879842`; includes `/explorar` captures) |
 | **Spec** | `frontend/e2e/visual-polish-screenshots.spec.ts` |
 | **Config** | `frontend/playwright.visual-polish.config.ts` |
 | **Output** | `workspace/screenshots/visual-polish/runs/<YYYY-MM-DD-HHMM>/` |
@@ -90,44 +90,35 @@ Runbook: `workspace/screenshots/visual-polish/README.md`
 ## Known visual debt
 
 1. **Logged-in Home screenshot** — Recommended second capture after demo login for navbar parity with reference (non-blocking; Home/Hero approved).
-2. **Listing detail** — Active/uncommitted visual polish changes in frontend; not human-approved.
-3. **Order detail / disputes** — Uncommitted polish on dispute section; WebPay UI needs screenshot verification.
-4. **Admin route** — Legacy dark/violet internal styling (`OUT_OF_SCOPE`).
-5. **Other routes** — No screenshot baseline beyond Home.
+2. **Listing detail** — M-013 polish committed; awaiting Daniela/Ernesto human review (`IN_REVIEW`).
+3. **Explore catalog** — M-012 sidebar polish + M-016 card polish committed; `/explorar?genre=` deep links do not auto-apply filters yet.
+4. **Order detail / disputes** — Dispute/checkout surfaces need screenshot verification and human review.
+5. **Admin route** — Legacy dark/violet internal styling (`OUT_OF_SCOPE`).
+6. **Other routes** — Capture screenshots and run reference/system review per `VISUAL_POLISH_ROUTES.json`.
 
 ---
 
-## Uncommitted product UI changes (record only)
+## Committed polish state (repos clean at `9879842`)
 
-**14 modified frontend files** — mixed approval scope. Daniela approved the current Home/Hero visual state; route `/` PASS is tied to the approved Home baseline screenshots. Non-Home route-specific components remain `IN_REVIEW`:
+Frontend working tree is **clean**. Recent TYPE C commits on record (all **IN_REVIEW** until human PASS):
 
-| File | Scope | Status |
-|------|-------|--------|
-| `src/components/home/HomeHero.tsx` | Home/Hero | **APPROVED** (Daniela, 2026-07-01) |
-| `src/components/home/HomeMetricsBand.tsx` | Home | **APPROVED** (Daniela, 2026-07-01) |
-| `src/app/listings/[id]/page.tsx` | Listing detail | IN_REVIEW |
-| `src/components/DetailField.tsx` | Listing detail | IN_REVIEW |
-| `src/components/DiggingScorePanel.tsx` | Shared / listing | IN_REVIEW |
-| `src/components/ListingDetailActions.tsx` | Listing detail | IN_REVIEW |
-| `src/components/ListingVideoSection.tsx` | Listing detail | IN_REVIEW |
-| `src/components/Marketplace.tsx` | Home catalog + marketplace | IN_REVIEW |
-| `src/components/MessageForm.tsx` | Messages / listing | IN_REVIEW |
-| `src/components/OrderDisputeSection.tsx` | Order detail | IN_REVIEW |
-| `src/components/SellerCard.tsx` | Listing detail | IN_REVIEW |
-| `src/components/SellerReputationPanel.tsx` | Listing detail | IN_REVIEW |
-| `src/components/TrustBadgePills.tsx` | Shared | IN_REVIEW |
-| `src/components/VinylCover.tsx` | Listing detail | IN_REVIEW |
+| Area | Frontend commit | Status |
+|------|-----------------|--------|
+| Profile | `5857a75` | IN_REVIEW |
+| Listing card | `f029b83` | IN_REVIEW |
+| Listing detail | `d74f34b` | IN_REVIEW |
+| Explore filters sidebar | `9879842` | IN_REVIEW |
 
-Functional Smoke Gate **PASS** with these changes present (37/37 E2E, build OK, `run_melomanos.py --check` OK). Home/Hero visual acceptance recorded; frontend commit of non-Home files remains blocked pending separate route approval.
+Functional smoke: **43/43 E2E**, build OK, `run_melomanos.py --check` OK. No route PASS extended beyond Home baseline.
 
 ---
 
 ## Next recommended actions
 
 1. **Optional logged-in Home capture** — `home-desktop-1440.png` (authenticated) for navbar parity.
-2. **Listing detail review** — Screenshot, reference match, and human approval for `/listings/[id]`.
+2. **Human review** — `/explorar`, `/listings/[id]`, `/profile` (polish committed; evidence in latest `runs/`).
 3. **Order detail review** — Screenshot and approval for `/orders/[id]` dispute/checkout surfaces.
-4. **Frontend commit** — Home/Hero-approved files may be committed when Ernesto scopes the commit; other route files await separate approval.
+4. **Next TYPE C mission** — M-014 empty states (see `NEXT_ACTION_QUEUE.md`).
 5. **Other routes** — Capture screenshots and run reference/system review per `VISUAL_POLISH_ROUTES.json`.
 
 ---
@@ -137,7 +128,7 @@ Functional Smoke Gate **PASS** with these changes present (37/37 E2E, build OK, 
 | Date | Route / Gate | Approver | Result | Notes |
 |------|----------------|----------|--------|-------|
 | 2026-07-01 | Adoption gate | AI Dev OS review | PASS WITH WARNINGS | Scaffolding versioned in workspace `main` |
-| 2026-07-01 | Functional Smoke Gate | AI Dev OS review | PASS | 37/37 E2E with uncommitted UI |
+| 2026-07-01 | Functional Smoke Gate | AI Dev OS review | PASS | 43/43 E2E at latest gate |
 | 2026-07-01 | Home Reference Match | AI Dev OS review | PASS WITH MINOR WARNINGS | Screenshots captured; human approval pending |
 | 2026-07-01 | Home `/` — Home/Hero | Daniela | **APPROVED** | Hero V2 copy + gold color emphasis; underline removed per micro-hotfix; approved screenshots: `home-hero-v2-underline-fix-*.png`. Route PASS applies to approved Home baseline only; non-Home route-specific components remain IN_REVIEW. |
 
