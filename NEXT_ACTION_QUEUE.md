@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (SESSION-20260710-1811 closure sync)  
+**Last updated:** 2026-07-10 (SESSION-20260710-1848 — no READY A/B/C/D missions)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -502,11 +502,11 @@
 1. **M-019** — Messages back link remediation (BLOCKED — approve before execution)  
 2. **M-010** — Bounties product spec (TYPE G — not in default autonomous types)  
 
-**Completed (recent):** Session [`SESSION-20260710-1811`](reports/missions/SESSION-20260710-1811_REPORT.md) — M-015 mobile nav polish + M-009 favorites audit; commits local; pushes disabled.
+**Completed (recent):** Session [`SESSION-20260710-1848`](reports/missions/SESSION-20260710-1848_REPORT.md) — queue exhausted for types A/B/C/D (0 missions). Prior: [`SESSION-20260710-1811`](reports/missions/SESSION-20260710-1811_REPORT.md).
 
 **Primary next human action:** `APPROVE_MISSION_EXECUTION` / Mission: M-019 (remediation for M-008 F1)
 
-**No READY missions remain** for types A/B/C/D except M-019 (BLOCKED pending approval).
+**No READY missions remain** for types A/B/C/D. M-010 (TYPE G) is READY but excluded from default autonomous types.
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
