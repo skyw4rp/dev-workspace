@@ -467,7 +467,7 @@
 | **gate_result** | PASS |
 | **gate_review** | Inline in execution report § Gate review |
 | **completion_evidence** | Back link `/explorar`; messaging E2E 2/2; build + unit PASS |
-| **commit_sha** | pending — post-commit |
+| **commit_sha** | frontend `e8b8564`; workspace `15db36e` |
 | **push_status** | pending_approval |
 | **completed_in_session** | ACTION-M-019-20260710 |
 | **human_disposition** | — |
