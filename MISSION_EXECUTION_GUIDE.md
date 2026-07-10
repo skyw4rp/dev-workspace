@@ -30,6 +30,7 @@ Humans approve with short tokens instead of rewriting full prompts each time.
 | Mission briefs | `workspace/missions/M-XXX_*.md` |
 | Mission execution reports | `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md` |
 | Reusable prompt interfaces | `workspace/prompts/*.md` |
+| Session reports | `workspace/reports/missions/SESSION-<YYYYMMDD-HHMM>_REPORT.md` |
 | This guide | `workspace/MISSION_EXECUTION_GUIDE.md` |
 | Visual Polish control | `workspace/VISUAL_POLISH_CONTROL.md` |
 | Visual Feedback Loop | `workspace/VISUAL_FEEDBACK_LOOP_CONTROL.md` |
@@ -178,6 +179,7 @@ Gate review must **not** continue implementation.
 | `APPROVE_MISSION_EXECUTION` + `Mission: M-XXX` | Run the named mission per its brief — see [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md) |
 | `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | Review-only gate on brief + execution report — see [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) |
 | `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | Inspect diffs, validate, stage/commit/push per report safe list — see [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) |
+| `APPROVE_AUTONOMOUS_SESSION` | Multi-mission session (execute → gate → optional commit) under limits — see [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) |
 | `APPROVE_FRONTEND_COMMIT` | Stage/commit/push listed frontend files only (explicit path list) |
 | `APPROVE_BACKEND_COMMIT` | Stage/commit/push listed backend files only |
 | `APPROVE_WORKSPACE_COMMIT` | Stage/commit/push listed workspace files only |
@@ -238,8 +240,23 @@ Melómanos-local prompt files under `workspace/prompts/` let you send **short to
 | `APPROVE_MISSION_EXECUTION` + `Mission: M-XXX` | [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md) | Executes named mission, writes report |
 | `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) | Review-only; lists safe files; no implementation |
 | `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) | Inspects diffs, validates, commits per report safe list |
+| `APPROVE_AUTONOMOUS_SESSION` | [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) | Multi-mission session under limits (default: no commits) |
 
 Repo-specific commit tokens (`APPROVE_FRONTEND_COMMIT`, `APPROVE_WORKSPACE_COMMIT`, `APPROVE_BACKEND_COMMIT`) remain available when you need an explicit path list instead of the report-driven safe-commit gate.
+
+### Autonomous session (multi-mission)
+
+One approval can run several bounded missions in sequence. Default: **execute + gate review only** (`Commits: disabled`). Enable commits only with explicit `Commits: enabled` in the same message.
+
+```text
+APPROVE_AUTONOMOUS_SESSION
+Max missions: 3
+Commits: disabled
+Mission types: A,B,C,D
+Missions: auto
+```
+
+Session output: per-mission reports plus `SESSION-<YYYYMMDD-HHMM>_REPORT.md`.
 
 ### Examples
 
@@ -260,6 +277,12 @@ Mission: M-013
 ```text
 APPROVE_SAFE_COMMIT
 Mission: M-013
+```
+
+```text
+APPROVE_AUTONOMOUS_SESSION
+Max missions: 2
+Commits: disabled
 ```
 
 Default after any mission run: **do not commit** until `APPROVE_GATE_REVIEW` and/or `APPROVE_SAFE_COMMIT` (or a repo-specific `APPROVE_*_COMMIT` with exact paths).

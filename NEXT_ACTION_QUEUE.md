@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (QUEUE-HYGIENE — sync DONE statuses with committed reports)  
+**Last updated:** 2026-07-10 (M-018 autonomous session orchestrator DONE)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -42,10 +42,11 @@
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | DONE |
 | M-013 | Product detail page layout | C | P1 | DONE |
-| M-014 | Empty states visual pass | C | P2 | READY |
+| M-014 | Empty states visual pass | C | P2 | DONE |
 | M-015 | Mobile navigation polish | C | P2 | READY |
 | M-016 | Listing card visual improvement | C | P1 | DONE |
 | M-017 | Adopt reusable mission runner prompts | B | P1 | DONE |
+| M-018 | Autonomous session orchestrator | B | P1 | DONE |
 
 ---
 
@@ -334,7 +335,7 @@
 | **Title** | Empty states visual pass |
 | **Mission type** | TYPE C — Frontend Low-Risk |
 | **Priority** | P2 |
-| **Status** | READY |
+| **Status** | DONE (2026-07-10) — report [`reports/missions/M-014_EXECUTION_REPORT.md`](reports/missions/M-014_EXECUTION_REPORT.md); frontend `065c0e8` |
 | **Scope** | Editorial empty states for favorites, messages, orders, and/or explorar-as-scoped in brief — copy + layout only |
 | **Forbidden changes** | No API empty-contract changes; no backend; no PASS; no commits without token |
 | **Tooling** | **Cursor** primary. Optional **v0** for empty-state composition; Cursor integrates |
@@ -342,7 +343,7 @@
 | **Verification required** | `npm run build`; targeted E2E |
 | **Dependencies** | None |
 | **Stop conditions** | Inventing new product flows → STOP (TYPE G) |
-| **Brief** | `missions/M-014_EMPTY_STATES_VISUAL_PASS.md` *(create at execution start if missing)* |
+| **Brief** | [`missions/M-014_EMPTY_STATES_VISUAL_PASS.md`](missions/M-014_EMPTY_STATES_VISUAL_PASS.md) |
 | **Report path** | `reports/missions/M-014_EXECUTION_REPORT.md` |
 | **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-014 |
 
@@ -414,22 +415,44 @@
 
 ---
 
+### M-018 — Autonomous session orchestrator
+
+| Field | Value |
+|-------|--------|
+| **ID** | M-018 |
+| **Title** | Autonomous session orchestrator |
+| **Mission type** | TYPE B — Docs / Governance |
+| **Priority** | P1 |
+| **Status** | DONE (2026-07-10) — report [`reports/missions/M-018_EXECUTION_REPORT.md`](reports/missions/M-018_EXECUTION_REPORT.md) |
+| **Scope** | Add `APPROVE_AUTONOMOUS_SESSION` multi-mission orchestrator prompt; update mission guide and queue |
+| **Forbidden changes** | No frontend/backend/product code; no commits during execution |
+| **Acceptance criteria** | `AUTONOMOUS_SESSION_PROMPT.md`; session report convention; guide + queue updated |
+| **Verification required** | Docs inspection; git status shows only workspace docs |
+| **Dependencies** | M-017 reusable prompts (met) |
+| **Stop conditions** | Any product code change → STOP |
+| **Brief** | [`missions/M-018_AUTONOMOUS_SESSION_ORCHESTRATOR.md`](missions/M-018_AUTONOMOUS_SESSION_ORCHESTRATOR.md) |
+| **Report path** | `reports/missions/M-018_EXECUTION_REPORT.md` |
+| **Recommended executor prompt** | `APPROVE_AUTONOMOUS_SESSION` — see [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) |
+
+---
+
 ## Suggested execution order
 
-1. **M-014** — Empty states visual pass  
-2. **M-015** — Mobile navigation polish  
-3. **M-006 / M-008 / M-009** — verification & flow audits  
-4. **M-010** — product design when capacity allows  
+1. **M-015** — Mobile navigation polish  
+2. **M-006 / M-008 / M-009** — verification & flow audits  
+3. **M-010** — product design when capacity allows  
 
-**Completed (recent):** M-002, M-003, M-004, M-005, M-007, M-011, M-012, M-013, M-016, M-017 (reports + frontend commits on record). Queue synced via QUEUE-HYGIENE (2026-07-10).
+**Completed (recent):** M-014 empty states (`065c0e8`). M-018 session orchestrator (TYPE B). Queue synced 2026-07-10.
 
-**First recommended mission (do not auto-execute):** **M-014** (Empty states visual pass).
+**First recommended mission (do not auto-execute):** **M-015** (Mobile navigation polish).
+
+Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
 ---
 
 ## Notes
 
-- Reusable prompts: [`workspace/prompts/`](prompts/) — `APPROVE_NEXT_MISSION`, `APPROVE_MISSION_EXECUTION`, `APPROVE_GATE_REVIEW`, `APPROVE_SAFE_COMMIT`
+- Reusable prompts: [`workspace/prompts/`](prompts/) — includes `APPROVE_AUTONOMOUS_SESSION` for multi-mission sessions
 - Briefs for M-002+ may be created at mission start from this queue + [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md); **M-001 brief + report exist**.
 - Do not weaken Visual Polish human approval gates via this queue.
 - Header search-width microfix is **committed** (`frontend` `d09225b`); do not reopen as dirty work.
