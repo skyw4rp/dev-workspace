@@ -28,7 +28,7 @@
 | Subscriptions | IMPLEMENTED | [BUSINESS_RULES § Subscription](../backend/BUSINESS_RULES.md) | [ARCHITECTURE § Subscriptions](../backend/ARCHITECTURE.md) | [`subscription.py`](../backend/app/services/subscription.py) |
 | Reputation / Digging Score | IMPLEMENTED | [BUSINESS_RULES](../backend/BUSINESS_RULES.md) | [ARCHITECTURE](../backend/ARCHITECTURE.md) | [`users.py`](../backend/app/routers/users.py) |
 | Shipping / Payout profiles | IMPLEMENTED (payout UI: UNKNOWN) | [BUSINESS_RULES](../backend/BUSINESS_RULES.md) | [ARCHITECTURE](../backend/ARCHITECTURE.md) | [`users.py`](../backend/app/routers/users.py) |
-| **Bounties / Wanted records** | **PLANNED** | [BOUNTIES_PRODUCT_SPEC](BOUNTIES_PRODUCT_SPEC.md) | — | Not in [`main.py`](../backend/app/main.py); **NOT_APPROVED** (M-010) |
+| **Bounties / Wanted records** | **PLANNED** | [BOUNTIES_PRODUCT_SPEC](BOUNTIES_PRODUCT_SPEC.md) · [DR-BOUNTIES-001](decisions/BOUNTIES_MVP_DECISION_RECORD.md) | — | Decisions **APPROVED** M-020; bounded implementation M-021+; **closed pilot** |
 | Catalog `/releases` | UNKNOWN | — | README/CHANGELOG only | Not in [`main.py`](../backend/app/main.py) |
 
 ---

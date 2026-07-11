@@ -1,10 +1,10 @@
 # Bounties Product Specification — Melómanos Market
 
-**Document type:** Product specification (TYPE G — not implementation-approved)  
-**Mission:** M-010  
+**Document type:** Product specification (TYPE G)  
+**Mission:** M-010 · **M-020 (decisions approved 2026-07-10)**  
 **Date:** 2026-07-10  
-**Implementation status:** **NOT_APPROVED**  
-**Authority:** This document defines proposed product rules. Until promoted and implemented, [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) remains authoritative for live behavior.
+**Implementation status:** **APPROVED_FOR_BOUNDED_IMPLEMENTATION** (closed pilot; M-021+ per mission)  
+**Authority:** Approved product rules for bounded implementation. Live runtime until shipped: [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md).
 
 **Related:** [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md)
 
@@ -53,10 +53,10 @@ A buyer can publish an **active wanted request**, receive **at least one seller 
 | **Bounty** | A buyer-published **wanted request** for a vinyl record, optionally including a **stated incentive** (informational in MVP). |
 | **Bounty creator** | Authenticated user who owns the bounty. |
 | **Wanted vinyl** | Target record metadata (artist, title, format, pressing/edition notes, condition preferences). Not a listing until a seller responds. |
-| **Bounty response** (preferred) / **candidate offer** | A seller’s reply linking an **existing or newly created listing** to the bounty. One response = one listing proposal. |
+| **Bounty response** (preferred) / **candidate offer** | A seller’s reply linking an **existing available listing** owned by the responder. One response = one listing proposal. |
 | **Matched bounty** | Bounty with **≥1 active response** under buyer review (`MATCHED` or later). |
-| **Accepted response** | The single response the buyer selected to pursue (`ACCEPTED`). Does not by itself move money. |
-| **Fulfilled bounty** | Accepted path completed: linked **order reaches `completed`** via Compra Segura, **or** buyer marks fulfilled with audit trail (MVP may require order completion only — see open decisions). |
+| **Accepted response** | The single response the buyer selected to pursue (`ACCEPTED`). Does not by itself move money or fulfill the bounty. |
+| **Fulfilled bounty** | Linked **Compra Segura order reaches `completed`** (canonical fulfillment — M-020 approved). |
 | **Expired bounty** | Past `expires_at` without acceptance; no longer discoverable as active. |
 | **Cancelled bounty** | Creator or moderator terminated before fulfillment. |
 | **Stated incentive** | Optional CLP amount the creator **declares** they are willing to pay **above or including** expected record price — **not held or guaranteed by Melómanos in MVP**. |
@@ -64,6 +64,16 @@ A buyer can publish an **active wanted request**, receive **at least one seller 
 | **Reward / incentive (MVP)** | Synonym for **stated incentive** only — **not** escrowed funds. |
 
 **Avoid:** Using “bounty” to mean both the request and the payment. Use **bounty** = request, **stated incentive** = optional declared amount, **Compra Segura payment** = actual transaction.
+
+### Public-facing terminology (M-020 approved)
+
+| Context | Term |
+|---------|------|
+| **Internal / API** | `Bounty`, `BountyResponse` |
+| **Primary UI label** | **Vinilos buscados** |
+| **Supporting copy** | “Busco este vinilo”; “Incentivo ofrecido” |
+| **Incentive disclaimer (required where shown)** | Declared by the buyer; **not reserved or guaranteed** by Melómanos |
+| **Forbidden in customer copy** | Guaranteed payment, escrowed reward, secured/held/protected incentive funds |
 
 ---
 
@@ -127,11 +137,11 @@ Melómanos **does not** hold or transfer bounty incentive money in MVP. Stated i
 ### 4.4 Seller responds
 
 1. Authenticated seller views bounty detail → **Responder**.
-2. **Preferred MVP:** Select **existing active listing** (`status = available`) OR **create new listing** (redirect `/sell` with bounty context prefilled).
-3. Response includes optional message (opens protected messaging thread on linked listing **or** bounty-scoped thread — see integration).
+2. Selects **existing active listing** (`status = available`) owned by seller.
+3. Response includes optional message (protected messaging on linked listing).
 4. Buyer notified via in-app notification.
 
-**Failure paths:** Listing not owned by seller; listing sold/reserved; duplicate response same listing; bounty expired mid-flow.
+**Failure paths:** Listing not owned by seller; listing not `available`; duplicate response same listing; bounty expired mid-flow; creator cannot self-respond.
 
 ### 4.5 Buyer evaluates responses
 
@@ -206,7 +216,7 @@ All message bodies subject to [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_
 - **Who:** Authenticated users with verified account (same as messaging).
 - **Required fields:** Artist, title (Spanish/UTF-8); at least one distinguishing attribute (year, label, pressing, or free-text “detalles”).
 - **Optional:** Discogs release ID (numeric, validated format); expected record price CLP; stated incentive CLP; min record/cover grade (Discogs enum); expiration date.
-- **Limits (proposed):** Max 5 active bounties per user; max 1 active bounty per normalized `(artist, title, pressing_key)` per creator; global rate limit 10 creates/day/user.
+- **Limits (approved M-020):** Max **5 ACTIVE-equivalent** bounties per user (`ACTIVE`, `MATCHED`, `ACCEPTED`); enforced atomically on create/activate. Max 1 active bounty per normalized `(artist, title, pressing_key)` per creator; global rate limit 10 creates/day/user.
 
 ### Pricing and currency
 
@@ -217,9 +227,9 @@ All message bodies subject to [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_
 ### Responses
 
 - **Who:** Authenticated sellers (any plan).
-- **Listing required:** Response must reference `listing_id` where seller is owner and listing `available` (recommended — see open decision on create-on-respond).
+- **Listing required (M-020):** Response must reference `listing_id` where seller is owner and listing `available`.
+- **Self-response:** **Blocked** — `responder_id` must not equal `creator_id` (server-enforced).
 - **Multiple responses:** Allowed from different sellers; one response per seller per bounty; one listing per response.
-- **Without listing:** Deferred — increases fraud risk.
 
 ### Acceptance and cancellation
 
@@ -234,8 +244,7 @@ All message bodies subject to [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_
 
 ### Fulfillment evidence
 
-- **Primary:** Order ID linked to accepted response reaches `completed`.
-- **Manual buyer confirm:** Deferred (abuse risk).
+- **Primary:** Order ID linked to accepted response reaches `completed` (M-020 — **only** path).
 
 ### Moderation
 
@@ -451,27 +460,31 @@ User 1──* BountyResponse (as responder)
 
 | Phase | Deliverable | Approval |
 |-------|-------------|----------|
-| **0** | M-010 spec + human decision closure (M-020) | This document |
-| **1** | Informational bounties: backend domain + API + basic UI | TYPE F/H per mission |
-| **2** | Notifications, discovery polish, E2E, abuse reports | TYPE C/F |
-| **3** | Optional financial incentive / escrow | Separate legal + product gate |
+| **0** | M-010 spec + M-020 decision closure | **DONE** |
+| **1 (closed pilot)** | Informational bounties: backend domain + API + controlled UI exposure | M-021+ per mission; **not** general public rollout |
+| **2** | Notifications, discovery polish, E2E, abuse reports | After pilot evidence |
+| **3** | Optional financial incentive / escrow | Separate legal + product gate — **NOT_APPROVED** |
 
-Align with [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) promotion process — **not** in current MVP queue until promoted.
+**Rollout (M-020):** Closed pilot with controlled exposure. **Not** promoted to general [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) scope until pilot evidence reviewed and separate gate passed.
 
 ---
 
-## 15. Open human decisions
+## 15. Approved product decisions (M-020)
 
-| Decision | Options | Recommendation | Evidence | Human approval required |
-|----------|---------|----------------|----------|-------------------------|
-| MVP financial model | A) Informational only B) Escrow incentive | **A** | No custody infra; Compra Segura covers transactions | **Yes** — confirm A |
-| Public display of stated incentive | A) Always show if set B) Hide until response C) Never in MVP | **A** with disclaimer | User concept mentions incentive | Yes |
-| Seller response without listing | A) Listing required B) Create-on-respond C) Text-only response | **A** (listing required) | Listing ties to Compra Segura | Yes |
-| Self-response (creator responds to own bounty) | A) Block B) Allow | **A) Block** | Collusion risk | Yes |
-| Fulfillment definition | A) Order completed only B) Manual buyer confirm | **A** | Auditable | Yes |
-| Digging Score for bounty fulfill | A) None MVP B) +N points | **A** | BUSINESS_RULES score from orders | Yes |
-| Active bounty limit per user | 3 / 5 / 10 | **5** | Balance spam vs utility | Yes |
-| Promote to MVP_ROADMAP | Now / After beta / Defer | **After closed beta** | Roadmap focus: deployment, WebPay | Yes |
+All decisions **APPROVED** 2026-07-10 via Mission M-020. Authoritative detail: [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md).
+
+| # | Decision | Final rule |
+|---|----------|------------|
+| DR-001 | Financial model | Informational incentive only; no custody/guarantee; Compra Segura orders only |
+| DR-002 | Public incentive display | Show in CLP with mandatory non-guarantee disclaimer |
+| DR-003 | Seller responses | Existing `available` listing required |
+| DR-004 | Self-response | Blocked; server-enforced |
+| DR-005 | Fulfillment | Order `completed` only; accept does not fulfill or auto-reserve |
+| DR-006 | Digging Score | No effect in MVP |
+| DR-007 | Active bounty limit | Max 5 ACTIVE-equivalent; atomic enforcement |
+| DR-008 | Rollout | Closed pilot; general promotion requires separate gate |
+
+**Deferred (explicit):** Incentive escrow, bounty checkout, Digging Score credit, general MVP_ROADMAP promotion, public rollout without pilot review.
 
 ---
 
