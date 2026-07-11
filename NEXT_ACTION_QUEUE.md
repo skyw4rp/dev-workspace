@@ -3,7 +3,7 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (M-008 re-audit closure after M-019 remediation)  
+**Last updated:** 2026-07-10 (M-010 Bounties product spec — TYPE G closure)  
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 > This queue is the **operational** execution board for Cursor missions.  
@@ -41,7 +41,7 @@
 | M-007 | Home vs Explore validation | A | P1 | DONE |
 | M-008 | Messaging flow audit | A | P2 | DONE |
 | M-009 | Favorites flow audit | A | P2 | DONE |
-| M-010 | Bounties product spec | G | P3 | READY |
+| M-010 | Bounties product spec | G | P3 | DONE |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | DONE |
 | M-013 | Product detail page layout | C | P1 | DONE |
@@ -281,16 +281,26 @@
 | **Title** | Bounties product spec |
 | **Mission type** | TYPE G — Product Design only |
 | **Priority** | P3 |
-| **Status** | READY |
-| **Scope** | Produce a product/UX spec for a future Bounties feature; no implementation |
-| **Forbidden changes** | No frontend/backend implementation; no schema; no commits of code; docs/report only |
-| **Acceptance criteria** | Spec covering problem, user flows, non-goals, open questions, suggested later mission types |
-| **Verification required** | Spec completeness review only |
-| **Dependencies** | None (low priority vs visual audits) |
-| **Stop conditions** | Any implementation started → STOP |
-| **Brief** | `missions/M-010_BOUNTIES_PRODUCT_SPEC.md` *(create at execution start if missing)* |
-| **Report path** | `reports/missions/M-010_EXECUTION_REPORT.md` (or spec path named in brief) |
-| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-010 — TYPE G docs only |
+| **Status** | DONE (2026-07-10) — specification complete; **implementation NOT_APPROVED** |
+| **execution_report** | [`reports/missions/M-010_EXECUTION_REPORT.md`](reports/missions/M-010_EXECUTION_REPORT.md) |
+| **gate_result** | PASS WITH WARNINGS |
+| **gate_review** | Inline in execution report § Gate result |
+| **completion_evidence** | [`BOUNTIES_PRODUCT_SPEC.md`](BOUNTIES_PRODUCT_SPEC.md); [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md); SPEC index row |
+| **commit_sha** | pending — post M-010 commit |
+| **push_status** | pending_approval |
+| **completed_in_session** | M-010-20260710 |
+| **implementation_status** | **NOT_APPROVED** |
+| **human_disposition** | — |
+| **Scope** | Product/UX spec for future Bounties (wanted records + optional informational incentive); no implementation |
+| **Forbidden changes** | No frontend/backend implementation; no schema; no code |
+| **Acceptance criteria** | Spec: problem, flows, non-goals, open questions, proposed later missions — **met** |
+| **Verification required** | Spec completeness; `py run_melomanos.py --check` — **met** |
+| **Dependencies** | None |
+| **Brief** | [`missions/M-010_BOUNTIES_PRODUCT_SPEC.md`](missions/M-010_BOUNTIES_PRODUCT_SPEC.md) |
+| **Canonical spec** | [`BOUNTIES_PRODUCT_SPEC.md`](BOUNTIES_PRODUCT_SPEC.md) |
+| **Decision record** | [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md) |
+| **Notes** | **W1–W4** non-blocking: human decisions (M-020); roadmap/BUSINESS_RULES updates deferred to implementation. MVP = informational wanted board; no fund custody. |
+| **Recommended executor prompt** | Completed — see proposed batch below |
 
 ---
 
@@ -510,13 +520,32 @@
 
 ## Suggested execution order
 
-1. **M-010** — Bounties product spec (TYPE G)
+**Queue exhausted for READY missions.** All M-001–M-019 and M-010 are DONE.
 
-**Completed (recent):** **M-008** re-audit closure (2026-07-10) after **M-019** remediation.
+**Completed (recent):** **M-010** Bounties product spec (2026-07-10).
 
-**Primary next human action:** `APPROVE_MISSION_EXECUTION` / Mission: M-010 — or autonomous session with `Mission types: G`
+**Primary next human action:** Review [`BOUNTIES_PRODUCT_SPEC.md`](BOUNTIES_PRODUCT_SPEC.md) → `APPROVE_MISSION_EXECUTION` / Mission: **M-020** (decision closure) when ready — or promote implementation batch after decisions locked.
 
-**READY missions:** M-010 only (TYPE G). **READY A/B/C/D:** zero. **BLOCKED:** none.
+**READY missions:** **zero**. **READY A/B/C/D:** zero. **BLOCKED:** none.
+
+---
+
+## Proposed missions (post M-010 — not READY)
+
+Implementation **NOT_APPROVED**. Activate only with explicit per-mission approval.
+
+| ID | Title | Type | Priority | Status |
+|----|-------|------|----------|--------|
+| M-020 | Bounties human decision closure | G | P2 | PROPOSED |
+| M-021 | Bounties backend domain + persistence design | F | P2 | PROPOSED |
+| M-022 | Bounties API contracts | F | P2 | PROPOSED |
+| M-023 | Bounties discovery + detail UI | C/H | P2 | PROPOSED |
+| M-024 | Create / manage bounties UI | C/H | P2 | PROPOSED |
+| M-025 | Seller response flow | C/H | P2 | PROPOSED |
+| M-026 | Bounties notifications + messaging hooks | F | P2 | PROPOSED |
+| M-027 | Bounties E2E + abuse controls | D/F | P2 | PROPOSED |
+
+**Suggested order:** M-020 → M-021 → M-022 → parallel UI (M-023–M-025) → M-026 → M-027.
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
