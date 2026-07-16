@@ -6,13 +6,17 @@
 **Executor:** Melómanos Market AI Dev OS Product Decision Authority  
 **Workspace HEAD (start):** `abcb96a5d36b97139831937a68c5dcd04a3c86c0`
 
+> ## SUPERSESSION NOTICE — CURRENT OPERATIONAL STATUS
+>
+> This report preserves the M-020 execution record as it existed on 2026-07-10. Its former recommendation to execute M-021, including any `READY` or bounded-implementation language, is historical, superseded, and non-executable. Bounties and M-021 are **HOLD**. M-021 requires a new explicit human decision before any work may be authorized. [`PROJECT_STATUS.md`](../../PROJECT_STATUS.md) is the sole cross-repository operational authority.
+
 ---
 
 ## Verdict
 
 **PASS**
 
-All eight decisions closed. Compatible with M-010. Bounded implementation authorized; M-021 only promoted to READY.
+Historical verdict: all eight decisions closed. Compatible with M-010. Bounded implementation authorized; M-021 only promoted to READY. This record is superseded for current operations.
 
 ---
 
@@ -75,9 +79,9 @@ None blocking. W1–W4 from M-010 partially resolved (decisions closed); W2/W3 (
 
 ---
 
-## Recommended next action
+## Historical recommended next action — superseded
 
-`APPROVE_MISSION_EXECUTION` / Mission: **M-021** when ready to begin backend domain design.
+At the time, the recorded recommendation was: `APPROVE_MISSION_EXECUTION` / Mission: **M-021** when ready to begin backend domain design. It is now superseded, non-executable, and does not authorize M-021; Bounties and M-021 remain **HOLD** pending a new explicit human decision.
 
 ---
 

@@ -151,3 +151,6 @@ Missions should cite evidence paths. Do not invent PASS from green tests alone.
 | [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) | Mission pattern + tokens |
 | [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) | Ready missions |
 | [`QUALITY_GATE.md`](QUALITY_GATE.md) | Functional DoD |
+# Canonical authority boundary
+
+`PROJECT_STATUS.md` is read first for every execution, technical command, validation, or session. Parse its exact JSON authority block and require an exact `READY` mission plus the requested action class. If the block is absent, duplicated, malformed, stale, or conflicts with prose, STOP. Tokens, queues, roadmaps, briefs, reports, decisions, and gate PASS results are intent or evidence, never authority. A gate is read-only unless the canonical block explicitly permits its validation command.

@@ -82,3 +82,6 @@ Correct the `/messages` page persistent back link so `← Volver al catálogo` n
 ## Relationship to M-008
 
 Completing M-019 successfully does **not** auto-close M-008. After remediation, human may re-run disposition or gate review per mission guide.
+# M-019 — DONE / HISTORICAL / NON-OPERATIVE
+
+This brief preserves its original body and authorization evidence. It grants no current execution authority; only the canonical JSON block in `../PROJECT_STATUS.md` can do so.

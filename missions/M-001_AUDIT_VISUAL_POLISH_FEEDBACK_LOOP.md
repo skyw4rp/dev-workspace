@@ -2,17 +2,20 @@
 
 | Field | Value |
 |-------|--------|
+| **Operational notice** | **DONE / HISTORICAL / NON-OPERATIVE — DO NOT EXECUTE.** This brief cannot be re-executed or authorize work. **MEL-UX-001 is the sole READY operational mission only because [`workspace/PROJECT_STATUS.md`](../PROJECT_STATUS.md) currently authorizes it.** `NEXT_ACTION_QUEUE.md`, `backend/MVP_ROADMAP.md`, this brief, and any plan or report are subordinate context only. |
 | **Mission ID** | M-001 |
 | **Title** | Audit Visual Polish / Visual Feedback Loop status |
 | **Mission type** | **TYPE A — Review Only** |
 | **Priority** | P0 |
-| **Status** | READY |
+| **Status** | DONE — HISTORICAL — NON-OPERATIVE |
 | **Product** | Melómanos Market |
 | **Pattern** | One mission → one execution report → one gate review |
 
 ---
 
 ## Goal
+
+> Historical goal preserved for record only; M-001 is not a current or executable mission.
 
 Audit the current Visual Polish Gate and Visual Feedback Loop adoption state. Produce a clear snapshot of route readiness, evidence strategy, and open visual debt. Recommend the **safest next TYPE C** (frontend low-risk polish) mission — without implementing anything.
 
@@ -81,7 +84,9 @@ Write:
 
 ## Dependencies
 
-None. This is the recommended first mission.
+> Historical dependency statement only. M-001 is DONE and cannot become READY through this brief or any subordinate document.
+
+None. This was historical completed work; it is not a recommended current mission.
 
 ---
 
@@ -129,6 +134,8 @@ Use at least:
 
 ## Executor prompt
 
+> **ARCHIVED / NON-OPERATIVE:** Do not copy or use this prompt to execute M-001.
+
 Copy into the next Cursor session:
 
 ```text
@@ -160,6 +167,8 @@ Return the execution report summary and the recommended next mission.
 ---
 
 ## Gate review prompt (after report)
+
+> **ARCHIVED / NON-OPERATIVE:** This historical review prompt cannot authorize work.
 
 ```text
 GATE_REVIEW for M-001

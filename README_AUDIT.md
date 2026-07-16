@@ -96,3 +96,6 @@ Melomanos audit passed
 - [`QUALITY_GATE.md`](./QUALITY_GATE.md) — Definition of Done
 - [`../backend/TESTING_STRATEGY.md`](../backend/TESTING_STRATEGY.md) — testing pyramid and CI
 - [`TESTING_OPTIMIZATION_REPORT.md`](./TESTING_OPTIMIZATION_REPORT.md) — audit and optimization notes
+# Operational authority
+
+Audit commands are technical references, not standing permission to execute. First parse the canonical JSON authority block in `PROJECT_STATUS.md` and require the exact mission, `READY`, and the named validation action. A gate remains read-only unless that command is explicitly authorized.

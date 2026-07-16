@@ -1,14 +1,22 @@
 # Deployment Runbook — Melómanos Marketplace
 
-**Purpose:** Operator procedures for production deploy, migration, backup, and recovery.  
-**Architecture:** Option B — Vercel frontend + VPS (Docker: Caddy, FastAPI, PostgreSQL).  
+> **DEFERRED / NOT AUTHORIZED / NON-EXECUTABLE.** Production Deployment is deferred. This runbook preserves technical history and conditional procedure; it does not authorize a deployment, cutover, infrastructure, cloud, domain, database, environment, secret, production, build, test, or runtime action. No deployment-related action may begin without a new explicit human decision recorded in [`PROJECT_STATUS.md`](PROJECT_STATUS.md). `NEXT_ACTION_QUEUE.md`, `backend/MVP_ROADMAP.md`, and any roadmap, queue, mission brief, plan, report, checklist, or runbook cannot authorize execution by themselves.
+>
+> All "current," "approved," "deploy," "execute," "pre-deploy," and "deploy day" wording below is historical or conditional reference material only, not present authorization.
+
+**Purpose:** Historical/conditional operator reference for production deployment, migration, backup, and recovery.
+**Architecture:** Historically proposed Option B — Vercel frontend + VPS (Docker: Caddy, FastAPI, PostgreSQL).
 **Companion docs:** [`PRODUCTION_DEPLOYMENT_PLAN.md`](PRODUCTION_DEPLOYMENT_PLAN.md), [`PRODUCTION_ENV_MATRIX.md`](PRODUCTION_ENV_MATRIX.md)
 
-**Status:** Phase 4 — CI workflows and deployment validation docs; **production cutover not performed**.
+**Status:** **DEFERRED / NOT AUTHORIZED / NON-EXECUTABLE** — Phase 4 historical CI and validation documentation; production cutover not performed.
 
 ---
 
 ## 1. Target architecture
+
+> **DEFERRED / NOT AUTHORIZED / NON-EXECUTABLE.** Production Deployment is deferred. This runbook preserves technical history and conditional procedure; it does not authorize a deployment, cutover, infrastructure, cloud, domain, database, environment, secret, production, build, test, or runtime action. No deployment-related action may begin without a new explicit human decision recorded in [`PROJECT_STATUS.md`](PROJECT_STATUS.md). `NEXT_ACTION_QUEUE.md`, `backend/MVP_ROADMAP.md`, and any roadmap, queue, mission brief, plan, report, checklist, or runbook cannot authorize execution by themselves.
+>
+> All "current," "approved," "deploy," "execute," "pre-deploy," and "deploy day" wording below is historical or conditional reference material only, not present authorization.
 
 ```
 Internet

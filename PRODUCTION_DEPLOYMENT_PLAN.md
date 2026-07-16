@@ -1,9 +1,15 @@
 # Production Deployment Plan — Melómanos Marketplace
 
 **Document type:** Phased execution plan (Cursor / operator playbook)  
-**Source of truth:** [`PRODUCTION_DEPLOYMENT_SCOPE_REPORT.md`](PRODUCTION_DEPLOYMENT_SCOPE_REPORT.md)  
-**Active roadmap item:** Production Deployment — [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md)  
-**Policy:** Do **not** mark the deployment milestone complete or advance `MVP_ROADMAP.md` until **all phases below are DONE**. See [`QUALITY_GATE.md`](QUALITY_GATE.md).
+**Historical technical reference:** [`PRODUCTION_DEPLOYMENT_SCOPE_REPORT.md`](PRODUCTION_DEPLOYMENT_SCOPE_REPORT.md)
+**Current operational disposition:** **DEFERRED / NOT AUTHORIZED**
+
+> ## CURRENT-STATUS NOTICE — NOT EXECUTABLE
+>
+> Production Deployment is **DEFERRED / NOT AUTHORIZED** pending UX and product-readiness evidence. No deployment, infrastructure, cloud, domain, database, environment, secret, or production work is authorized. This plan’s phases, operator instructions, architecture, and checklists are preserved as historical technical planning only and must not be interpreted as current commands. A future executor requires a new explicit human decision before using this document as execution instructions. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) is the sole cross-repository operational authority.
+
+**Historical roadmap reference:** Production Deployment — [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md)
+**Historical policy:** Do **not** mark the deployment milestone complete or advance `MVP_ROADMAP.md` until **all phases below are DONE**. See [`QUALITY_GATE.md`](QUALITY_GATE.md).
 
 ---
 
@@ -23,10 +29,10 @@
 
 ---
 
-## Cursor instruction
+## Historical Cursor instruction — non-operative
 
 ```
-To continue Production Deployment, implement the next TODO phase only.
+Historical instruction only: To continue Production Deployment, implement the next TODO phase only.
 Read PRODUCTION_DEPLOYMENT_PLAN.md, PRODUCTION_ENV_MATRIX.md, and DEPLOYMENT_RUNBOOK.md.
 Set the target phase Status to IN_PROGRESS before coding or infra work.
 When the phase completion checklist is fully satisfied, set Status to DONE.
@@ -36,7 +42,7 @@ Do not advance MVP_ROADMAP.md until Phase 5 is DONE.
 
 ---
 
-## Execution rules
+## Historical execution rules — non-operative
 
 1. **Only one phase may be `IN_PROGRESS` at a time.**
 2. **Do not cut over to production** until Phase 5 checklist is complete.

@@ -7,11 +7,15 @@ APPROVE_SAFE_COMMIT
 Mission: M-XXX
 ```
 
-Replace `M-XXX` with the mission ID whose execution report authorizes commits.
+Replace `M-XXX` with the mission ID. An execution report does not authorize commits.
 
 **Executor:** Melómanos Market AI Dev OS Lead Engineer and Adoption Agent (commit gate role).
 
 ---
+
+## Canonical preflight (before all instructions)
+
+Read `workspace/PROJECT_STATUS.md` first and parse its exact canonical JSON authority block. Require the exact mission, `READY`, and explicit `stage`, `commit`, and `push` action classes before any git side effect. STOP on absent, duplicate, malformed, stale, or conflicting authority. A token, queue, roadmap, brief, report, decision, gate result, or PASS cannot substitute.
 
 ## Instructions
 

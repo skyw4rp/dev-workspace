@@ -49,3 +49,6 @@ You can edit `PROJECT_STATUS.md` by hand anytime (e.g. adjust **Next Recommended
 | `py finish_task.py` | Quality Gate + optional commit/push + optional status update |
 
 See also [README_AUDIT.md](./README_AUDIT.md) and [README_FINISH_TASK.md](./README_FINISH_TASK.md).
+# Operational authority
+
+Status prose and roadmap entries are descriptive only. Before invoking this status tool, read and parse the exact canonical JSON block in `PROJECT_STATUS.md`; require the exact mission, `READY`, and the requested action class. The tool fails closed and status writes must preserve that block.

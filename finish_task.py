@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, WORKSPACE_DIR
+from governance_authority import AuthorityError, observe_repository_heads, require_actions
 from project_status import update_project_status
 from roadmap_advance import (
     ROADMAP_FILE,
@@ -106,6 +107,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Show release plan only; no audit, commit, or push.",
     )
+    parser.add_argument("--mission-id", required=True, help="Exact canonical mission ID.")
     parser.add_argument(
         "--advance-roadmap",
         action="store_true",
@@ -439,7 +441,12 @@ def roadmap_should_advance(plan: RoadmapPlan) -> bool:
     return plan.summary.startswith("Will auto-advance")
 
 
-def run_quality_gate() -> None:
+def run_quality_gate(mission_id: str) -> None:
+    require_actions(
+        mission_id,
+        ("product_tests", "product_build"),
+        observed_heads=observe_repository_heads(),
+    )
     print("\n=== Quality Gate ===\n")
     code = run_command(["py", "run_audit.py"], WORKSPACE)
     if code != 0:
@@ -498,7 +505,12 @@ def confirm_proceed() -> bool:
         print("Please enter Y or N.")
 
 
-def commit_and_push(state: RepoState) -> str:
+def commit_and_push(state: RepoState, mission_id: str) -> str:
+    require_actions(
+        mission_id,
+        ("stage", "commit", "push"),
+        observed_heads=observe_repository_heads(),
+    )
     print(f"\n--- {state.name} ({state.repo}) ---\n")
 
     steps = [
@@ -561,7 +573,12 @@ def release_had_successful_commit(
     )
 
 
-def commit_roadmap_docs(repo: Path, branch: str, message: str) -> None:
+def commit_roadmap_docs(repo: Path, branch: str, message: str, mission_id: str) -> None:
+    require_actions(
+        mission_id,
+        ("stage", "commit", "push"),
+        observed_heads=observe_repository_heads(),
+    )
     status = subprocess.run(
         ["git", "status", "--short", "MVP_ROADMAP.md", "PROJECT_STATUS.md"],
         cwd=repo,
@@ -589,6 +606,7 @@ def commit_roadmap_docs(repo: Path, branch: str, message: str) -> None:
 def execute_roadmap_advance(
     plan: RoadmapPlan,
     *,
+    mission_id: str,
     force_advance: bool,
     aborted: bool,
     backend_result: str | None,
@@ -613,15 +631,18 @@ def execute_roadmap_advance(
 
     try:
         new_text, next_task, backlog_complete = apply_roadmap_advance(
+            mission_id=mission_id,
             previous_task=previous_task,
             force_advance=force_advance or preview.multi_phase_safety,
         )
         ROADMAP_FILE.write_text(new_text, encoding="utf-8", newline="\n")
         update_workspace_roadmap_focus(
+            mission_id=mission_id,
             current_task=next_task,
             last_completed=previous_task,
         )
         update_backend_status_focus(
+            mission_id=mission_id,
             current_task=next_task,
             last_completed=previous_task,
         )
@@ -641,12 +662,13 @@ def execute_roadmap_advance(
     commit_message = (
         f"Advance roadmap: complete {previous_task}, active {next_label}"
     )
-    commit_roadmap_docs(BACKEND, BACKEND_BRANCH, commit_message)
+    commit_roadmap_docs(BACKEND, BACKEND_BRANCH, commit_message, mission_id)
 
 
 def maybe_commit_workspace(
     workspace: RepoState,
     *,
+    mission_id: str,
     custom_message: str | None,
     aborted: bool,
 ) -> str | None:
@@ -673,11 +695,12 @@ def maybe_commit_workspace(
         current_files,
         message,
     )
-    return commit_and_push(state)
+    return commit_and_push(state, mission_id)
 
 
 def update_project_status_after_release(
     *,
+    mission_id: str,
     backend: RepoState,
     frontend: RepoState,
     backend_result: str | None,
@@ -689,6 +712,7 @@ def update_project_status_after_release(
 
     try:
         update_project_status(
+            mission_id=mission_id,
             backend_committed=backend_result == "Committed and pushed",
             backend_message=backend.message,
             frontend_committed=frontend_result == "Committed and pushed",
@@ -752,6 +776,31 @@ def main() -> None:
     args = parse_args()
     print("Melomanos finish task v2\n")
 
+    # Guard before every roadmap/git read, audit, write, stage, commit, or push.
+    # A dry run is still an operational inspection and requires explicit consent.
+    requested_actions = (
+        ("read_only_inspection",)
+        if args.dry_run
+        else (
+            "product_tests",
+            "product_build",
+            "status_write",
+            "roadmap_promotion",
+            "stage",
+            "commit",
+            "push",
+        )
+    )
+    try:
+        require_actions(
+            args.mission_id,
+            requested_actions,
+            observed_heads=observe_repository_heads(),
+        )
+    except AuthorityError as error:
+        print(f"STOP: canonical authority denied finish_task: {error}")
+        sys.exit(1)
+
     active_task = read_active_task_from_roadmap(BACKEND / "MVP_ROADMAP.md")
     roadmap_plan = plan_roadmap_advance(
         advance_flag=args.advance_roadmap,
@@ -801,7 +850,7 @@ def main() -> None:
         )
         return
 
-    run_quality_gate()
+    run_quality_gate(args.mission_id)
 
     if active_task:
         print(f"Roadmap active task: {active_task}\n")
@@ -828,12 +877,13 @@ def main() -> None:
         sys.exit(0)
 
     if backend.will_commit:
-        backend_result = commit_and_push(backend)
+        backend_result = commit_and_push(backend, args.mission_id)
     if frontend.will_commit:
-        frontend_result = commit_and_push(frontend)
+        frontend_result = commit_and_push(frontend, args.mission_id)
 
     if not aborted:
         update_project_status_after_release(
+            mission_id=args.mission_id,
             backend=backend,
             frontend=frontend,
             backend_result=backend_result,
@@ -842,6 +892,7 @@ def main() -> None:
         )
         execute_roadmap_advance(
             plan=roadmap_plan,
+            mission_id=args.mission_id,
             force_advance=args.force_advance_roadmap,
             aborted=aborted,
             backend_result=backend_result,
@@ -849,6 +900,7 @@ def main() -> None:
         )
         workspace_result = maybe_commit_workspace(
             workspace,
+            mission_id=args.mission_id,
             custom_message=args.workspace_message,
             aborted=aborted,
         )

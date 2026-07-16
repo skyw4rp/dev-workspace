@@ -13,6 +13,10 @@ Replace `M-XXX` with the completed mission ID.
 
 ---
 
+## Canonical preflight (before all instructions)
+
+Read `workspace/PROJECT_STATUS.md` first and parse its exact canonical JSON authority block. Require the exact mission, `READY`, and `read_only_inspection` (or a named validation command) before gate work. STOP on absent, duplicate, malformed, stale, or conflicting authority. Queue, roadmap, brief, report, token, decision, and gate PASS are subordinate evidence; a gate is read-only and may not expand scope or grant commit authority.
+
 ## Instructions
 
 1. Read:

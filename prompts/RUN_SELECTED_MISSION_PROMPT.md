@@ -13,6 +13,10 @@ Replace `M-XXX` with the mission ID (e.g. `M-002`, `M-012`).
 
 ---
 
+## Canonical preflight (before all instructions)
+
+Read `workspace/PROJECT_STATUS.md` first and parse the exact canonical JSON authority block. Require that `Mission: M-XXX` exactly matches the sole authorized mission, is `READY`, and explicitly allows each requested action class. STOP on an absent, duplicate, malformed, stale, or conflicting block. Queue, roadmap, brief, report, token, decision, and gate prose are subordinate evidence only; PASS/report is never commit authority. Gates are read-only unless a specific validation command is explicitly authorized.
+
 ## Instructions
 
 1. Read first:

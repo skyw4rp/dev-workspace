@@ -4,9 +4,11 @@
 **Last synced:** 2026-07-09 (Stack constraints + tool intelligence + UI mission candidates)  
 **Root layout:** `C:\melomanos\{backend, frontend, workspace}`
 
+> **Operational authority notice — read before selecting work.** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) is the sole cross-repository operational authority and the only document that can authorize an active task or a READY mission. [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) and [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) are subordinate planning references; neither can authorize execution. A roadmap, queue, mission brief, plan, report, checklist, or runbook is context only and cannot authorize work by itself.
+
 > **This file is an index, not a specification.**  
-> On conflict, **`backend/BUSINESS_RULES.md`**, **`backend/ARCHITECTURE.md`**, and **`backend/MVP_ROADMAP.md`** override any summary here.  
-> Operational Cursor missions use **`workspace/NEXT_ACTION_QUEUE.md`** — they do not override roadmap or visual human PASS gates.  
+> For business and architecture constraints, use **`backend/BUSINESS_RULES.md`** and **`backend/ARCHITECTURE.md`**; neither planning context nor this index authorizes execution.
+> `workspace/NEXT_ACTION_QUEUE.md` is a subordinate locator only and cannot authorize a mission.
 > Stack, isolation, and tool rules: **[`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)**.
 
 ---
@@ -17,7 +19,7 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 
 **Product and business detail:** see [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md)  
 **Technical structure:** see [`backend/ARCHITECTURE.md`](../backend/ARCHITECTURE.md)  
-**What to build next:** see [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md)
+**Product roadmap context:** see [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) (subordinate; not execution authority)
 
 ---
 
@@ -28,12 +30,12 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 | [`AI_CONTEXT.md`](AI_CONTEXT.md) | This file — start here |
 | [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) | Project isolation, registered stack, tool intelligence (Cursor / v0) |
 | [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) | Bounded mission execution (one mission → one report → one gate) |
-| [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) | Ready missions (TYPE A–H) for Cursor sessions |
+| [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) | Subordinate mission queue; cannot authorize a READY mission |
 | [`TASKS.md`](TASKS.md) | Task board index → roadmap |
 | [`SPEC.md`](SPEC.md) | MVP coverage index → authoritative specs |
 | [`DESIGN.md`](DESIGN.md) | Flow and layout index → architecture |
 | [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Release index → roadmap / status |
-| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Living snapshot |
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Sole authority for active tasks and READY missions |
 | [`VISUAL_POLISH_CONTROL.md`](VISUAL_POLISH_CONTROL.md) | Visual polish gate (human PASS) |
 | [`VISUAL_FEEDBACK_LOOP_CONTROL.md`](VISUAL_FEEDBACK_LOOP_CONTROL.md) | Screenshot evidence feedback loop |
 | [`AI_DEV_OS_PROJECT_SCAN.md`](AI_DEV_OS_PROJECT_SCAN.md) | Audit scan (2026-06-17) |
@@ -42,9 +44,11 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 
 ## Current Snapshot (pointers only)
 
+The entries below provide context only. For an active task or READY mission, `PROJECT_STATUS.md` is the sole source of truth and authorization.
+
 | Item | Where to read |
 |------|----------------|
-| Active task | [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) — Current Active Task |
+| Active task / READY mission | [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md) — sole authority |
 | Completed milestones (13) | [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) — Completed |
 | Quality Gate | [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md) |
 | Last release | [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md) — Latest Release markers |
@@ -55,12 +59,14 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 
 ## Agent Onboarding (minimal)
 
+Before selecting or executing any work, read `PROJECT_STATUS.md`. Do not derive an active task from the roadmap or a mission from the queue: both are subordinate and non-authorizing.
+
 1. Read this file.
 2. Read [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) (stack + Cursor/v0 rules).
 3. Read [`backend/AGENT_RULES.md`](../backend/AGENT_RULES.md).
-4. Confirm active task in [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
-5. Read [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md).
-6. For Cursor execution sessions: read [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) and pick one mission from [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md).
+4. Read [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md) and confirm it explicitly authorizes the active task or READY mission.
+5. Read [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) only for subordinate product-planning context.
+6. For an authorized mission, read [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) and use [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) only as a subordinate locator.
 7. Read the relevant section of [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) before implementing (TYPE F/H only with explicit approval).
 
 **Path config:** [`workspace/README_PROJECT_LAYOUT.md`](README_PROJECT_LAYOUT.md) — set `MELOMANOS_*_DIR` when not using legacy defaults.
@@ -91,7 +97,7 @@ Full constraints: [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md).
 |----------|------|
 | Business rules | [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) |
 | Architecture | [`backend/ARCHITECTURE.md`](../backend/ARCHITECTURE.md) |
-| MVP roadmap | [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) |
+| MVP roadmap | [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) — subordinate planning reference, not execution authority |
 
 ### Backend governance
 
@@ -111,10 +117,10 @@ Full constraints: [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md).
 | Quality gate | [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md) |
 | Stack constraints | [`workspace/STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) |
 | Mission execution guide | [`workspace/MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) |
-| Next action queue | [`workspace/NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) |
+| Next action queue | [`workspace/NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) — subordinate queue, not execution authority |
 | Mission briefs | [`workspace/missions/`](missions/) |
 | Mission reports | [`workspace/reports/missions/`](reports/missions/) |
-| Project status | [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md) |
+| Project status | [`workspace/PROJECT_STATUS.md`](PROJECT_STATUS.md) — sole authority for active tasks and READY missions |
 | Visual polish control | [`workspace/VISUAL_POLISH_CONTROL.md`](VISUAL_POLISH_CONTROL.md) |
 | Visual feedback loop | [`workspace/VISUAL_FEEDBACK_LOOP_CONTROL.md`](VISUAL_FEEDBACK_LOOP_CONTROL.md) |
 | Project scan | [`workspace/AI_DEV_OS_PROJECT_SCAN.md`](AI_DEV_OS_PROJECT_SCAN.md) |

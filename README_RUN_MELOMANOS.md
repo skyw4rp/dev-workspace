@@ -93,3 +93,6 @@ Press CTRL+C or Enter to stop both.
 - [README_LOCAL_RUN.md](./README_LOCAL_RUN.md) — run backend or frontend alone
 - [README_FINISH_TASK.md](./README_FINISH_TASK.md) — release workflow after Quality Gate
 - [README_AUDIT.md](./README_AUDIT.md) — `run_audit.py` (requires dev servers up)
+# Operational authority
+
+The commands below are technical references only. Before a server, build, test, migration, or other runtime action, parse the canonical `PROJECT_STATUS.md` JSON authority block and require the exact `READY` mission and requested action class. Otherwise STOP.

@@ -1,10 +1,11 @@
 # TASKS — Melómanos Marketplace
 
-**Purpose:** Workspace task board **index**.  
-**Backlog master (authoritative):** [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md)  
-**Last synced:** 2026-06-17 (constraint pass)
+**Purpose:** Planning and task **index**; this file is **not an operational authority**.
+**Operational authority:** [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+**Product roadmap:** [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) (not an execution authority).
+**Last reconciled:** 2026-07-15
 
-> **Do not duplicate roadmap content here.** For goals, acceptance criteria, and next steps, read [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).  
+> **Do not authorize work from this index.** For operational state, read [`PROJECT_STATUS.md`](PROJECT_STATUS.md). For product-roadmap content, read [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
 > Completion rules: [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md).
 
 ---
@@ -32,25 +33,11 @@
 
 ---
 
-## IN_PROGRESS
+## Operational reference
 
-### Payment Provider Integration (WebPay placeholder)
-
-| Field | Value |
-|-------|-------|
-| **Status** | READY — [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) Current Active Task |
-| **Queue line status** | TODO — documented inconsistency in roadmap |
-| **Scope** | See roadmap item #1 — do not re-specify here |
-
-**Before starting:** [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md) (Compra Segura) + [`backend/ARCHITECTURE.md`](../backend/ARCHITECTURE.md) (Escrow Architecture).
-
----
-
-## NEXT
-
-### Notifications
-
-Roadmap item #2 — [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) Current Priority Queue.
+- **Sole READY mission:** [`MEL-UX-001 — Frontend UX and Product Readiness Audit`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md), read-only.
+- **Bounties / M-021:** EXPERIMENTAL / HOLD; no implementation work authorized.
+- **Production Deployment:** DEFERRED pending UX and product-readiness evidence.
 
 ---
 
@@ -58,9 +45,9 @@ Roadmap item #2 — [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) Curren
 
 From [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) Current Priority Queue:
 
-3. Production Deployment  
-4. Closed Beta  
-5. Public Launch  
+1. Production Deployment — deferred pending UX and product-readiness evidence
+2. Closed Beta — not authorized
+3. Public Launch — not authorized
 
 **Future Ideas** (not in MVP queue until promoted): same file — Future Ideas table.
 
@@ -75,7 +62,7 @@ Tracked in [`workspace/AI_DEV_OS_PROJECT_SCAN.md`](AI_DEV_OS_PROJECT_SCAN.md) §
 | Register UI | MISSING — API only |
 | Edit/delete listing UI | PARTIAL — backend only |
 | `/releases` catalog API | DOCUMENTATION MISMATCH — see scan |
-| WebPay | PLANNED — active task |
+| WebPay | Historical placeholder implementation; no active work authorized by this index |
 | Terms / privacy pages | MISSING |
 
 ---

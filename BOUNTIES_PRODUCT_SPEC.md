@@ -3,10 +3,10 @@
 **Document type:** Product specification (TYPE G)  
 **Mission:** M-010 · **M-020 (decisions approved 2026-07-10)**  
 **Date:** 2026-07-10  
-**Implementation status:** **APPROVED_FOR_BOUNDED_IMPLEMENTATION** (closed pilot; M-021+ per mission)  
-**Authority:** Approved product rules for bounded implementation. Live runtime until shipped: [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md).
+**Implementation status:** **EXPERIMENTAL / HOLD** — no implementation is authorized until a new explicit human decision.
+**Authority:** Historical product specification and approved M-020 decisions; operational state is controlled solely by [`PROJECT_STATUS.md`](PROJECT_STATUS.md). Live runtime until shipped: [`backend/BUSINESS_RULES.md`](../backend/BUSINESS_RULES.md).
 
-**Related:** [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md)
+**Related:** [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md) · [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md)
 
 ---
 
@@ -456,16 +456,16 @@ User 1──* BountyResponse (as responder)
 
 ---
 
-## 14. Rollout strategy
+## 14. Rollout strategy (historical; superseded operationally)
 
 | Phase | Deliverable | Approval |
 |-------|-------------|----------|
 | **0** | M-010 spec + M-020 decision closure | **DONE** |
-| **1 (closed pilot)** | Informational bounties: backend domain + API + controlled UI exposure | M-021+ per mission; **not** general public rollout |
+| **1 (closed pilot)** | Informational bounties: backend domain + API + controlled UI exposure | Historical proposal only; **HOLD** — no work authorized |
 | **2** | Notifications, discovery polish, E2E, abuse reports | After pilot evidence |
 | **3** | Optional financial incentive / escrow | Separate legal + product gate — **NOT_APPROVED** |
 
-**Rollout (M-020):** Closed pilot with controlled exposure. **Not** promoted to general [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) scope until pilot evidence reviewed and separate gate passed.
+**Historical rollout decision (M-020):** Closed pilot with controlled exposure. It was not promoted to general [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) scope. The later human prioritization decision places Bounties on **EXPERIMENTAL / HOLD**, superseding operational activation without erasing this specification or decision history; see [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md).
 
 ---
 

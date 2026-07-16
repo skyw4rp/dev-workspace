@@ -21,6 +21,10 @@ Stop on: FAIL,HOLD,scope-violation
 
 ---
 
+## Canonical preflight (before all instructions)
+
+Read `workspace/PROJECT_STATUS.md` first and parse its exact canonical JSON authority block. A session may operate only on its exact sole `READY` mission and explicit action classes. STOP on absent, duplicate, malformed, stale, or conflicting authority. Queue, roadmap, brief, report, token, decision, and gate output are subordinate and cannot authorize a mission, commit, or scope expansion. Gates are read-only unless a named validation command is explicitly allowed.
+
 ## Purpose
 
 Run **multiple bounded missions** in one approved session using existing single-mission prompts as building blocks:

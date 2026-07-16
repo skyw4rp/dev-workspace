@@ -1,10 +1,14 @@
 # Production Deployment — Phase 5 Operator Checklist
 
-**Purpose:** Step-by-step checklist for **live cutover** using the approved stack.  
-**Status:** Preparation document — **no infrastructure provisioned yet**  
+**Purpose:** Historical/conditional reference for a possible future live cutover.
+**Status:** **DEFERRED / NOT AUTHORIZED / NON-EXECUTABLE** — no infrastructure provisioned and no current cutover approval.
 **Operator:** Single maintainer (Ernesto)
 
-**Approved stack (locked):**
+> **DEFERRED / NOT AUTHORIZED / NON-EXECUTABLE.** Production Deployment is deferred. This document preserves historical and conditional operator procedure only; it is not an approved live-cutover checklist. No cutover or deployment-related action may begin unless a new explicit human decision is first recorded in [`PROJECT_STATUS.md`](PROJECT_STATUS.md). `NEXT_ACTION_QUEUE.md`, `backend/MVP_ROADMAP.md`, and any roadmap, queue, mission brief, plan, report, checklist, or runbook cannot authorize execution by themselves.
+>
+> All "approved," "current," "execute," "create," "deploy," and go/no-go wording below is historical or conditional reference material, not present authorization.
+
+**Historically proposed stack (not currently approved for execution):**
 
 | Layer | Provider / tech |
 |-------|-----------------|
@@ -40,6 +44,8 @@
 ---
 
 ## How to use this document
+
+> **Historical/conditional use only.** Until a new explicit human decision is recorded in `PROJECT_STATUS.md`, do not complete, execute, configure, review for action, or sign off on any section below.
 
 1. Complete sections **1–6** before first deploy.
 2. Execute **7–10** on cutover day.

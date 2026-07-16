@@ -10,6 +10,10 @@ APPROVE_NEXT_MISSION
 
 ---
 
+## Canonical preflight (before all instructions)
+
+Read `workspace/PROJECT_STATUS.md` first and parse the exact canonical JSON authority block. Require an exact mission ID, `READY`, and the requested action class before any selection, inspection, validation, write, or execution. STOP on an absent, duplicate, malformed, stale, or conflicting block. `NEXT_ACTION_QUEUE.md`, roadmap, brief, report, token, decision, and gate prose are subordinate and cannot grant authority. A PASS/report is never commit authority.
+
 ## Instructions
 
 1. Read first:
@@ -19,7 +23,7 @@ APPROVE_NEXT_MISSION
    - `workspace/NEXT_ACTION_QUEUE.md`
    - `workspace/MISSION_EXECUTION_GUIDE.md`
 
-2. Select **one** mission from `NEXT_ACTION_QUEUE.md`:
+2. Select only the mission already named by canonical authority; the queue may provide title/order only:
    - Status must be `READY`.
    - Prefer highest priority (`P0` → `P1` → `P2` → `P3`).
    - If tied, prefer the mission listed first in **Suggested execution order**.

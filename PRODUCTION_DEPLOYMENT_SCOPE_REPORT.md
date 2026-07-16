@@ -2,8 +2,14 @@
 
 **Document type:** Pre-implementation scope audit  
 **Date:** 2026-06-18  
-**Active milestone:** Production Deployment (`backend/MVP_ROADMAP.md` — Current Priority Queue #1)  
-**Status:** Planning only — **no deployment code or infrastructure changes in this document**
+**Current operational disposition:** **DEFERRED / NOT AUTHORIZED**
+
+> ## CURRENT-STATUS NOTICE — NOT EXECUTABLE
+>
+> Production Deployment is **DEFERRED / NOT AUTHORIZED** pending UX and product-readiness evidence. No deployment, infrastructure, cloud, domain, database, environment, secret, or production work is authorized. The scope, architecture, recommendations, phases, and checklists below are preserved as historical technical planning and must not be interpreted as current commands. A future executor requires a new explicit human decision before using this report as execution instructions. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) is the sole cross-repository operational authority.
+
+**Historical milestone reference:** Production Deployment (`backend/MVP_ROADMAP.md` — former Current Priority Queue #1)
+**Historical status:** Planning only — **no deployment code or infrastructure changes in this document**
 
 **Authority stack:** `BUSINESS_RULES.md` → `ARCHITECTURE.md` → `MVP_ROADMAP.md` → this report
 
@@ -17,7 +23,7 @@ Production Deployment means taking the **existing FastAPI + Next.js + PostgreSQL
 
 **Staging:** **Not required** for MVP — use local Docker + production beta flag (Closed Beta milestone) instead.
 
-**First implementation phase:** **Phase 1 — Deployment architecture & decisions** (domain, provider, env matrix, runbooks — no production cutover yet).
+**Historical first implementation phase:** **Phase 1 — Deployment architecture & decisions** (domain, provider, env matrix, runbooks — no production cutover yet). This is not a current instruction.
 
 ---
 

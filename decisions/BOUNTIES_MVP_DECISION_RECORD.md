@@ -3,8 +3,8 @@
 **ID:** DR-BOUNTIES-001  
 **Mission:** M-010 (spec) · M-020 (closure)  
 **Date:** 2026-07-10 (M-010) · **2026-07-10 (M-020 approved)**  
-**Status:** **APPROVED**  
-**Implementation:** **APPROVED_FOR_BOUNDED_IMPLEMENTATION** (M-021+ per mission; closed pilot)
+**Status:** **APPROVED** (historical product decisions preserved)
+**Implementation:** **EXPERIMENTAL / HOLD** — later human prioritization supersedes operational activation; no implementation is authorized.
 
 **Canonical spec:** [`BOUNTIES_PRODUCT_SPEC.md`](../BOUNTIES_PRODUCT_SPEC.md)  
 **Approval reference:** `APPROVE_MISSION_EXECUTION` / Mission: M-020
@@ -156,8 +156,8 @@ Adopt **Option 2: Lightweight wanted-records board with optional stated incentiv
 
 | Scope | Status |
 |-------|--------|
-| Bounded backend domain design (M-021) | **READY** — next mission |
-| API, UI, notifications, E2E (M-022–M-027) | **PROPOSED** — dependency-gated |
+| Bounded backend domain design (M-021) | **HOLD** — not READY, active, next, or authorized |
+| API, UI, notifications, E2E (M-022–M-027) | **HOLD** — no implementation work authorized |
 | Payment custody / incentive escrow | **NOT_APPROVED** |
 | Digging Score integration | **NOT_APPROVED** (deferred) |
 | General public rollout | **NOT_APPROVED** — closed pilot only |
@@ -174,4 +174,4 @@ Adopt **Option 2: Lightweight wanted-records board with optional stated incentiv
 
 ---
 
-*Approved decisions are binding for bounded implementation missions M-021+. Financial expansion requires separate legal/payment validation.*
+*These approved product decisions remain historical evidence. The later human prioritization decision supersedes operational activation without erasing them: Bounties and M-021 are on HOLD until a new explicit human decision; see [`BOUNTIES_HOLD_DECISION_RECORD.md`](BOUNTIES_HOLD_DECISION_RECORD.md).*

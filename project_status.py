@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import argparse
-import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
-from melomanos_paths import ROADMAP_FILE, WORKSPACE_STATUS_FILE
+from melomanos_paths import WORKSPACE_STATUS_FILE
+from governance_authority import (
+    AuthorityError,
+    load_authority,
+    observe_repository_heads,
+    parse_authority_text,
+    require_authorized,
+)
 
 STATUS_FILE = WORKSPACE_STATUS_FILE
 
@@ -83,17 +89,25 @@ def build_latest_release_section(
 
 def update_project_status(
     *,
+    mission_id: str,
     backend_committed: bool,
     backend_message: str,
     frontend_committed: bool,
     frontend_message: str,
     timestamp: str | None = None,
 ) -> None:
+    require_authorized(
+        mission_id,
+        "status_write",
+        STATUS_FILE,
+        observed_heads=observe_repository_heads(),
+    )
     if not STATUS_FILE.is_file():
         raise FileNotFoundError(f"Status file not found: {STATUS_FILE}")
 
     when = timestamp or datetime.now().strftime("%Y-%m-%d %H:%M")
     content = STATUS_FILE.read_text(encoding="utf-8")
+    load_authority(STATUS_FILE)
 
     qg_body = build_last_quality_gate_section(timestamp=when)
     release_body = build_latest_release_section(
@@ -115,20 +129,10 @@ def update_project_status(
         release_body,
     )
 
+    # The marker update may not replace, remove, or corrupt canonical authority.
+    parse_authority_text(content)
     STATUS_FILE.write_text(content, encoding="utf-8", newline="\n")
-
-
-def read_active_task_from_roadmap(roadmap_path: Path = ROADMAP_FILE) -> str | None:
-    if not roadmap_path.is_file():
-        return None
-    text = roadmap_path.read_text(encoding="utf-8")
-    match = re.search(
-        r"## Current Active Task\s*\n+(?:###\s+(.+?)\s*(?:\n|$))",
-        text,
-    )
-    if not match:
-        return None
-    return match.group(1).strip()
+    load_authority(STATUS_FILE)
 
 
 def extract_between_markers(
@@ -144,7 +148,13 @@ def extract_between_markers(
     return content[body_start:end_idx].strip()
 
 
-def verify_status_file() -> tuple[bool, list[str]]:
+def verify_status_file(*, mission_id: str) -> tuple[bool, list[str]]:
+    require_authorized(
+        mission_id,
+        "governance_scripts",
+        STATUS_FILE,
+        observed_heads=observe_repository_heads(),
+    )
     errors: list[str] = []
     if not STATUS_FILE.is_file():
         errors.append(f"File not found: {STATUS_FILE}")
@@ -154,13 +164,17 @@ def verify_status_file() -> tuple[bool, list[str]]:
     for marker in REQUIRED_MARKERS:
         if marker not in content:
             errors.append(f"Missing marker: {marker}")
+    try:
+        load_authority(STATUS_FILE)
+    except AuthorityError as error:
+        errors.append(f"Invalid canonical authority: {error}")
     return not errors, errors
 
 
-def print_status_summary() -> int:
+def print_status_summary(mission_id: str) -> int:
     print(f"PROJECT_STATUS.md: {STATUS_FILE}\n")
 
-    ok, errors = verify_status_file()
+    ok, errors = verify_status_file(mission_id=mission_id)
     if not ok:
         for err in errors:
             print(f"ERROR: {err}")
@@ -184,21 +198,24 @@ def print_status_summary() -> int:
     print(release_section or "(empty)")
     print()
 
-    active_task = read_active_task_from_roadmap()
-    print("--- Current Active Task ---")
-    if active_task:
-        print(f"{active_task} (from {ROADMAP_FILE})")
-    else:
-        print(f"(not found in {ROADMAP_FILE})")
+    authority = load_authority(STATUS_FILE)
+    print("--- Canonical Operational Mission ---")
+    print(f"{authority.mission.mission_id} ({authority.mission.status})")
     print()
 
     print("Status: OK")
     return 0
 
 
-def run_check() -> int:
+def run_check(mission_id: str) -> int:
+    require_authorized(
+        mission_id,
+        "governance_scripts",
+        STATUS_FILE,
+        observed_heads=observe_repository_heads(),
+    )
     print(f"Checking {STATUS_FILE}\n")
-    ok, errors = verify_status_file()
+    ok, errors = verify_status_file(mission_id=mission_id)
     if ok:
         for marker in REQUIRED_MARKERS:
             print(f"OK   {marker}")
@@ -218,9 +235,10 @@ def run_check() -> int:
     return 1
 
 
-def run_update_manual() -> int:
+def run_update_manual(mission_id: str) -> int:
     try:
         update_project_status(
+            mission_id=mission_id,
             backend_committed=False,
             backend_message="",
             frontend_committed=False,
@@ -251,16 +269,35 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Update status sections for manual testing (no changes, QG passed).",
     )
+    parser.add_argument("--mission-id", required=True, help="Exact canonical mission ID.")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     if args.check:
-        sys.exit(run_check())
+        try:
+            sys.exit(run_check(args.mission_id))
+        except AuthorityError as error:
+            print(f"ERROR: {error}")
+            sys.exit(1)
     if args.update_manual:
-        sys.exit(run_update_manual())
-    sys.exit(print_status_summary())
+        try:
+            sys.exit(run_update_manual(args.mission_id))
+        except AuthorityError as error:
+            print(f"ERROR: {error}")
+            sys.exit(1)
+    try:
+        require_authorized(
+            args.mission_id,
+            "governance_scripts",
+            STATUS_FILE,
+            observed_heads=observe_repository_heads(),
+        )
+        sys.exit(print_status_summary(args.mission_id))
+    except AuthorityError as error:
+        print(f"ERROR: {error}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

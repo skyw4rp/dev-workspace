@@ -33,3 +33,6 @@ py run_melomanos.py
 Press **Enter** or **CTRL+C** in the launcher terminal to stop both processes.
 
 See [README_RUN_MELOMANOS.md](./README_RUN_MELOMANOS.md) for `--check`, `--no-wait`, and `--kill-stale`.
+# Operational authority
+
+These local commands are references only and do not authorize execution. Read and parse the canonical JSON block in `PROJECT_STATUS.md` first; run a command only for its exact `READY` mission and explicitly allowed action class.

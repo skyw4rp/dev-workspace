@@ -11,6 +11,7 @@ from melomanos_paths import (
     ROADMAP_FILE,
     WORKSPACE_STATUS_FILE,
 )
+from governance_authority import observe_repository_heads, require_authorized
 
 MARKER_ROADMAP_FOCUS_START = "<!-- STATUS:ROADMAP_FOCUS_START -->"
 MARKER_ROADMAP_FOCUS_END = "<!-- STATUS:ROADMAP_FOCUS_END -->"
@@ -268,13 +269,12 @@ def _build_active_task_section(
 
 ### {task_title}
 
-**Status:** READY
+**Status:** NOT_AUTHORIZED
 
 **Next steps:**
-1. See **Current Priority Queue** above for goals, dependencies, and tests.
-2. Implement backend and frontend per milestone definition.
-3. Run Quality Gate (`py -m pytest`, `npm run build`, `npm run test:e2e`).
-4. `finish_task.py` → commit → push → update status docs.
+1. This is a product-backlog candidate only; it does not create operational READY state.
+2. Read the canonical JSON authority block in `workspace/PROJECT_STATUS.md`.
+3. Do not execute until that block authorizes this exact mission and action.
 
 ---"""
 
@@ -320,11 +320,17 @@ def _update_footer(text: str, previous_task: str, next_task: str | None) -> str:
 
 def apply_roadmap_advance(
     *,
+    mission_id: str,
     roadmap_path: Path = ROADMAP_FILE,
     previous_task: str | None = None,
     force_advance: bool = False,
 ) -> tuple[str, str | None, bool]:
     """Return (new_roadmap_text, next_task_title, backlog_complete)."""
+    require_authorized(
+        mission_id,
+        "roadmap_promotion",
+        observed_heads=observe_repository_heads(),
+    )
     if not roadmap_path.is_file():
         raise FileNotFoundError(f"Roadmap not found: {roadmap_path}")
 
@@ -408,10 +414,16 @@ def build_roadmap_focus_body(
 
 def update_workspace_roadmap_focus(
     *,
+    mission_id: str,
     current_task: str | None,
     last_completed: str,
     status_path: Path = WORKSPACE_STATUS_FILE,
 ) -> None:
+    require_authorized(
+        mission_id,
+        "status_write",
+        observed_heads=observe_repository_heads(),
+    )
     if not status_path.is_file():
         raise FileNotFoundError(f"Status file not found: {status_path}")
 
@@ -451,10 +463,16 @@ def update_workspace_roadmap_focus(
 
 def update_backend_status_focus(
     *,
+    mission_id: str,
     current_task: str | None,
     last_completed: str,
     status_path: Path = BACKEND_STATUS_FILE,
 ) -> None:
+    require_authorized(
+        mission_id,
+        "status_write",
+        observed_heads=observe_repository_heads(),
+    )
     if not status_path.is_file():
         return
 

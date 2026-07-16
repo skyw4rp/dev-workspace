@@ -3,11 +3,25 @@
 **System:** AI Dev OS Bounded Autonomous Mission Execution  
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-10 (M-020 Bounties decision closure — M-021 READY)  
+**Last updated:** 2026-07-16 (MEL-GOV-001-FINAL closed; MEL-UX-001 is the sole READY read-only audit)
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
-> This queue is the **operational** execution board for Cursor missions.  
-> Product backlog authority remains [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).  
+## Canonical current queue state
+
+This queue is subordinate to [`PROJECT_STATUS.md`](PROJECT_STATUS.md) and cannot authorize work. The machine-readable authority block in that file controls. The historical entries below are preserved and cannot override this current state.
+
+| ID / item | Status |
+|-----------|--------|
+| MEL-GOV-001-FINAL — Operational Authority Remediation | **DONE** — Gate 4 R3 PASS_WITH_WARNINGS accepted by the human |
+| MEL-UX-001 — Frontend UX and Product Readiness Audit | **READY** — sole READY mission; read-only inspection/audit only |
+| M-021 | **HOLD** |
+| Bounties | **EXPERIMENTAL / HOLD** |
+| Production Deployment | **DEFERRED / NOT AUTHORIZED** |
+
+MEL-UX-001 is limited to `read_only_inspection` / `read_only_audit`. No product work or mutation is authorized: product code, product tests, product builds, servers, network, cloud, secrets, database, deployment, staging, commit, push, merge, pull request, and publication remain forbidden.
+
+> This queue is a **subordinate execution queue** for Cursor missions; it **cannot authorize work independently**.
+> Sole cross-repository operational-state authority: [`PROJECT_STATUS.md`](PROJECT_STATUS.md). Product backlog reference: [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
 > Visual PASS authority remains Visual Polish / Visual Feedback Loop (human approval).  
 > **Cursor** is the primary implementation tool. **v0** is optional UI prototype only — see stack constraints.
 
@@ -15,14 +29,14 @@
 
 ## How to use
 
-1. Pick the highest-priority mission with status `READY`, or send `APPROVE_NEXT_MISSION` (see [`prompts/RUN_NEXT_MISSION_PROMPT.md`](prompts/RUN_NEXT_MISSION_PROMPT.md)).
+1. Confirm that [`PROJECT_STATUS.md`](PROJECT_STATUS.md) authorizes the mission, then select a listed `READY` mission or use the applicable approval prompt.
 2. Or send `APPROVE_MISSION_EXECUTION` + mission ID (see [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md)).
 3. Executor follows the brief under `workspace/missions/`.
 4. Executor writes `workspace/reports/missions/M-XXX_EXECUTION_REPORT.md`.
 5. Gate review with `APPROVE_GATE_REVIEW` + mission ID; commit with `APPROVE_SAFE_COMMIT` or repo-specific `APPROVE_*_COMMIT`.
 6. After autonomous sessions, run `APPROVE_SESSION_CLOSURE` + `Session: SESSION-*` to sync queue (see [`prompts/SESSION_STATE_SYNC_PROMPT.md`](prompts/SESSION_STATE_SYNC_PROMPT.md)).
 
-**Statuses:** `READY` | `IN_PROGRESS` | `BLOCKED` | `DONE` | `CANCELLED`
+**Statuses:** `READY` | `HOLD` | `IN_PROGRESS` | `BLOCKED` | `DONE` | `CANCELLED`. Only `PROJECT_STATUS.md` can establish `READY` authorization.
 
 **Evidence fields (per mission detail — not separate statuses):** `execution_report`, `gate_result`, `gate_review`, `completion_evidence`, `commit_sha`, `push_status`, `completed_in_session`, `human_disposition`, optional `claimed_by` / `active_session_id`. **DONE** requires `gate_result: PASS`, or `PASS WITH WARNINGS` only after `human_disposition: accepted` via `APPROVE_SESSION_CLOSURE` + `Disposition:`.
 
@@ -43,7 +57,8 @@
 | M-009 | Favorites flow audit | A | P2 | DONE |
 | M-010 | Bounties product spec | G | P3 | DONE |
 | M-020 | Bounties human decision closure | G | P2 | DONE |
-| M-021 | Bounties backend domain + persistence design | F | P2 | READY |
+| M-021 | Bounties backend domain + persistence design | F | P2 | HOLD |
+| MEL-UX-001 | Frontend UX and Product Readiness Audit | A | P0 | READY |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | DONE |
 | M-013 | Product detail page layout | C | P1 | DONE |
@@ -57,6 +72,21 @@
 ---
 
 ## Missions
+
+### MEL-GOV-001-FINAL — Operational Authority Remediation
+
+| Field | Value |
+|-------|--------|
+| **ID** | MEL-GOV-001-FINAL |
+| **Title** | Operational Authority Remediation |
+| **Mission type** | TYPE B — Governance remediation |
+| **Priority** | P0 |
+| **Status** | **DONE** — completed after Gate 4 R3 PASS_WITH_WARNINGS; the two warnings were explicitly accepted by the human. |
+| **Scope** | Completed governance remediation record; no further execution is authorized by this queue. |
+| **Forbidden changes** | No product code, product tests, product builds, servers, network, cloud, secrets, database, deployment, staging, commit, push, merge, pull request, or publication. Commit and publication still require separate human authorization. |
+| **Brief** | [`missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md`](missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md) |
+
+---
 
 ### M-001 — Audit Visual Polish / Visual Feedback Loop status
 
@@ -291,7 +321,7 @@
 | **commit_sha** | `abcb96a` |
 | **push_status** | published (MEL-GIT-007) |
 | **completed_in_session** | M-010-20260710 |
-| **implementation_status** | **APPROVED_FOR_BOUNDED_IMPLEMENTATION** (M-020) |
+| **implementation_status** | Historical product decisions retained; current operational disposition is EXPERIMENTAL / HOLD |
 | **human_disposition** | — |
 | **Scope** | Product/UX spec for future Bounties (wanted records + optional informational incentive); no implementation |
 | **Forbidden changes** | No frontend/backend implementation; no schema; no code |
@@ -301,7 +331,7 @@
 | **Brief** | [`missions/M-010_BOUNTIES_PRODUCT_SPEC.md`](missions/M-010_BOUNTIES_PRODUCT_SPEC.md) |
 | **Canonical spec** | [`BOUNTIES_PRODUCT_SPEC.md`](BOUNTIES_PRODUCT_SPEC.md) |
 | **Decision record** | [`decisions/BOUNTIES_MVP_DECISION_RECORD.md`](decisions/BOUNTIES_MVP_DECISION_RECORD.md) |
-| **Notes** | Decisions **APPROVED** M-020. Closed pilot rollout. W2/W3 (roadmap/BUSINESS_RULES sync) deferred to M-021+. |
+| **Notes** | Historical decisions are preserved. Later human prioritization places Bounties on HOLD; see [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md). |
 | **Recommended executor prompt** | Completed |
 
 ---
@@ -323,7 +353,7 @@
 | **completed_in_session** | M-020-20260710 |
 | **Dependencies** | M-010 DONE |
 | **Brief** | [`missions/M-020_BOUNTIES_HUMAN_DECISION_CLOSURE.md`](missions/M-020_BOUNTIES_HUMAN_DECISION_CLOSURE.md) |
-| **Notes** | Authorizes **APPROVED_FOR_BOUNDED_IMPLEMENTATION**; promotes M-021 only |
+| **Notes** | Completed historical decision closure. Later human prioritization supersedes M-021 operational activation; see [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md). |
 | **Recommended executor prompt** | Completed |
 
 ---
@@ -336,15 +366,27 @@
 | **Title** | Bounties backend domain + persistence design |
 | **Mission type** | TYPE F — Backend / Business Logic |
 | **Priority** | P2 |
-| **Status** | READY |
-| **Scope** | Domain model, business rules in backend docs, Alembic migration design, service boundaries — **design + implementation per brief when executed** |
-| **Forbidden changes** | Frontend; payment custody; Digging Score hooks; public rollout without pilot flag |
-| **Acceptance criteria** | Domain design aligned with DR-001–DR-008; migration plan; no contradiction with Compra Segura |
-| **Dependencies** | M-020 DONE |
-| **Stop conditions** | Payment custody scope → STOP; auto-reserve on accept → STOP |
-| **Brief** | Create at execution start: `missions/M-021_BOUNTIES_BACKEND_DOMAIN.md` |
-| **Report path** | `reports/missions/M-021_EXECUTION_REPORT.md` |
-| **Recommended executor prompt** | `APPROVE_MISSION_EXECUTION` / Mission: M-021 |
+| **Status** | **HOLD** |
+| **Scope** | No execution scope. Bounties backend, persistence, schema, migration, API, UI, and test work are not authorized. |
+| **Hold basis** | Later human prioritization decision; see [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md). |
+| **Reactivation condition** | New explicit human decision plus operational authorization in [`PROJECT_STATUS.md`](PROJECT_STATUS.md). |
+| **Recommended executor prompt** | None — not authorized |
+
+---
+
+### MEL-UX-001 — Frontend UX and Product Readiness Audit
+
+| Field | Value |
+|-------|--------|
+| **ID** | MEL-UX-001 |
+| **Title** | Frontend UX and Product Readiness Audit |
+| **Mission type** | TYPE A — Read-only audit |
+| **Priority** | P0 |
+| **Status** | **READY** — sole READY mission, as authorized only by [`PROJECT_STATUS.md`](PROJECT_STATUS.md). |
+| **Scope** | `read_only_inspection` in `read_only_audit` mode only; no product work or mutation. |
+| **Forbidden changes** | No code, dependency, build, test, server, screenshot, deployment, network, paid-tool, or API work. |
+| **Brief** | [`missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md) |
+| **Recommended executor prompt** | Follow the brief only after confirming its authorization and stop conditions. |
 
 ---
 
@@ -564,31 +606,29 @@
 
 ## Suggested execution order
 
-1. **M-021** — Bounties backend domain + persistence design (TYPE F) — **READY**
+1. **MEL-UX-001** — Frontend UX and Product Readiness Audit (TYPE A) — **READY** (`read_only_inspection` / `read_only_audit` only)
 
-**Completed (recent):** **M-020** Bounties decision closure (2026-07-10).
+**Completed (recent):** **M-020** Bounties decision closure (2026-07-10); its decision history remains preserved.
 
-**Primary next human action:** `APPROVE_MISSION_EXECUTION` / Mission: **M-021**
+**Primary next human action:** Review MEL-UX-001's read-only audit scope against the canonical authority before any inspection. MEL-GOV-001-FINAL is DONE.
 
-**READY missions:** M-021 only. **READY A/B/C/D:** M-021 (TYPE F). **BLOCKED:** none.
-
-**Bounties implementation:** **APPROVED_FOR_BOUNDED_IMPLEMENTATION** — closed pilot; M-022–M-027 remain PROPOSED.
+**READY missions:** MEL-UX-001 only, limited to `read_only_inspection` / `read_only_audit`. **MEL-GOV-001-FINAL:** DONE. **Bounties / M-021:** HOLD. **Production Deployment:** DEFERRED / NOT AUTHORIZED in the sole operational authority, [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ---
 
-## Bounties implementation batch (M-021–M-027)
+## Bounties implementation batch (M-021–M-027) — HOLD
 
 | ID | Title | Type | Priority | Status | Depends on |
 |----|-------|------|----------|--------|------------|
-| M-021 | Bounties backend domain + persistence design | F | P2 | **READY** | M-020 |
-| M-022 | Bounties API contracts | F | P2 | PROPOSED | M-021 |
-| M-023 | Bounties discovery + detail UI | C/H | P2 | PROPOSED | M-022 |
-| M-024 | Create / manage bounties UI | C/H | P2 | PROPOSED | M-022 |
-| M-025 | Seller response flow | C/H | P2 | PROPOSED | M-022 |
-| M-026 | Bounties notifications + messaging hooks | F | P2 | PROPOSED | M-022 |
-| M-027 | Bounties E2E + abuse controls | D/F | P2 | PROPOSED | M-023–M-026 |
+| M-021 | Bounties backend domain + persistence design | F | P2 | **HOLD** | New explicit human decision |
+| M-022 | Bounties API contracts | F | P2 | **HOLD** | New explicit human decision |
+| M-023 | Bounties discovery + detail UI | C/H | P2 | **HOLD** | New explicit human decision |
+| M-024 | Create / manage bounties UI | C/H | P2 | **HOLD** | New explicit human decision |
+| M-025 | Seller response flow | C/H | P2 | **HOLD** | New explicit human decision |
+| M-026 | Bounties notifications + messaging hooks | F | P2 | **HOLD** | New explicit human decision |
+| M-027 | Bounties E2E + abuse controls | D/F | P2 | **HOLD** | New explicit human decision |
 
-**Order:** M-021 → M-022 → (M-023–M-026 parallel) → M-027. Activate only with explicit per-mission approval.
+**Disposition:** All Bounties work is on HOLD. No order, activation, or implementation is authorized until a new explicit human decision and operational authorization in [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `Commits: disabled|enabled`.
 
@@ -603,3 +643,6 @@ Or run a bounded batch: `APPROVE_AUTONOMOUS_SESSION` with `Max missions:` and `C
 - UI candidates M-012, M-013, M-014, M-015, M-016 follow [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) tool rules.
 - **M-011 governance (2026-07-09):** M-011 executed as explorar visual-polish capture (TYPE D, DONE). Former Listing Card mission renumbered to **M-016**.
 - **SESSION-20260710-1721 (2026-07-10):** M-008 disposition `remediation_required` (2026-07-10). M-019 proposed for messages back link `/` → `/explorar`. M-015 does **not** cover this defect (header-only scope).
+# Canonical authority notice
+
+This queue is subordinate scheduling evidence, not operational authority. Before selecting or executing anything, parse the exact JSON authority block in `PROJECT_STATUS.md`; require the exact mission, `READY`, and action class. Never infer authority from a queue READY label, token, report, roadmap, brief, decision, or gate result.

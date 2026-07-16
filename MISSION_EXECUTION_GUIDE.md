@@ -319,3 +319,6 @@ Default after any mission run: **do not commit** until `APPROVE_GATE_REVIEW` and
 ---
 
 *Adoption date: 2026-07-08. Docs-only; does not replace Visual Polish or Visual Feedback Loop.*
+# Canonical operational preflight (mandatory)
+
+Before any session, mission, validation, gate, status update, commit, or release action, read `PROJECT_STATUS.md` first and parse the one JSON block between `AI_DEV_OS_OPERATIONAL_AUTHORITY` markers. Proceed only when it names the exact requested mission, its status is `READY`, and it explicitly allows the exact action class. Stop on an absent, duplicate, malformed, stale, or conflicting block. Queue, roadmap, brief, report, token, decision, and gate prose are subordinate evidence only; a PASS result or execution report never grants commit authority. Gates are read-only unless the canonical block explicitly authorizes their named validation command, and gates may not expand scope.

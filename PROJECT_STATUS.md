@@ -22,9 +22,9 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 <!-- STATUS:LATEST_RELEASE_END -->
 
 <!-- STATUS:ROADMAP_FOCUS_START -->
-## Roadmap Focus
+## Historical Roadmap Focus (superseded)
 
-- **Current Active Task:** Production Deployment
+- **Snapshot task:** Production Deployment; superseded by the deferred disposition below.
 - **Last completed task:** Notifications
 <!-- STATUS:ROADMAP_FOCUS_END -->
 
@@ -53,13 +53,85 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 - **UI mission candidates:** M-011–M-015 (listing card, explore filters, product detail, empty states, mobile nav)
 - **Next recommended mission (not auto-executed):** **M-002** — Profile UX audit (TYPE A)
 
+## Operational authority and current state
+
+This file is the **sole cross-repository operational-state authority**. `READY` is necessary but insufficient for execution: execution also requires separate human authorization and a fresh matching runtime lease issued after publication. The subordinate queue in [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) records execution order but cannot authorize work independently.
+
+**Canonical authority notice:** The machine-readable block below is the sole operational authority. All other status prose in this file is explanatory or historical and cannot authorize work.
+
+<!-- AI_DEV_OS_OPERATIONAL_AUTHORITY_BEGIN -->
+{
+    "schema_version":  2,
+    "authority_file":  "workspace/PROJECT_STATUS.md",
+    "authority_revision":  4,
+    "authorized_mission":  {
+                               "id":  "MEL-UX-001",
+                               "status":  "READY",
+                               "mode":  "read_only_audit"
+                           },
+    "held_missions":  [
+
+                      ],
+    "completed_missions":  [
+                               {
+                                   "id":  "MEL-GOV-001-FINAL",
+                                   "status":  "DONE"
+                               }
+                           ],
+    "m021":  "HOLD",
+    "bounties":  "EXPERIMENTAL_HOLD",
+    "production_deployment":  "DEFERRED_NOT_AUTHORIZED",
+    "allowed_actions":  [
+                            "read_only_inspection"
+                        ],
+    "forbidden_actions":  [
+                              "product_code",
+                              "product_tests",
+                              "product_build",
+                              "server",
+                              "network",
+                              "cloud",
+                              "secrets",
+                              "database",
+                              "deployment",
+                              "stage",
+                              "commit",
+                              "push",
+                              "merge",
+                              "pull_request",
+                              "publication"
+                          ]
+}
+<!-- AI_DEV_OS_OPERATIONAL_AUTHORITY_END -->
+
+## Reconciliation binding
+
+The canonical JSON block above is controlling and must be parsed, not interpreted from surrounding prose. **MEL-UX-001 is the sole persistently READY mission** and only `read_only_inspection` in `read_only_audit` mode is allowed. MEL-GOV-001-FINAL is DONE. `READY` is necessary but insufficient: execution additionally requires separate human authorization and a fresh matching runtime lease at `C:\ai-dev-os-runtime\projects\melomanos\authority\active-authority-lease.json` (or `MELOMANOS_AUTHORITY_LEASE_FILE`) issued after publication and bound to the published repository HEADs. **This remediation issues no active runtime lease.** Any legacy table, release snapshot, roadmap focus, queue entry, token, report, decision, or prose below that describes another item as READY is historical/subordinate and grants no authority.
+
+**Accepted Gate 4 R3 warning:** Guarded entry points require `MELOMANOS_AI_DEV_OS_DIR=C:\ai-dev-os`. Its absence or a mismatched value must continue to fail closed.
+
+| Current item | Canonical state | Authorization |
+|--------------|-----------------|---------------|
+| MEL-GOV-001-FINAL | DONE | Completed after Gate 4 R3 PASS_WITH_WARNINGS; commit and publication still require separate human authorization. |
+| MEL-UX-001 | READY | Sole persistent READY mission; execution additionally requires separate human authorization and a valid matching runtime lease. |
+| M-021 | HOLD | Not authorized. |
+| Bounties | EXPERIMENTAL / HOLD | Not authorized. |
+| Production Deployment | DEFERRED / NOT AUTHORIZED | Not authorized. |
+
+| Item | Operational state | Authorization |
+|-------|-------------------|---------------|
+| **MEL-UX-001 — Frontend UX and Product Readiness Audit** | **READY** | Sole READY mission; `read_only_inspection` in `read_only_audit` mode only. See [`missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md). |
+| **M-021 — Bounties backend domain + persistence design** | **HOLD** | Not active, next, READY, or authorized. No Bounties implementation work. See [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md). |
+| **Bounties** | **EXPERIMENTAL / HOLD** | Product specification and completed M-020 decisions remain historical evidence; later human prioritization supersedes operational activation without erasing them. |
+| **Production Deployment** | **DEFERRED** | Pending UX and product-readiness evidence; no deployment, infrastructure, cloud, domain, database, environment, or secret work is authorized. |
+
 ## Current Phase & Focus
 
 | Field | Value |
 |-------|-------|
-| **Active task** | Notifications |
-| **Task status** | TODO |
-| **Roadmap source** | `backend/MVP_ROADMAP.md` |
+| **Operational mission** | MEL-UX-001 — Frontend UX and Product Readiness Audit |
+| **Task status** | READY (read-only inspection/audit only) |
+| **Roadmap source** | `backend/MVP_ROADMAP.md` (product roadmap only; not execution authority) |
 | **MVP progress** | 14 / 18 roadmap milestones completed (~78%) |
 
 ## Open Risks
@@ -72,7 +144,7 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Next Milestone
 
-**Notifications** — implementation complete (Phases 1–4); formal roadmap close via `finish_task.py`. Next queue item: **Production Deployment**. See [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
+**No product implementation milestone is active.** Production Deployment is **DEFERRED** pending UX and product-readiness evidence. [`MEL-GOV-001-FINAL`](missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md) is DONE. The sole READY mission is [`MEL-UX-001`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md), limited to read-only inspection/audit.
 
 ## Current MVP Features
 
@@ -116,18 +188,16 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ### Mission layer (operational)
 
-- **Session closure adoption:** AI Dev OS U7 @ `aafe470` (2026-07-10)
-- **M-008 disposition:** `remediation_required` — M-019 proposed (messages back link `/` → `/explorar`)
-- **Primary human action:** Review M-019 → `APPROVE_MISSION_EXECUTION` / Mission: M-019
-- **Next independent READY mission:** **M-015** — Mobile navigation polish (header scope only; does not remediate M-008 F1)
-- **Queue authority:** `NEXT_ACTION_QUEUE.md` — do not auto-start without approval token
+- **Sole READY mission:** **MEL-UX-001** — Frontend UX and Product Readiness Audit (`read_only_inspection` / `read_only_audit` only). **MEL-GOV-001-FINAL** is DONE.
+- **Bounties:** EXPERIMENTAL / HOLD; M-021 and all related implementation work are not authorized.
+- **Production Deployment:** DEFERRED pending the audit's UX and product-readiness evidence.
+- **Authority:** this file is the sole cross-repository operational authority; `NEXT_ACTION_QUEUE.md` is subordinate.
 
 ### Product roadmap (authoritative backlog)
 
-1. Close Notifications milestone (`finish_task.py`) → Production deployment
-2. Production deployment
-3. Closed beta
-4. Public launch
+1. Production Deployment — deferred pending UX and product-readiness assessment
+2. Closed beta — not authorized
+3. Public launch — not authorized
 
 ## AI Dev OS Document Map
 
@@ -136,21 +206,21 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 | AI_CONTEXT.md | workspace | Onboarding hub |
 | STACK_CONSTRAINTS.md | workspace | Isolation, stack, Cursor/v0 rules |
 | MISSION_EXECUTION_GUIDE.md | workspace | Mission pattern + approval tokens |
-| NEXT_ACTION_QUEUE.md | workspace | Operational missions |
-| TASKS.md | workspace | Task board |
+| NEXT_ACTION_QUEUE.md | workspace | Subordinate execution queue; cannot authorize work |
+| TASKS.md | workspace | Planning and task index; not an operational authority |
 | SPEC.md | workspace | Consolidated MVP spec |
 | DESIGN.md | workspace | Flows and technical design |
 | RELEASE_NOTES.md | workspace | Milestone history |
 | WEBPAY_PHASE7_REPORT.md | workspace | WebPay placeholder release audit |
-| MVP_ROADMAP.md | backend | Authoritative backlog |
+| MVP_ROADMAP.md | backend | Product roadmap only; not an execution authority |
 | BUSINESS_RULES.md | backend | Authoritative business rules |
 | ARCHITECTURE.md | backend | Authoritative architecture |
 
 ## Documentation Governance
 
-Workspace docs (`AI_CONTEXT`, `TASKS`, `SPEC`, `DESIGN`, `RELEASE_NOTES`) are **indexes** — they link to authoritative backend sources; they do not override them.
+`PROJECT_STATUS.md` is the **sole cross-repository operational-state authority**. `NEXT_ACTION_QUEUE.md` is a subordinate execution queue and cannot authorize work independently. `TASKS.md` is a planning/task index. `backend/MVP_ROADMAP.md` is a product roadmap only. `backend/PROJECT_STATUS.md` is a backend component-status view subordinate to this file.
 
-**Priority on conflict:** `backend/BUSINESS_RULES.md` → `backend/ARCHITECTURE.md` → `backend/MVP_ROADMAP.md` → workspace summaries.
+For product and technical substance, `backend/BUSINESS_RULES.md` is the authoritative business-rule source and `backend/ARCHITECTURE.md` is the authoritative backend architecture source. Neither overrides the operational state established here.
 
 **Constraint pass:** 2026-06-18 — Notifications Phases 1–4 complete; roadmap advance pending `finish_task.py`.
 

@@ -268,3 +268,6 @@ py finish_task.py --advance-roadmap
 # Force advance multi-phase epic (verified complete)
 py finish_task.py --advance-roadmap --force-advance-roadmap
 ```
+# Operational authority
+
+`finish_task.py` is not a release authorization. Before any dry run, audit, test, build, write, staging, commit, push, or roadmap promotion, it requires an exact `READY` mission and each exact action class from the canonical `PROJECT_STATUS.md` JSON block. A token, report, gate PASS, queue, or roadmap cannot substitute.

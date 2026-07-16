@@ -134,3 +134,6 @@ Define the smallest viable, testable **Bounties / Wanted Records** capability fo
 ## Report path
 
 [`reports/missions/M-010_EXECUTION_REPORT.md`](../reports/missions/M-010_EXECUTION_REPORT.md)
+# M-010 — DONE / HISTORICAL / NON-OPERATIVE
+
+This brief preserves its original body and authorization evidence. It grants no current execution authority; only the canonical JSON block in `../PROJECT_STATUS.md` can do so.

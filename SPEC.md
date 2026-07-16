@@ -8,6 +8,8 @@
 
 **Status legend:** `IMPLEMENTED` | `PARTIAL` | `PLANNED` | `UNKNOWN`
 
+> **Operational authority:** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) is the sole cross-repository operational authority. The Bounties materials below preserve the product specification and completed M-020 decision history; Bounties is currently **EXPERIMENTAL / HOLD**. No M-021+ implementation is planned, active, next, executable, or authorized without a new explicit human decision.
+
 ---
 
 ## Domain Index
@@ -28,7 +30,7 @@
 | Subscriptions | IMPLEMENTED | [BUSINESS_RULES § Subscription](../backend/BUSINESS_RULES.md) | [ARCHITECTURE § Subscriptions](../backend/ARCHITECTURE.md) | [`subscription.py`](../backend/app/services/subscription.py) |
 | Reputation / Digging Score | IMPLEMENTED | [BUSINESS_RULES](../backend/BUSINESS_RULES.md) | [ARCHITECTURE](../backend/ARCHITECTURE.md) | [`users.py`](../backend/app/routers/users.py) |
 | Shipping / Payout profiles | IMPLEMENTED (payout UI: UNKNOWN) | [BUSINESS_RULES](../backend/BUSINESS_RULES.md) | [ARCHITECTURE](../backend/ARCHITECTURE.md) | [`users.py`](../backend/app/routers/users.py) |
-| **Bounties / Wanted records** | **PLANNED** | [BOUNTIES_PRODUCT_SPEC](BOUNTIES_PRODUCT_SPEC.md) · [DR-BOUNTIES-001](decisions/BOUNTIES_MVP_DECISION_RECORD.md) | — | Decisions **APPROVED** M-020; bounded implementation M-021+; **closed pilot** |
+| **Bounties / Wanted records** | **EXPERIMENTAL / HOLD** | [BOUNTIES_PRODUCT_SPEC](BOUNTIES_PRODUCT_SPEC.md) · [DR-BOUNTIES-001](decisions/BOUNTIES_MVP_DECISION_RECORD.md) | — | Historical M-020 decision work completed; M-021+ is **HOLD** and requires a new explicit human decision. See [`PROJECT_STATUS.md`](PROJECT_STATUS.md). |
 | Catalog `/releases` | UNKNOWN | — | README/CHANGELOG only | Not in [`main.py`](../backend/app/main.py) |
 
 ---

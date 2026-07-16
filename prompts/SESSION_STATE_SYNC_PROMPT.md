@@ -34,6 +34,10 @@ Supported `Disposition:` values only: `accepted` · `remediation_required` · `d
 
 ---
 
+## Canonical preflight (before all instructions)
+
+Read `workspace/PROJECT_STATUS.md` first and parse its exact canonical JSON authority block. Require the exact `READY` mission and explicit action class for every inspection or mutation; STOP on absent, duplicate, malformed, stale, or conflicting authority. Queue, roadmap, brief, report, token, decision, and gate result are subordinate evidence only. Gates are read-only unless an exact validation command is explicitly allowed; no gate expands scope.
+
 ## Purpose
 
 Synchronize `workspace/NEXT_ACTION_QUEUE.md` and session report with mission execution reports and gate results **without** commit or push.
