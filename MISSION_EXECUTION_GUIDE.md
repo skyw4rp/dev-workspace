@@ -10,7 +10,7 @@ This guide adapts the base AI Dev OS bounded autonomy layer to Melómanos withou
 
 ## Purpose
 
-Reduce human mediation (copying long prompts between ChatGPT and Cursor) by:
+Support bounded missions while preserving human checkpoints by:
 
 1. Queuing **bounded missions** with explicit type, scope, and stop conditions.
 2. Letting an executor run **one mission** to completion (or stop).
@@ -67,7 +67,7 @@ Use the **most conservative** type when uncertain.
 
 Full rules: [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md).
 
-- **Cursor** = primary tool for all real repo changes.
+- **Codex** = direct executor only when the canonical authority explicitly selects `HUMAN_AUTHORIZED_DIRECT_CODEX`; otherwise use Cursor as the default implementation tool.
 - **v0** = optional UI prototype for compatible TYPE C visual missions only.
 - **Never** use v0 for backend, auth, database, reservations, security, tests, or production integration.
 - v0 may propose UI; **Cursor integrates**; Melómanos git repos remain source of truth.
@@ -76,9 +76,9 @@ Full rules: [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md).
 
 ## How to run a mission
 
-### 1. Pick one mission from the queue
+### 1. Confirm canonical mission and execution mode
 
-Open `workspace/NEXT_ACTION_QUEUE.md`. Select a mission with status `READY` (or `BLOCKED` only if unblocking is the mission itself).
+Read `PROJECT_STATUS.md` first. Select only its exact `READY` mission and action classes. The queue is a subordinate locator. A declared `HUMAN_AUTHORIZED_DIRECT_CODEX` mode is valid only for one manually started, bounded Codex session; it does not use or simulate a lease.
 
 ### 2. Confirm approval
 
@@ -178,7 +178,7 @@ Gate review must **not** continue implementation.
 | `APPROVE_NEXT_MISSION` | Run highest-priority `READY` mission from queue — see [`prompts/RUN_NEXT_MISSION_PROMPT.md`](prompts/RUN_NEXT_MISSION_PROMPT.md) |
 | `APPROVE_MISSION_EXECUTION` + `Mission: M-XXX` | Run the named mission per its brief — see [`prompts/RUN_SELECTED_MISSION_PROMPT.md`](prompts/RUN_SELECTED_MISSION_PROMPT.md) |
 | `APPROVE_GATE_REVIEW` + `Mission: M-XXX` | Review-only gate on brief + execution report — see [`prompts/GATE_REVIEW_PROMPT.md`](prompts/GATE_REVIEW_PROMPT.md) |
-| `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | Inspect diffs, validate, stage/commit/push per report safe list — see [`prompts/SAFE_COMMIT_GATE_PROMPT.md`](prompts/SAFE_COMMIT_GATE_PROMPT.md) |
+| `APPROVE_SAFE_COMMIT` + `Mission: M-XXX` | Separate human checkpoint to inspect diffs and, only if explicitly approved, stage/commit/push per report safe list |
 | `APPROVE_AUTONOMOUS_SESSION` | Multi-mission session (execute → gate → optional commit → **mandatory closure**) — see [`prompts/AUTONOMOUS_SESSION_PROMPT.md`](prompts/AUTONOMOUS_SESSION_PROMPT.md) |
 | `APPROVE_SESSION_CLOSURE` + `Session: SESSION-*` | Standalone queue sync / recovery after autonomous session — **no** disposition — see [`prompts/SESSION_STATE_SYNC_PROMPT.md`](prompts/SESSION_STATE_SYNC_PROMPT.md) |
 | `APPROVE_SESSION_CLOSURE` + `Session:` + `Mission:` + `Disposition:` | Resolve PASS WITH WARNINGS for one mission — OS mutates queue; human does not edit disposition manually |
@@ -321,4 +321,4 @@ Default after any mission run: **do not commit** until `APPROVE_GATE_REVIEW` and
 *Adoption date: 2026-07-08. Docs-only; does not replace Visual Polish or Visual Feedback Loop.*
 # Canonical operational preflight (mandatory)
 
-Before any session, mission, validation, gate, status update, commit, or release action, read `PROJECT_STATUS.md` first and parse the one JSON block between `AI_DEV_OS_OPERATIONAL_AUTHORITY` markers. Proceed only when it names the exact requested mission, its status is `READY`, and it explicitly allows the exact action class. Stop on an absent, duplicate, malformed, stale, or conflicting block. Queue, roadmap, brief, report, token, decision, and gate prose are subordinate evidence only; a PASS result or execution report never grants commit authority. Gates are read-only unless the canonical block explicitly authorizes their named validation command, and gates may not expand scope.
+Before any session, mission, validation, gate, status update, commit, or release action, read `PROJECT_STATUS.md` first and parse the one JSON block between `AI_DEV_OS_OPERATIONAL_AUTHORITY` markers. Proceed only when it names the exact requested mission, its status is `READY`, and it explicitly allows the exact action class. `HUMAN_AUTHORIZED_DIRECT_CODEX` is valid only when the block declares it and Ernesto has explicitly authorized the bounded mission; it is one manually started consolidated session, not a runtime lease, automatic launch, or continuous autonomy. It requires clean starting repositories, an exact allowlist, STOP conditions, and a stop before `git add`, commit, or push. Stop on an absent, duplicate, malformed, stale, or conflicting block. Queue, roadmap, brief, report, token, decision, and gate prose are subordinate evidence only; a PASS result or execution report never grants commit authority. Gates are read-only unless the canonical block explicitly authorizes their named validation command, and gates may not expand scope.

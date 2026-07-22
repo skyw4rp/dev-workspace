@@ -55,20 +55,31 @@ Living snapshot for product and quality status. Updated manually or via `py fini
 
 ## Operational authority and current state
 
-This file is the **sole cross-repository operational-state authority**. `READY` is necessary but insufficient for execution: execution also requires separate human authorization and a fresh matching runtime lease issued after publication. The subordinate queue in [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) records execution order but cannot authorize work independently.
+This file is the **sole cross-repository operational-state authority**. The AI Dev OS operational runtime is disabled. Its canonical authority may instead authorize one explicitly human-authorized, bounded direct Codex mission under `HUMAN_AUTHORIZED_DIRECT_CODEX`; this is not a runtime lease, simulated lease, automatic launch, or continuous autonomy. The subordinate queue in [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) records execution order but cannot authorize work independently.
 
 **Canonical authority notice:** The machine-readable block below is the sole operational authority. All other status prose in this file is explanatory or historical and cannot authorize work.
 
 <!-- AI_DEV_OS_OPERATIONAL_AUTHORITY_BEGIN -->
 {
-    "schema_version":  2,
+    "schema_version":  3,
     "authority_file":  "workspace/PROJECT_STATUS.md",
-    "authority_revision":  4,
+    "authority_revision":  5,
+    "manual_execution_mode":  "HUMAN_AUTHORIZED_DIRECT_CODEX",
+    "operational_runtime":  "DISABLED",
+    "automatic_codex_launch":  "NOT_IMPLEMENTED",
+    "continuous_autonomy":  "DISABLED",
     "authorized_mission":  {
-                               "id":  "MEL-UX-001",
+                               "id":  "MEL-UX-003",
                                "status":  "READY",
-                               "mode":  "read_only_audit"
+                               "mode":  "HUMAN_AUTHORIZED_DIRECT_CODEX",
+                               "repository":  "C:\\melomanos\\frontend"
                            },
+    "blocked_missions":  [
+                              {
+                                  "id":  "MEL-UX-001",
+                                  "status":  "BLOCKED_BY_INACTIVE_OS_RUNTIME"
+                              }
+                          ],
     "held_missions":  [
 
                       ],
@@ -79,15 +90,22 @@ This file is the **sole cross-repository operational-state authority**. `READY` 
                                }
                            ],
     "m021":  "HOLD",
+    "os_routing_001":  "HOLD",
+    "os_routing_001_disposition":  "OS_ROUTING_HOTFIX_SCOPE_EXCEEDED",
     "bounties":  "EXPERIMENTAL_HOLD",
     "production_deployment":  "DEFERRED_NOT_AUTHORIZED",
     "allowed_actions":  [
-                            "read_only_inspection"
+                            "repository_read",
+                            "branch_create",
+                            "product_code",
+                            "focused_tests",
+                            "lint",
+                            "typecheck",
+                            "build",
+                            "git_inspection",
+                            "status_reporting"
                         ],
     "forbidden_actions":  [
-                              "product_code",
-                              "product_tests",
-                              "product_build",
                               "server",
                               "network",
                               "cloud",
@@ -99,28 +117,45 @@ This file is the **sole cross-repository operational-state authority**. `READY` 
                               "push",
                               "merge",
                               "pull_request",
-                              "publication"
+                              "publication",
+                              "force_push",
+                              "rebase",
+                              "amend",
+                              "reset",
+                              "restore",
+                              "clean",
+                              "stash",
+                              "tags",
+                              "releases",
+                              "runtime_activation",
+                              "simulated_leases",
+                              "paid_services",
+                              "paid_apis",
+                              "automatic_deployment"
                           ]
 }
 <!-- AI_DEV_OS_OPERATIONAL_AUTHORITY_END -->
 
 ## Reconciliation binding
 
-The canonical JSON block above is controlling and must be parsed, not interpreted from surrounding prose. **MEL-UX-001 is the sole persistently READY mission** and only `read_only_inspection` in `read_only_audit` mode is allowed. MEL-GOV-001-FINAL is DONE. `READY` is necessary but insufficient: execution additionally requires separate human authorization and a fresh matching runtime lease at `C:\ai-dev-os-runtime\projects\melomanos\authority\active-authority-lease.json` (or `MELOMANOS_AUTHORITY_LEASE_FILE`) issued after publication and bound to the published repository HEADs. **This remediation issues no active runtime lease.** Any legacy table, release snapshot, roadmap focus, queue entry, token, report, decision, or prose below that describes another item as READY is historical/subordinate and grants no authority.
+The canonical JSON block above is controlling and must be parsed, not interpreted from surrounding prose. **MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME` and is not reopened.** `OS-ROUTING-001` remains `HOLD` with disposition `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. MEL-GOV-001-FINAL is DONE. MEL-UX-003 is the sole READY mission and is valid only in `HUMAN_AUTHORIZED_DIRECT_CODEX` mode: Ernesto must explicitly authorize a bounded contract; Codex must be manually started in one consolidated session; repositories must start clean; the scope, allowlist, STOP conditions, and Git checkpoint must be explicit; and Codex must stop before `git add`, commit, or push. This direct manual mode requires **no runtime lease** because the operational runtime is disabled; it must never be represented as AI Dev OS autonomy or a lease substitute. Any legacy table, release snapshot, roadmap focus, queue entry, token, report, decision, or prose below that describes another item as READY is historical/subordinate and grants no authority.
 
 **Accepted Gate 4 R3 warning:** Guarded entry points require `MELOMANOS_AI_DEV_OS_DIR=C:\ai-dev-os`. Its absence or a mismatched value must continue to fail closed.
 
 | Current item | Canonical state | Authorization |
 |--------------|-----------------|---------------|
 | MEL-GOV-001-FINAL | DONE | Completed after Gate 4 R3 PASS_WITH_WARNINGS; commit and publication still require separate human authorization. |
-| MEL-UX-001 | READY | Sole persistent READY mission; execution additionally requires separate human authorization and a valid matching runtime lease. |
+| MEL-UX-001 | BLOCKED_BY_INACTIVE_OS_RUNTIME | Preserved historical audit; not reopened. |
+| MEL-UX-003 | READY | Human-authorized direct Codex execution only; no lease; stop before Git publication actions. |
+| OS-ROUTING-001 | HOLD | `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`; no runtime remediation. |
 | M-021 | HOLD | Not authorized. |
 | Bounties | EXPERIMENTAL / HOLD | Not authorized. |
 | Production Deployment | DEFERRED / NOT AUTHORIZED | Not authorized. |
 
 | Item | Operational state | Authorization |
 |-------|-------------------|---------------|
-| **MEL-UX-001 — Frontend UX and Product Readiness Audit** | **READY** | Sole READY mission; `read_only_inspection` in `read_only_audit` mode only. See [`missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md). |
+| **MEL-UX-001 — Frontend UX and Product Readiness Audit** | **BLOCKED_BY_INACTIVE_OS_RUNTIME** | Preserved historical record; do not reopen. |
+| **MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion** | **READY** | `HUMAN_AUTHORIZED_DIRECT_CODEX` only; frontend allowlist and mandatory pre-Git checkpoint apply. |
 | **M-021 — Bounties backend domain + persistence design** | **HOLD** | Not active, next, READY, or authorized. No Bounties implementation work. See [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md). |
 | **Bounties** | **EXPERIMENTAL / HOLD** | Product specification and completed M-020 decisions remain historical evidence; later human prioritization supersedes operational activation without erasing them. |
 | **Production Deployment** | **DEFERRED** | Pending UX and product-readiness evidence; no deployment, infrastructure, cloud, domain, database, environment, or secret work is authorized. |
@@ -129,8 +164,8 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 
 | Field | Value |
 |-------|-------|
-| **Operational mission** | MEL-UX-001 — Frontend UX and Product Readiness Audit |
-| **Task status** | READY (read-only inspection/audit only) |
+| **Operational mission** | MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion |
+| **Task status** | READY (`HUMAN_AUTHORIZED_DIRECT_CODEX`; manual, bounded, no lease) |
 | **Roadmap source** | `backend/MVP_ROADMAP.md` (product roadmap only; not execution authority) |
 | **MVP progress** | 14 / 18 roadmap milestones completed (~78%) |
 
@@ -144,7 +179,7 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 
 ## Next Milestone
 
-**No product implementation milestone is active.** Production Deployment is **DEFERRED** pending UX and product-readiness evidence. [`MEL-GOV-001-FINAL`](missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md) is DONE. The sole READY mission is [`MEL-UX-001`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md), limited to read-only inspection/audit.
+Production Deployment remains **DEFERRED**. [`MEL-GOV-001-FINAL`](missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md) is DONE and MEL-UX-001 remains blocked. The sole READY mission is MEL-UX-003, a manual, bounded frontend detail-page completion with no runtime lease.
 
 ## Current MVP Features
 
@@ -188,7 +223,7 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 
 ### Mission layer (operational)
 
-- **Sole READY mission:** **MEL-UX-001** — Frontend UX and Product Readiness Audit (`read_only_inspection` / `read_only_audit` only). **MEL-GOV-001-FINAL** is DONE.
+- **Sole READY mission:** **MEL-UX-003** — Vinyl Detail Page — Desktop-First UX Completion (`HUMAN_AUTHORIZED_DIRECT_CODEX` only). MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME`; MEL-GOV-001-FINAL is DONE.
 - **Bounties:** EXPERIMENTAL / HOLD; M-021 and all related implementation work are not authorized.
 - **Production Deployment:** DEFERRED pending the audit's UX and product-readiness evidence.
 - **Authority:** this file is the sole cross-repository operational authority; `NEXT_ACTION_QUEUE.md` is subordinate.

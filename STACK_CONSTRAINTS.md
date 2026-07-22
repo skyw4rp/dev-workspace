@@ -64,7 +64,8 @@ Changes that touch domain **rules** are TYPE F/H — not TYPE C polish.
 
 | Tool | Role for Melómanos |
 |------|---------------------|
-| **Cursor** | **Primary implementation tool** for all real repo changes (frontend, backend, workspace docs, tests, integration) |
+| **Codex (manual direct mode)** | May implement only the exact mission selected by canonical `HUMAN_AUTHORIZED_DIRECT_CODEX`; one manually started bounded session, no runtime lease or autonomy, and mandatory stop before Git publication actions |
+| **Cursor** | Default implementation tool when the canonical authority does not select manual direct Codex mode |
 | **v0** | **Optional** UI prototyping only for compatible **frontend visual** missions |
 | **ChatGPT / planning** | Specs, mission briefs, gate review — not a substitute for Cursor commits |
 | **Playwright / pytest** | Verification evidence — not visual PASS |
@@ -84,7 +85,7 @@ Changes that touch domain **rules** are TYPE F/H — not TYPE C polish.
 - Production wiring, env secrets, deploy
 - Treating v0 output as the product source of truth
 
-**Integration rule:** v0 may propose UI → **Cursor must integrate** into `frontend/` → Melómanos repo remains source of truth → Visual Polish human PASS still required for route PASS.
+**Integration rule:** v0 may propose UI → the canonically selected executor integrates into `frontend/` → Melómanos repo remains source of truth → Visual Polish human PASS still required for route PASS.
 
 ---
 
@@ -93,7 +94,7 @@ Changes that touch domain **rules** are TYPE F/H — not TYPE C polish.
 | Work | Prefer |
 |------|--------|
 | TYPE A/B audits, governance, reports | Fast/cheap reasoning OK; accuracy over flair |
-| TYPE C visual polish in existing design system | Implementation-capable model in **Cursor** |
+| TYPE C visual polish in existing design system | Canonically selected executor; Codex only under explicit manual direct mode, otherwise Cursor |
 | TYPE F/H business logic | Strongest available + explicit `APPROVE_MISSION_EXECUTION`; read BUSINESS_RULES first |
 | TYPE G product design | Spec-focused; no code |
 | UI prototype exploration | Optional v0 **only** if mission brief allows; then Cursor |
@@ -154,3 +155,5 @@ Missions should cite evidence paths. Do not invent PASS from green tests alone.
 # Canonical authority boundary
 
 `PROJECT_STATUS.md` is read first for every execution, technical command, validation, or session. Parse its exact JSON authority block and require an exact `READY` mission plus the requested action class. If the block is absent, duplicated, malformed, stale, or conflicts with prose, STOP. Tokens, queues, roadmaps, briefs, reports, decisions, and gate PASS results are intent or evidence, never authority. A gate is read-only unless the canonical block explicitly permits its validation command.
+
+`HUMAN_AUTHORIZED_DIRECT_CODEX` is a narrowly bounded execution mode only when declared by that block. It requires explicit Ernesto authorization, a defined allowlist and STOP conditions, clean starting repositories, one manually started consolidated Codex session, and a stop before `git add`, commit, or push. It neither activates AI Dev OS nor creates or simulates a runtime lease. Migrations, database writes, secrets, deployment, irreversible operations, scope expansion, and acceptance of PASS WITH WARNINGS remain human checkpoints.

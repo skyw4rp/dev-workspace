@@ -1,10 +1,10 @@
 # AI_CONTEXT — Melómanos Marketplace
 
 **Purpose:** Workspace onboarding index for humans and AI agents.  
-**Last synced:** 2026-07-09 (Stack constraints + tool intelligence + UI mission candidates)  
+**Last synced:** 2026-07-21 (human-authorized direct Codex mode)
 **Root layout:** `C:\melomanos\{backend, frontend, workspace}`
 
-> **Operational authority notice — read before selecting work.** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) is the sole cross-repository operational authority and the only document that can authorize an active task or a READY mission. [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) and [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) are subordinate planning references; neither can authorize execution. A roadmap, queue, mission brief, plan, report, checklist, or runbook is context only and cannot authorize work by itself.
+> **Operational authority notice — read before selecting work.** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) is the sole cross-repository operational authority and the only document that can authorize an active task or a READY mission. When its canonical JSON declares `HUMAN_AUTHORIZED_DIRECT_CODEX`, that means one manually started, bounded Codex session under explicit Ernesto authorization; it is not a lease, runtime activation, automatic launch, or continuous autonomy. [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) and [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md) remain subordinate planning references.
 
 > **This file is an index, not a specification.**  
 > For business and architecture constraints, use **`backend/BUSINESS_RULES.md`** and **`backend/ARCHITECTURE.md`**; neither planning context nor this index authorizes execution.
@@ -28,7 +28,7 @@ Chile-focused vinyl marketplace with Compra Segura (escrow), Discogs-style gradi
 | Workspace doc | Role |
 |---------------|------|
 | [`AI_CONTEXT.md`](AI_CONTEXT.md) | This file — start here |
-| [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) | Project isolation, registered stack, tool intelligence (Cursor / v0) |
+| [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md) | Project isolation, registered stack, tool intelligence (manual Codex / Cursor / v0) |
 | [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md) | Bounded mission execution (one mission → one report → one gate) |
 | [`NEXT_ACTION_QUEUE.md`](NEXT_ACTION_QUEUE.md) | Subordinate mission queue; cannot authorize a READY mission |
 | [`TASKS.md`](TASKS.md) | Task board index → roadmap |
@@ -73,7 +73,7 @@ Before selecting or executing any work, read `PROJECT_STATUS.md`. Do not derive 
 
 **Quality Gate commands:** [`workspace/QUALITY_GATE.md`](QUALITY_GATE.md).
 
-**Tool default:** Implement in **Cursor**. Do not use **v0** for backend, auth, DB, reservations, security, tests, or production integration.
+**Tool default:** When the canonical block explicitly selects `HUMAN_AUTHORIZED_DIRECT_CODEX`, Codex may implement the named bounded mission directly. Otherwise use the selected executor policy in `STACK_CONSTRAINTS.md`. Do not use **v0** for backend, auth, DB, reservations, security, tests, or production integration.
 
 ---
 

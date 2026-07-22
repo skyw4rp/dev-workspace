@@ -1,9 +1,9 @@
 # Next Action Queue — Melómanos Market
 
-**System:** AI Dev OS Bounded Autonomous Mission Execution  
+**System:** Human-authorized direct Codex execution with AI Dev OS runtime disabled
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-16 (MEL-GOV-001-FINAL closed; MEL-UX-001 is the sole READY read-only audit)
+**Last updated:** 2026-07-21 (manual direct Codex mode reconciled; MEL-UX-003 is the sole READY mission)
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 ## Canonical current queue state
@@ -13,17 +13,19 @@ This queue is subordinate to [`PROJECT_STATUS.md`](PROJECT_STATUS.md) and cannot
 | ID / item | Status |
 |-----------|--------|
 | MEL-GOV-001-FINAL — Operational Authority Remediation | **DONE** — Gate 4 R3 PASS_WITH_WARNINGS accepted by the human |
-| MEL-UX-001 — Frontend UX and Product Readiness Audit | **READY** — sole READY mission; read-only inspection/audit only |
+| MEL-UX-001 — Frontend UX and Product Readiness Audit | **BLOCKED_BY_INACTIVE_OS_RUNTIME** — preserved; do not reopen |
+| MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion | **READY** — `HUMAN_AUTHORIZED_DIRECT_CODEX` only |
+| OS-ROUTING-001 | **HOLD** — `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED` |
 | M-021 | **HOLD** |
 | Bounties | **EXPERIMENTAL / HOLD** |
 | Production Deployment | **DEFERRED / NOT AUTHORIZED** |
 
-MEL-UX-001 is limited to `read_only_inspection` / `read_only_audit`. No product work or mutation is authorized: product code, product tests, product builds, servers, network, cloud, secrets, database, deployment, staging, commit, push, merge, pull request, and publication remain forbidden.
+The operational runtime is disabled. MEL-UX-003 alone is authorized under `HUMAN_AUTHORIZED_DIRECT_CODEX`: one manually started consolidated Codex session with explicit Ernesto authorization, a bounded allowlist, clean repositories, STOP conditions, and a mandatory stop before `git add`, commit, or push. It has no runtime lease and is not AI Dev OS autonomy. Database writes, migrations, secrets, deployment, scope expansion, irreversible operations, and acceptance of PASS WITH WARNINGS remain human checkpoints.
 
-> This queue is a **subordinate execution queue** for Cursor missions; it **cannot authorize work independently**.
+> This queue is a **subordinate execution queue**; it **cannot authorize work independently**.
 > Sole cross-repository operational-state authority: [`PROJECT_STATUS.md`](PROJECT_STATUS.md). Product backlog reference: [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
 > Visual PASS authority remains Visual Polish / Visual Feedback Loop (human approval).  
-> **Cursor** is the primary implementation tool. **v0** is optional UI prototype only — see stack constraints.
+> Codex is permitted only when `PROJECT_STATUS.md` explicitly selects `HUMAN_AUTHORIZED_DIRECT_CODEX`; otherwise Cursor is the default implementation tool. **v0** is optional UI prototype only — see stack constraints.
 
 ---
 
@@ -58,7 +60,8 @@ MEL-UX-001 is limited to `read_only_inspection` / `read_only_audit`. No product 
 | M-010 | Bounties product spec | G | P3 | DONE |
 | M-020 | Bounties human decision closure | G | P2 | DONE |
 | M-021 | Bounties backend domain + persistence design | F | P2 | HOLD |
-| MEL-UX-001 | Frontend UX and Product Readiness Audit | A | P0 | READY |
+| MEL-UX-001 | Frontend UX and Product Readiness Audit | A | P0 | BLOCKED_BY_INACTIVE_OS_RUNTIME |
+| MEL-UX-003 | Vinyl Detail Page — Desktop-First UX Completion | C | P0 | READY |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | DONE |
 | M-013 | Product detail page layout | C | P1 | DONE |
@@ -382,11 +385,29 @@ MEL-UX-001 is limited to `read_only_inspection` / `read_only_audit`. No product 
 | **Title** | Frontend UX and Product Readiness Audit |
 | **Mission type** | TYPE A — Read-only audit |
 | **Priority** | P0 |
-| **Status** | **READY** — sole READY mission, as authorized only by [`PROJECT_STATUS.md`](PROJECT_STATUS.md). |
-| **Scope** | `read_only_inspection` in `read_only_audit` mode only; no product work or mutation. |
+| **Status** | **BLOCKED_BY_INACTIVE_OS_RUNTIME** — preserved historical mission; do not reopen. |
+| **Scope** | No execution scope while the AI Dev OS runtime remains disabled. |
 | **Forbidden changes** | No code, dependency, build, test, server, screenshot, deployment, network, paid-tool, or API work. |
 | **Brief** | [`missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md`](missions/MEL-UX-001_FRONTEND_UX_READINESS_AUDIT.md) |
 | **Recommended executor prompt** | Follow the brief only after confirming its authorization and stop conditions. |
+
+---
+
+### MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion
+
+| Field | Value |
+|-------|--------|
+| **ID** | MEL-UX-003 |
+| **Title** | Vinyl Detail Page — Desktop-First UX Completion |
+| **Mission type** | TYPE C — Frontend bounded implementation |
+| **Priority** | P0 |
+| **Status** | **READY** — authorized only by [`PROJECT_STATUS.md`](PROJECT_STATUS.md) in `HUMAN_AUTHORIZED_DIRECT_CODEX` mode. |
+| **Repository** | `C:\melomanos\frontend` |
+| **Objective** | Complete the vinyl detail page so a buyer can identify the record, assess condition, price, location and seller, and use the real reserve, message and favorite actions. |
+| **Scope** | Existing detail route/page; direct detail components; strictly necessary frontend types and API client; focused tests; desktop-first responsive UI; real data only; no invented metrics or recommendations. |
+| **Forbidden changes** | Backend, database, migrations, infrastructure, deployment, AI Dev OS, global refactors, and new dependencies. |
+| **Checkpoint** | Stop before `git add`, commit, and push. |
+| **Execution conditions** | Explicit Ernesto authorization, one manual consolidated Codex session, clean baselines, exact allowlist, and STOP conditions. No runtime lease is used or simulated. |
 
 ---
 
@@ -606,13 +627,13 @@ MEL-UX-001 is limited to `read_only_inspection` / `read_only_audit`. No product 
 
 ## Suggested execution order
 
-1. **MEL-UX-001** — Frontend UX and Product Readiness Audit (TYPE A) — **READY** (`read_only_inspection` / `read_only_audit` only)
+1. **MEL-UX-003** — Vinyl Detail Page — Desktop-First UX Completion (TYPE C) — **READY** (`HUMAN_AUTHORIZED_DIRECT_CODEX` only)
 
 **Completed (recent):** **M-020** Bounties decision closure (2026-07-10); its decision history remains preserved.
 
-**Primary next human action:** Review MEL-UX-001's read-only audit scope against the canonical authority before any inspection. MEL-GOV-001-FINAL is DONE.
+**Primary next human action:** Start MEL-UX-003 only under the explicit bounded contract and canonical authority. MEL-UX-001 remains blocked; MEL-GOV-001-FINAL is DONE.
 
-**READY missions:** MEL-UX-001 only, limited to `read_only_inspection` / `read_only_audit`. **MEL-GOV-001-FINAL:** DONE. **Bounties / M-021:** HOLD. **Production Deployment:** DEFERRED / NOT AUTHORIZED in the sole operational authority, [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+**READY missions:** MEL-UX-003 only in `HUMAN_AUTHORIZED_DIRECT_CODEX` mode. **MEL-UX-001:** `BLOCKED_BY_INACTIVE_OS_RUNTIME`. **OS-ROUTING-001:** HOLD / `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. **Bounties / M-021:** HOLD. **Production Deployment:** DEFERRED / NOT AUTHORIZED in the sole operational authority, [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ---
 
