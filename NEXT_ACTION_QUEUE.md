@@ -3,7 +3,7 @@
 **System:** Human-authorized direct Codex execution with AI Dev OS runtime disabled
 **Pattern:** One mission → one execution report → one gate review  
 **Guide:** [`MISSION_EXECUTION_GUIDE.md`](MISSION_EXECUTION_GUIDE.md)  
-**Last updated:** 2026-07-21 (manual direct Codex mode reconciled; MEL-UX-003 is the sole READY mission)
+**Last updated:** 2026-07-22 (MEL-UX-003 closed after human-authorized direct Codex execution)
 **Stack / tools:** [`STACK_CONSTRAINTS.md`](STACK_CONSTRAINTS.md)
 
 ## Canonical current queue state
@@ -14,13 +14,13 @@ This queue is subordinate to [`PROJECT_STATUS.md`](PROJECT_STATUS.md) and cannot
 |-----------|--------|
 | MEL-GOV-001-FINAL — Operational Authority Remediation | **DONE** — Gate 4 R3 PASS_WITH_WARNINGS accepted by the human |
 | MEL-UX-001 — Frontend UX and Product Readiness Audit | **BLOCKED_BY_INACTIVE_OS_RUNTIME** — preserved; do not reopen |
-| MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion | **READY** — `HUMAN_AUTHORIZED_DIRECT_CODEX` only |
+| MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion | **DONE** — integrated into frontend `master` at `2be0e02aecc64af8a10a5c8f53739552c764b73f` |
 | OS-ROUTING-001 | **HOLD** — `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED` |
 | M-021 | **HOLD** |
 | Bounties | **EXPERIMENTAL / HOLD** |
 | Production Deployment | **DEFERRED / NOT AUTHORIZED** |
 
-The operational runtime is disabled. MEL-UX-003 alone is authorized under `HUMAN_AUTHORIZED_DIRECT_CODEX`: one manually started consolidated Codex session with explicit Ernesto authorization, a bounded allowlist, clean repositories, STOP conditions, and a mandatory stop before `git add`, commit, or push. It has no runtime lease and is not AI Dev OS autonomy. Database writes, migrations, secrets, deployment, scope expansion, irreversible operations, and acceptance of PASS WITH WARNINGS remain human checkpoints.
+The operational runtime is disabled. MEL-UX-003 was completed through one manually started `HUMAN_AUTHORIZED_DIRECT_CODEX` session with explicit Ernesto authorization; it used no runtime lease and was not AI Dev OS autonomy. No successor implementation mission is authorized automatically. Database writes, migrations, secrets, deployment, scope expansion, irreversible operations, and acceptance of PASS WITH WARNINGS remain human checkpoints.
 
 > This queue is a **subordinate execution queue**; it **cannot authorize work independently**.
 > Sole cross-repository operational-state authority: [`PROJECT_STATUS.md`](PROJECT_STATUS.md). Product backlog reference: [`backend/MVP_ROADMAP.md`](../backend/MVP_ROADMAP.md).
@@ -61,7 +61,7 @@ The operational runtime is disabled. MEL-UX-003 alone is authorized under `HUMAN
 | M-020 | Bounties human decision closure | G | P2 | DONE |
 | M-021 | Bounties backend domain + persistence design | F | P2 | HOLD |
 | MEL-UX-001 | Frontend UX and Product Readiness Audit | A | P0 | BLOCKED_BY_INACTIVE_OS_RUNTIME |
-| MEL-UX-003 | Vinyl Detail Page — Desktop-First UX Completion | C | P0 | READY |
+| MEL-UX-003 | Vinyl Detail Page — Desktop-First UX Completion | C | P0 | DONE |
 | M-011 | Add /explorar visual-polish screenshot capture | D | P1 | DONE |
 | M-012 | Explore filters/sidebar improvement | C | P1 | DONE |
 | M-013 | Product detail page layout | C | P1 | DONE |
@@ -401,10 +401,10 @@ The operational runtime is disabled. MEL-UX-003 alone is authorized under `HUMAN
 | **Title** | Vinyl Detail Page — Desktop-First UX Completion |
 | **Mission type** | TYPE C — Frontend bounded implementation |
 | **Priority** | P0 |
-| **Status** | **READY** — authorized only by [`PROJECT_STATUS.md`](PROJECT_STATUS.md) in `HUMAN_AUTHORIZED_DIRECT_CODEX` mode. |
+| **Status** | **DONE** — human-authorized direct Codex execution completed and integrated into frontend `master`. |
 | **Repository** | `C:\melomanos\frontend` |
-| **Objective** | Complete the vinyl detail page so a buyer can identify the record, assess condition, price, location and seller, and use the real reserve, message and favorite actions. |
-| **Scope** | Existing detail route/page; direct detail components; strictly necessary frontend types and API client; focused tests; desktop-first responsive UI; real data only; no invented metrics or recommendations. |
+| **Completion evidence** | Frontend `master` / `origin/master`: `2be0e02aecc64af8a10a5c8f53739552c764b73f`; 17/17 unit tests passed; lint passed with 20 pre-existing warnings; `git diff --check` passed. |
+| **Known debts** | `TECH-DEBT-TS-API-BASE-TEST` (four pre-existing TS2345 errors), `TECH-DEBT-FONT-NETWORK` (`next/font` Google Fonts build limitation), `VERIFICATION-DEBT-E2E` (full frontend/backend E2E pending). |
 | **Forbidden changes** | Backend, database, migrations, infrastructure, deployment, AI Dev OS, global refactors, and new dependencies. |
 | **Checkpoint** | Stop before `git add`, commit, and push. |
 | **Execution conditions** | Explicit Ernesto authorization, one manual consolidated Codex session, clean baselines, exact allowlist, and STOP conditions. No runtime lease is used or simulated. |
@@ -627,13 +627,13 @@ The operational runtime is disabled. MEL-UX-003 alone is authorized under `HUMAN
 
 ## Suggested execution order
 
-1. **MEL-UX-003** — Vinyl Detail Page — Desktop-First UX Completion (TYPE C) — **READY** (`HUMAN_AUTHORIZED_DIRECT_CODEX` only)
+1. **MVP audit** — next planning step only; no implementation mission is automatically activated.
 
 **Completed (recent):** **M-020** Bounties decision closure (2026-07-10); its decision history remains preserved.
 
-**Primary next human action:** Start MEL-UX-003 only under the explicit bounded contract and canonical authority. MEL-UX-001 remains blocked; MEL-GOV-001-FINAL is DONE.
+**Primary next human action:** Return to MVP audit planning. MEL-UX-003 and MEL-GOV-001-FINAL are DONE; MEL-UX-001 remains blocked.
 
-**READY missions:** MEL-UX-003 only in `HUMAN_AUTHORIZED_DIRECT_CODEX` mode. **MEL-UX-001:** `BLOCKED_BY_INACTIVE_OS_RUNTIME`. **OS-ROUTING-001:** HOLD / `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. **Bounties / M-021:** HOLD. **Production Deployment:** DEFERRED / NOT AUTHORIZED in the sole operational authority, [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+**READY missions:** none. **MEL-UX-003:** DONE. **MEL-UX-001:** `BLOCKED_BY_INACTIVE_OS_RUNTIME`. **OS-ROUTING-001:** HOLD / `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. **Bounties / M-021:** HOLD. **Production Deployment:** DEFERRED / NOT AUTHORIZED in the sole operational authority, [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ---
 

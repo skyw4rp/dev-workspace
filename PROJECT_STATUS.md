@@ -63,17 +63,12 @@ This file is the **sole cross-repository operational-state authority**. The AI D
 {
     "schema_version":  3,
     "authority_file":  "workspace/PROJECT_STATUS.md",
-    "authority_revision":  5,
+    "authority_revision":  6,
     "manual_execution_mode":  "HUMAN_AUTHORIZED_DIRECT_CODEX",
     "operational_runtime":  "DISABLED",
     "automatic_codex_launch":  "NOT_IMPLEMENTED",
     "continuous_autonomy":  "DISABLED",
-    "authorized_mission":  {
-                               "id":  "MEL-UX-003",
-                               "status":  "READY",
-                               "mode":  "HUMAN_AUTHORIZED_DIRECT_CODEX",
-                               "repository":  "C:\\melomanos\\frontend"
-                           },
+    "authorized_mission":  null,
     "blocked_missions":  [
                               {
                                   "id":  "MEL-UX-001",
@@ -87,6 +82,12 @@ This file is the **sole cross-repository operational-state authority**. The AI D
                                {
                                    "id":  "MEL-GOV-001-FINAL",
                                    "status":  "DONE"
+                               },
+                               {
+                                   "id":  "MEL-UX-003",
+                                   "status":  "DONE",
+                                   "mode":  "HUMAN_AUTHORIZED_DIRECT_CODEX",
+                                   "frontend_master_sha":  "2be0e02aecc64af8a10a5c8f53739552c764b73f"
                                }
                            ],
     "m021":  "HOLD",
@@ -138,7 +139,7 @@ This file is the **sole cross-repository operational-state authority**. The AI D
 
 ## Reconciliation binding
 
-The canonical JSON block above is controlling and must be parsed, not interpreted from surrounding prose. **MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME` and is not reopened.** `OS-ROUTING-001` remains `HOLD` with disposition `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. MEL-GOV-001-FINAL is DONE. MEL-UX-003 is the sole READY mission and is valid only in `HUMAN_AUTHORIZED_DIRECT_CODEX` mode: Ernesto must explicitly authorize a bounded contract; Codex must be manually started in one consolidated session; repositories must start clean; the scope, allowlist, STOP conditions, and Git checkpoint must be explicit; and Codex must stop before `git add`, commit, or push. This direct manual mode requires **no runtime lease** because the operational runtime is disabled; it must never be represented as AI Dev OS autonomy or a lease substitute. Any legacy table, release snapshot, roadmap focus, queue entry, token, report, decision, or prose below that describes another item as READY is historical/subordinate and grants no authority.
+The canonical JSON block above is controlling and must be parsed, not interpreted from surrounding prose. **MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME` and is not reopened.** `OS-ROUTING-001` remains `HOLD` with disposition `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. MEL-GOV-001-FINAL and MEL-UX-003 are DONE. MEL-UX-003 was executed as one explicitly human-authorized `HUMAN_AUTHORIZED_DIRECT_CODEX` session and integrated into frontend `master` at `2be0e02aecc64af8a10a5c8f53739552c764b73f`; it did not create a runtime lease or AI Dev OS autonomy. No successor implementation mission is authorized automatically. Any legacy table, release snapshot, roadmap focus, queue entry, token, report, decision, or prose below that describes another item as READY is historical/subordinate and grants no authority.
 
 **Accepted Gate 4 R3 warning:** Guarded entry points require `MELOMANOS_AI_DEV_OS_DIR=C:\ai-dev-os`. Its absence or a mismatched value must continue to fail closed.
 
@@ -146,7 +147,7 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 |--------------|-----------------|---------------|
 | MEL-GOV-001-FINAL | DONE | Completed after Gate 4 R3 PASS_WITH_WARNINGS; commit and publication still require separate human authorization. |
 | MEL-UX-001 | BLOCKED_BY_INACTIVE_OS_RUNTIME | Preserved historical audit; not reopened. |
-| MEL-UX-003 | READY | Human-authorized direct Codex execution only; no lease; stop before Git publication actions. |
+| MEL-UX-003 | DONE | Human-authorized direct Codex execution completed; frontend `master` integrated at `2be0e02aecc64af8a10a5c8f53739552c764b73f`. |
 | OS-ROUTING-001 | HOLD | `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`; no runtime remediation. |
 | M-021 | HOLD | Not authorized. |
 | Bounties | EXPERIMENTAL / HOLD | Not authorized. |
@@ -155,7 +156,7 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 | Item | Operational state | Authorization |
 |-------|-------------------|---------------|
 | **MEL-UX-001 — Frontend UX and Product Readiness Audit** | **BLOCKED_BY_INACTIVE_OS_RUNTIME** | Preserved historical record; do not reopen. |
-| **MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion** | **READY** | `HUMAN_AUTHORIZED_DIRECT_CODEX` only; frontend allowlist and mandatory pre-Git checkpoint apply. |
+| **MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion** | **DONE** | Human-authorized direct Codex execution completed; no successor mission is automatically activated. |
 | **M-021 — Bounties backend domain + persistence design** | **HOLD** | Not active, next, READY, or authorized. No Bounties implementation work. See [`decisions/BOUNTIES_HOLD_DECISION_RECORD.md`](decisions/BOUNTIES_HOLD_DECISION_RECORD.md). |
 | **Bounties** | **EXPERIMENTAL / HOLD** | Product specification and completed M-020 decisions remain historical evidence; later human prioritization supersedes operational activation without erasing them. |
 | **Production Deployment** | **DEFERRED** | Pending UX and product-readiness evidence; no deployment, infrastructure, cloud, domain, database, environment, or secret work is authorized. |
@@ -164,8 +165,8 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 
 | Field | Value |
 |-------|-------|
-| **Operational mission** | MEL-UX-003 — Vinyl Detail Page — Desktop-First UX Completion |
-| **Task status** | READY (`HUMAN_AUTHORIZED_DIRECT_CODEX`; manual, bounded, no lease) |
+| **Operational mission** | None — MEL-UX-003 is complete |
+| **Task status** | DONE — MEL-UX-003 integrated into frontend `master` at `2be0e02aecc64af8a10a5c8f53739552c764b73f` |
 | **Roadmap source** | `backend/MVP_ROADMAP.md` (product roadmap only; not execution authority) |
 | **MVP progress** | 14 / 18 roadmap milestones completed (~78%) |
 
@@ -177,9 +178,18 @@ The canonical JSON block above is controlling and must be parsed, not interprete
 4. **Workspace path defaults** — `melomanos_paths.py` defaults to legacy `C:\melomanos_market` unless `MELOMANOS_*_DIR` env vars are set.
 5. **Dual PROJECT_STATUS** — this file and `backend/PROJECT_STATUS.md` must be kept aligned after releases.
 
+## MEL-UX-003 Completion Evidence and Known Debts
+
+- **Execution mode:** `HUMAN_AUTHORIZED_DIRECT_CODEX`; AI Dev OS runtime remains disabled and no runtime lease was used.
+- **Integrated frontend commit:** `2be0e02aecc64af8a10a5c8f53739552c764b73f` on `master` and `origin/master`.
+- **Verification:** 17/17 frontend unit tests passed; lint passed with 20 pre-existing warnings; `git diff --check` passed.
+- **TECH-DEBT-TS-API-BASE-TEST:** Four pre-existing TS2345 errors remain in `src/lib/api-base.test.ts`; not fixed by MEL-UX-003.
+- **TECH-DEBT-FONT-NETWORK:** Frontend build remains blocked by `next/font` Google Fonts network access; not fixed by MEL-UX-003.
+- **VERIFICATION-DEBT-E2E:** Full frontend/backend E2E remains pending because services were not authorized to start; not fixed by MEL-UX-003.
+
 ## Next Milestone
 
-Production Deployment remains **DEFERRED**. [`MEL-GOV-001-FINAL`](missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md) is DONE and MEL-UX-001 remains blocked. The sole READY mission is MEL-UX-003, a manual, bounded frontend detail-page completion with no runtime lease.
+Production Deployment remains **DEFERRED**. [`MEL-GOV-001-FINAL`](missions/MEL-GOV-001-FINAL_OPERATIONAL_AUTHORITY_REMEDIATION.md) and MEL-UX-003 are DONE; MEL-UX-001 remains blocked. The next planning step is an MVP audit, but no implementation mission is automatically activated.
 
 ## Current MVP Features
 
@@ -223,7 +233,8 @@ Production Deployment remains **DEFERRED**. [`MEL-GOV-001-FINAL`](missions/MEL-G
 
 ### Mission layer (operational)
 
-- **Sole READY mission:** **MEL-UX-003** — Vinyl Detail Page — Desktop-First UX Completion (`HUMAN_AUTHORIZED_DIRECT_CODEX` only). MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME`; MEL-GOV-001-FINAL is DONE.
+- **No implementation mission is READY or automatically activated.** MEL-UX-003 is DONE; MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME`; MEL-GOV-001-FINAL is DONE.
+- **Next planning step:** MVP audit; it is not an authorized implementation mission.
 - **Bounties:** EXPERIMENTAL / HOLD; M-021 and all related implementation work are not authorized.
 - **Production Deployment:** DEFERRED pending the audit's UX and product-readiness evidence.
 - **Authority:** this file is the sole cross-repository operational authority; `NEXT_ACTION_QUEUE.md` is subordinate.
