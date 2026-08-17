@@ -141,7 +141,7 @@ This file is the **sole cross-repository operational-state authority**. The AI D
 
 The canonical JSON block above is controlling and must be parsed, not interpreted from surrounding prose. **MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME` and is not reopened.** `OS-ROUTING-001` remains `HOLD` with disposition `OS_ROUTING_HOTFIX_SCOPE_EXCEEDED`. MEL-GOV-001-FINAL and MEL-UX-003 are DONE. MEL-UX-003 was executed as one explicitly human-authorized `HUMAN_AUTHORIZED_DIRECT_CODEX` session and integrated into frontend `master` at `2be0e02aecc64af8a10a5c8f53739552c764b73f`; it did not create a runtime lease or AI Dev OS autonomy. No successor implementation mission is authorized automatically. Any legacy table, release snapshot, roadmap focus, queue entry, token, report, decision, or prose below that describes another item as READY is historical/subordinate and grants no authority.
 
-**Accepted Gate 4 R3 warning:** Guarded entry points require `MELOMANOS_AI_DEV_OS_DIR=C:\ai-dev-os`. Its absence or a mismatched value must continue to fail closed.
+**Accepted Gate 4 R3 warning:** Guarded entry points require `MELOMANOS_AI_DEV_OS_DIR=C:\developments\tooling\ai-dev-os`. Its absence or a mismatched value must continue to fail closed.
 
 | Current item | Canonical state | Authorization |
 |--------------|-----------------|---------------|

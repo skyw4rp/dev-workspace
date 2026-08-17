@@ -9,7 +9,7 @@ Required for local development and **Quality Gate / E2E** preparation (see [READ
 ### Start dev environment (default)
 
 ```powershell
-cd C:\melomanos_workspace
+cd C:\developments\apps\melomanos\workspace
 py run_melomanos.py
 ```
 

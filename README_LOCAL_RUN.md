@@ -14,7 +14,7 @@ API: http://127.0.0.1:8000
 ## Frontend only
 
 ```powershell
-cd C:\melomanos-frontend
+cd C:\developments\apps\melomanos\frontend
 py run_frontend.py
 ```
 
@@ -23,7 +23,7 @@ App: http://localhost:3000
 ## Backend + frontend
 
 ```powershell
-cd C:\melomanos_workspace
+cd C:\developments\apps\melomanos\workspace
 py run_melomanos.py
 ```
 

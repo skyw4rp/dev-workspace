@@ -20,7 +20,7 @@ AUTHORITY_BEGIN = "<!-- AI_DEV_OS_OPERATIONAL_AUTHORITY_BEGIN -->"
 AUTHORITY_END = "<!-- AI_DEV_OS_OPERATIONAL_AUTHORITY_END -->"
 DEFAULT_STATUS_FILE = Path(__file__).with_name("PROJECT_STATUS.md")
 DEFAULT_AUTHORITY_LEASE_FILE = Path(
-    r"C:\ai-dev-os-runtime\projects\melomanos\authority\active-authority-lease.json"
+    r"C:\developments\archive\ai-dev-os-runtime\projects\melomanos\authority\active-authority-lease.json"
 )
 UTC = timezone.utc
 MAX_AUTHORITY_LIFETIME = timedelta(hours=72)
