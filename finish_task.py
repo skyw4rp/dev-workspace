@@ -9,7 +9,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, WORKSPACE_DIR
+from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, PYTHON_EXECUTABLE, WORKSPACE_DIR
 from governance_authority import AuthorityError, observe_repository_heads, require_actions
 from project_status import update_project_status
 from roadmap_advance import (
@@ -448,7 +448,7 @@ def run_quality_gate(mission_id: str) -> None:
         observed_heads=observe_repository_heads(),
     )
     print("\n=== Quality Gate ===\n")
-    code = run_command(["py", "run_audit.py"], WORKSPACE)
+    code = run_command([PYTHON_EXECUTABLE, "run_audit.py"], WORKSPACE)
     if code != 0:
         print("\nQuality Gate failed. Fix errors before committing.")
         sys.exit(code)

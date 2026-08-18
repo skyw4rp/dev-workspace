@@ -8,7 +8,7 @@ import sys
 import time
 from pathlib import Path
 
-from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, WORKSPACE_DIR
+from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, PYTHON_EXECUTABLE, WORKSPACE_DIR
 from run_melomanos import (
     BACKEND_HEALTH_URL,
     FRONTEND_URL,
@@ -29,7 +29,7 @@ MANUAL_STACK_CMD = "py run_melomanos.py --kill-stale --no-wait"
 STEP_BACKEND = {
     "key": "backend",
     "title": "Backend tests",
-    "command": ["py", "-m", "pytest"],
+    "command": [PYTHON_EXECUTABLE, "-m", "pytest"],
     "cwd": BACKEND,
 }
 STEP_FRONTEND_BUILD = {
@@ -129,7 +129,7 @@ def ensure_e2e_stack() -> None:
         fail_e2e_prerequisites(f"Workspace path not found: {WORKSPACE_DIR}")
 
     result = subprocess.run(
-        ["py", "run_melomanos.py", "--kill-stale", "--no-wait"],
+        [PYTHON_EXECUTABLE, "run_melomanos.py", "--kill-stale", "--no-wait"],
         cwd=WORKSPACE_DIR,
         shell=sys.platform == "win32",
     )

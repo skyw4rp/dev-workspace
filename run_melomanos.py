@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, WORKSPACE_DIR
+from melomanos_paths import BACKEND_DIR, FRONTEND_DIR, PYTHON_EXECUTABLE, WORKSPACE_DIR
 
 BACKEND_URL = "http://127.0.0.1:8000"
 BACKEND_HEALTH_URL = "http://127.0.0.1:8000/health"
@@ -95,7 +95,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def _backend_command() -> list[str]:
-    return [sys.executable, "run.py"]
+    return [PYTHON_EXECUTABLE, "run.py"]
 
 
 def _frontend_command() -> list[str]:
@@ -752,7 +752,7 @@ def ensure_database_migrations(
 
     mode = "upgrade" if auto_migrate else "check"
     print(f"Checking Alembic migrations ({mode})...")
-    cmd = [sys.executable, str(script), f"--{mode}"]
+    cmd = [PYTHON_EXECUTABLE, str(script), f"--{mode}"]
     result = subprocess.run(cmd, cwd=BACKEND_DIR, text=True, capture_output=True)
     if result.stdout.strip():
         print(result.stdout.strip())

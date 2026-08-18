@@ -224,7 +224,7 @@ Production Deployment remains **DEFERRED**. [`MEL-GOV-001-FINAL`](missions/MEL-G
 
 ## Current Quality Gate
 
-- Backend: `py -m pytest` — **231** tests
+- Backend: `py -m pytest` — **293** tests (1 skipped)
 - Frontend: `npm run build`
 - E2E: `npm run test:e2e` — **33** tests
 - Full audit: `py run_audit.py`
@@ -234,6 +234,7 @@ Production Deployment remains **DEFERRED**. [`MEL-GOV-001-FINAL`](missions/MEL-G
 ### Mission layer (operational)
 
 - **No implementation mission is READY or automatically activated.** MEL-UX-003 is DONE; MEL-UX-001 remains `BLOCKED_BY_INACTIVE_OS_RUNTIME`; MEL-GOV-001-FINAL is DONE.
+- **Backend Python runtime is reproducible:** `backend/venv` (3.10) now carries the pinned runtime/test dependencies, and `melomanos_paths.PYTHON_EXECUTABLE` gives `run_melomanos.py`/`run_audit.py`/`finish_task.py` a deterministic, non-personal interpreter (`MELOMANOS_PYTHON` override → `backend/venv` → `python3`/`python`/`py` on PATH). Backend suite passes at 293/1 skipped through this path.
 - **Next planning step:** MVP audit; it is not an authorized implementation mission.
 - **Bounties:** EXPERIMENTAL / HOLD; M-021 and all related implementation work are not authorized.
 - **Production Deployment:** DEFERRED pending the audit's UX and product-readiness evidence.

@@ -59,6 +59,17 @@ py run_melomanos.py --no-wait
 py run_melomanos.py --kill-stale --no-wait
 ```
 
+## Python interpreter selection
+
+The top-level `py`/`python` you type only needs to run `melomanos_paths.py`'s own stdlib-only code. Every subprocess the launcher spawns for the **backend** (`run.py`, Alembic migration checks, `run_audit.py`'s `pytest` step) instead uses `melomanos_paths.PYTHON_EXECUTABLE`, resolved in this order:
+
+1. `MELOMANOS_PYTHON` env var, if set (must point to an existing interpreter)
+2. `backend/venv`'s interpreter, if that venv exists
+3. `python3` / `python` / `py` found on `PATH`
+4. the interpreter currently running the launcher, as a last resort
+
+Set `MELOMANOS_PYTHON` explicitly if you keep backend dependencies (`fastapi`, `sqlalchemy`, `alembic`, `pytest`, ...) somewhere other than `backend/venv`.
+
 ## Port 3000 requirement
 
 E2E expects **http://localhost:3000**. If Next.js binds to **3001** because 3000 is taken, the launcher **fails** unless you used `--kill-stale` first.
